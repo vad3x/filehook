@@ -8,10 +8,10 @@ namespace Filehook.Samples.AspNetCoreMvc.ViewModels
         [Required]
         public int Id { get; set; }
 
-        [FileExtensions(Extensions = "jpg, jpeg")]
+        // TODO file validation
         public IFormFile CoverImageFile { get; set; }
 
-        [FileExtensions(Extensions = "pdf")]
+        // TODO file validation
         public IFormFile AttachmentFile { get; set; }
     }
 }

@@ -4,7 +4,5 @@ pull_requests:
 build_script:
 - ps: >-
     dotnet restore
-
-    dotnet build
 test_script:
 - ps: dir test | % { dotnet test $_.FullName }
