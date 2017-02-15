@@ -5,11 +5,11 @@ build_script:
 - ps: >-
     dotnet restore
 
-    dotnet pack src/Filehook.Core -o .\artifacts
+    dotnet pack src/Filehook.Core -o .\artifacts -c Release --version-suffix {build}
 
-    dotnet pack src/Filehook.Proccessors.Image.ImageSharpProccessor -o .\artifacts
+    dotnet pack src/Filehook.Proccessors.Image.ImageSharpProccessor -c Release -o .\artifacts --version-suffix {build}
 
-    dotnet pack src/Filehook.Storages.FileSystem -o .\artifacts
+    dotnet pack src/Filehook.Storages.FileSystem -c Release -o .\artifacts --version-suffix {build}
 
 test_script:
 - ps: dir test | % { dotnet test $_.FullName }
