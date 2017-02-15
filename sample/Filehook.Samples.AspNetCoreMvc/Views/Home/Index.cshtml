@@ -1,0 +1,51 @@
+﻿@model Filehook.Samples.AspNetCoreMvc.ViewModels.AttachmentViewModel
+
+<div class="row">
+    <form asp-action="index" asp-controller="home" enctype="multipart/form-data">
+        <div class="row">
+            <div class="form-group col-md-12">
+                <label asp-for="Id" class="control-label">Id</label>
+                <input type="text" asp-for="Id">
+                <span asp-validation-for="Id" class="text-danger"></span>
+            </div>
+
+            <div class="form-group col-md-12">
+                <label asp-for="AttachmentFile" class="control-label">Select pdf</label>
+                <input type="file" asp-for="AttachmentFile" accept="application/pdf">
+                <span asp-validation-for="AttachmentFile" class="text-danger"></span>
+            </div>
+
+            <div class="form-group col-md-12">
+                <label asp-for="CoverImageFile" class="control-label">Select image</label>
+                <input type="file" asp-for="CoverImageFile" accept="image/*">
+                <span asp-validation-for="CoverImageFile" class="text-danger"></span>
+            </div>
+
+            <div class="form-group col-md-12">
+                <button type="submit" class="btn btn-primary"><i class="glyphicon glyphicon-floppy-disk"></i> Upload</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+@if (ViewBag.AttachmentUrls != null)
+{
+    @foreach (KeyValuePair<string, string> pair in ViewBag.AttachmentUrls)
+    {
+    <div>
+        @pair.Key- @pair.Value
+    </div>
+    }
+}
+
+
+@if (ViewBag.Urls != null)
+{
+    @foreach (KeyValuePair<string, string> pair in ViewBag.Urls)
+    {
+    <div>
+        <img src="@pair.Value" />
+        @pair.Key- @pair.Value
+    </div>
+    }
+}

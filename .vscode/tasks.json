@@ -1,0 +1,36 @@
+﻿{
+    "version": "0.1.0",
+    "isShellCommand": true,
+    "showOutput": "silent",
+    "tasks": [
+        {
+            "taskName": "build sample web",
+            "suppressTaskName": true,
+            "args": [
+                "dotnet",
+                "build",
+                "sample/Filehook.Samples.AspNetCoreMvc"
+            ],
+            "showOutput": "always",
+            "problemMatcher": "$msCompile"
+        }
+    ],
+    "linux": {
+        "command": "sh",
+        "args": [
+            "-c"
+        ]
+    },
+    "osx": {
+        "command": "sh",
+        "args": [
+            "-c"
+        ]
+    },
+    "windows": {
+        "command": "cmd",
+        "args": [
+            "/c"
+        ]
+    }
+}
