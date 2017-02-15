@@ -26,6 +26,8 @@ namespace Filehook.Proccessors.Image.ImageSharpProccessor
 
             _configuration = new Configuration();
             _configuration.AddImageFormat(new JpegFormat());
+            _configuration.AddImageFormat(new PngFormat());
+            _configuration.AddImageFormat(new GifFormat());
         }
 
         public override bool CanProccess(string fileExtension, byte[] bytes)
