@@ -20,7 +20,7 @@ artifacts:
 
 deploy:
   provider: NuGet
-  server: https://www.myget.org/F/filehook/api/v3/index.json
+  server: https://www.myget.org/F/filehook/api/v2/package
   api_key:
     secure: uUSg50F5ec1bMyNNMvGbFfh6uZa7ItsP4Ug5TVeQPvmpYbFcov2Z1uXy7doyyd+w
   skip_symbols: false
