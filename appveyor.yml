@@ -6,7 +6,9 @@ build_script:
     dotnet restore
 
     dotnet pack src/Filehook.Core
+
     dotnet pack src/Filehook.Proccessors.Image.ImageSharpProccessor
+
     dotnet pack src/Filehook.Storages.FileSystem
 test_script:
 - ps: dir test | % { dotnet test $_.FullName }
