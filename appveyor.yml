@@ -5,13 +5,18 @@ build_script:
 - ps: >-
     dotnet restore
 
-    dotnet pack src/Filehook.Core
+    dotnet pack src/Filehook.Core -o .\artifacts
 
-    dotnet pack src/Filehook.Proccessors.Image.ImageSharpProccessor
+    dotnet pack src/Filehook.Proccessors.Image.ImageSharpProccessor -o .\artifacts
 
-    dotnet pack src/Filehook.Storages.FileSystem
+    dotnet pack src/Filehook.Storages.FileSystem -o .\artifacts
+
 test_script:
 - ps: dir test | % { dotnet test $_.FullName }
+
+artifacts:
+- path: .\artifacts\**\*.nupkg
+  name: NuGet
 
 deploy:
   provider: NuGet
