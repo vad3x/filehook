@@ -24,5 +24,7 @@ namespace Filehook.Abstractions
             Expression<Func<TEntity, string>> propertyExpression,
             byte[] bytes,
             string id) where TEntity : class;
+
+        bool CanProccess(byte[] bytes);
     }
 }

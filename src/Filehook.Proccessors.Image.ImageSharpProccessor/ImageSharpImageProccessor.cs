@@ -32,7 +32,12 @@ namespace Filehook.Proccessors.Image.ImageSharpProccessor
 
         public override bool CanProccess(string fileExtension, byte[] bytes)
         {
-            return _configuration.ImageFormats.Any(f => f.SupportedExtensions.Contains(fileExtension) && f.IsSupportedFileFormat(bytes));
+            if (bytes == null)
+            {
+                throw new ArgumentNullException(nameof(bytes));
+            }
+
+            return _configuration.ImageFormats.Any(f =>  f.IsSupportedFileFormat(bytes));
         }
 
         public override MemoryStream ProccessStyle(byte[] bytes, IFileStyle style)

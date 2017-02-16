@@ -7,6 +7,7 @@ namespace Filehook.Abstractions
 {
     public interface IFileProccessor
     {
+        // TODO remove fileExtension
         bool CanProccess(string fileExtension, byte[] bytes);
 
         Dictionary<string, MemoryStream> Proccess<TEntity>(

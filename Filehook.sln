@@ -39,6 +39,8 @@ Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Filehook.Proccessors.Image.
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Filehook.Proccessors.Image.ImageSharpProccessor.Tests", "test\Filehook.Proccessors.Image.ImageSharpProccessor.Tests\Filehook.Proccessors.Image.ImageSharpProccessor.Tests.xproj", "{6659E373-106D-4D33-AD95-2E79A22C7FCF}"
 EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Filehook.AspNetCore.Http", "src\Filehook.AspNetCore.Http\Filehook.AspNetCore.Http.xproj", "{47C4E063-23FF-4C29-BE5E-B14A18DFAB8A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -85,6 +87,10 @@ Global
 		{6659E373-106D-4D33-AD95-2E79A22C7FCF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6659E373-106D-4D33-AD95-2E79A22C7FCF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6659E373-106D-4D33-AD95-2E79A22C7FCF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{47C4E063-23FF-4C29-BE5E-B14A18DFAB8A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{47C4E063-23FF-4C29-BE5E-B14A18DFAB8A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{47C4E063-23FF-4C29-BE5E-B14A18DFAB8A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{47C4E063-23FF-4C29-BE5E-B14A18DFAB8A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -100,5 +106,6 @@ Global
 		{9434BDAF-17D9-4675-AFA7-8D4A72191BAE} = {71E8A7A2-E062-4B46-99E8-B37A3A49DBE8}
 		{87EC6062-BACA-4D15-9E0C-616CDCC21837} = {647C14F5-7DF2-4A77-9A20-421516BC3274}
 		{6659E373-106D-4D33-AD95-2E79A22C7FCF} = {FE345C39-62B0-4BD5-826C-8AD4C79D1654}
+		{47C4E063-23FF-4C29-BE5E-B14A18DFAB8A} = {647C14F5-7DF2-4A77-9A20-421516BC3274}
 	EndGlobalSection
 EndGlobal

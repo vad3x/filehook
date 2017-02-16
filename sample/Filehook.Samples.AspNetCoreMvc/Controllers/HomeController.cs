@@ -2,6 +2,7 @@
 using Filehook.Samples.AspNetCoreMvc.Models;
 using Filehook.Samples.AspNetCoreMvc.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -9,6 +10,8 @@ namespace Filehook.Samples.AspNetCoreMvc.Controllers
 {
     public class HomeController : Controller
     {
+        private static readonly List<Article> _articleStore = new List<Article>();
+
         private readonly IFilehookService _filehookService;
 
         public HomeController(IFilehookService filehookService)
@@ -44,8 +47,15 @@ namespace Filehook.Samples.AspNetCoreMvc.Controllers
                 using (var sourceStream = viewModel.AttachmentFile.OpenReadStream())
                 {
                     sourceStream.CopyTo(memoryStream);
+                    var bytes = memoryStream.ToArray();
 
-                    var urls = await _filehookService.SaveAsync(model, a => a.AttachmentFileName, memoryStream.ToArray(), model.Id.ToString());
+                    if (!_filehookService.CanProccess(memoryStream.ToArray()))
+                    {
+                        ModelState.AddModelError(nameof(viewModel.AttachmentFile), "Could not be proccessed");
+                        return View();
+                    }
+
+                    var urls = await _filehookService.SaveAsync(model, a => a.AttachmentFileName, bytes, model.Id.ToString());
 
                     ViewBag.AttachmentUrls = urls;
                 }
@@ -57,14 +67,23 @@ namespace Filehook.Samples.AspNetCoreMvc.Controllers
                 using (var sourceStream = viewModel.CoverImageFile.OpenReadStream())
                 {
                     sourceStream.CopyTo(memoryStream);
+                    var bytes = memoryStream.ToArray();
 
-                    var urls = await _filehookService.SaveAsync(model, a => a.CoverImageFileName, memoryStream.ToArray(), model.Id.ToString());
+                    if (!_filehookService.CanProccess(memoryStream.ToArray()))
+                    {
+                        ModelState.AddModelError(nameof(viewModel.CoverImageFile), "Could not be proccessed");
+                        return View();
+                    }
+
+                    var urls = await _filehookService.SaveAsync(model, a => a.CoverImageFileName, bytes, model.Id.ToString());
 
                     ViewBag.Urls = urls;
                 }
             }
 
-            return View();
+            _articleStore.Add(model);
+
+            return RedirectToAction(nameof(Index));
         }
     }
 }

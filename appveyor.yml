@@ -11,6 +11,8 @@ build_script:
 
     dotnet pack src/Filehook.Storages.FileSystem -c Release -o ./artifacts --version-suffix $env:APPVEYOR_BUILD_NUMBER
 
+    dotnet pack src/Filehook.AspNetCore.Http -c Release -o ./artifacts --version-suffix $env:APPVEYOR_BUILD_NUMBER
+
 test_script:
 - ps: dir test | % { dotnet test $_.FullName }
 

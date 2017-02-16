@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Reflection;
 using System.Threading.Tasks;
 
 namespace Filehook.Core
@@ -112,7 +111,7 @@ namespace Filehook.Core
             TEntity entity,
             Expression<Func<TEntity, string>> propertyExpression,
             string id,
-            string style = FilehookConsts.OriginalStyleName) where TEntity : class
+            string style) where TEntity : class
         {
             if (entity == null)
             {
@@ -238,6 +237,17 @@ namespace Filehook.Core
             }
 
             return filename;
+        }
+
+        public bool CanProccess(byte[] bytes)
+        {
+            var fileProccessor = _fileProccessors.FirstOrDefault(p => p.CanProccess(null, bytes));
+            if (fileProccessor == null)
+            {
+                return false;
+            }
+
+            return true;
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Filehook.AspNetCore.Http;
+using Microsoft.AspNetCore.Http;
 using System.ComponentModel.DataAnnotations;
 
 namespace Filehook.Samples.AspNetCoreMvc.ViewModels
@@ -8,10 +9,11 @@ namespace Filehook.Samples.AspNetCoreMvc.ViewModels
         [Required]
         public int Id { get; set; }
 
-        // TODO file validation
+        [FileFormats("jpg", "jpeg", "png")]
         public IFormFile CoverImageFile { get; set; }
 
-        // TODO file validation
+        [FileFormats("pdf")]
+        [FileSize(MinFileSize = 0, MaxFileSize = 7 * 1024 * 1024, ErrorMessage = "File size must be less than 7MB")]
         public IFormFile AttachmentFile { get; set; }
     }
 }
