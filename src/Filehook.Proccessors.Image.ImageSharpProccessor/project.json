@@ -17,7 +17,8 @@
     "ImageSharp.Processing": "1.0.0-alpha2-*",
     "Microsoft.Extensions.DependencyInjection.Abstractions": "1.1.*",
     "Microsoft.Extensions.Options.ConfigurationExtensions": "1.1.*",
-    "NETStandard.Library": "1.6.*"
+    "NETStandard.Library": "1.6.*",
+    "System.Linq.Parallel": "4.3.*"
   },
 
   "frameworks": {

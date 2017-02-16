@@ -1,7 +1,6 @@
-﻿using Filehook.Core.DependencyInjection;
+﻿using Filehook.Abstractions;
+using Filehook.Core.DependencyInjection;
 using Filehook.Storages.FileSystem;
-using Filehook.Abstractions;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using System;
 
 namespace Microsoft.Extensions.DependencyInjection

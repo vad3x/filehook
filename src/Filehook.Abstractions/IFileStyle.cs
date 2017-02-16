@@ -1,7 +1,12 @@
 ﻿namespace Filehook.Abstractions
 {
-    public interface IFileStyle
+    public class FileStyle
     {
-        string Name { get; }
+        public FileStyle(string name)
+        {
+            Name = name;
+        }
+
+        public string Name { get; private set; }
     }
 }

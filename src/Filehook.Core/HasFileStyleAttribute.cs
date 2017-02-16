@@ -1,9 +1,10 @@
-﻿using System;
+﻿using Filehook.Abstractions;
+using System;
 
 namespace Filehook.Core
 {
-    [AttributeUsage(AttributeTargets.Property)]
-    public abstract class HasFileStyleAttribute : Attribute 
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple = true)]
+    public class HasFileStyleAttribute : Attribute
     {
         public HasFileStyleAttribute(string name)
         {
@@ -12,9 +13,9 @@ namespace Filehook.Core
                 throw new ArgumentNullException(nameof(name));
             }
 
-            Name = name;
+            Style = new FileStyle(name);
         }
 
-        public string Name { get; private set; }
+        public FileStyle Style { get; protected set; }
     }
 }

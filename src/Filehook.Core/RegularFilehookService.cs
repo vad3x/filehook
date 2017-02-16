@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Reflection;
 using System.Threading.Tasks;
 
 namespace Filehook.Core
@@ -12,6 +11,7 @@ namespace Filehook.Core
     public class RegularFilehookService : IFilehookService
     {
         private readonly IFileStorageNameResolver _fileStorageNameResolver;
+        private readonly IFileStyleResolver _fileStyleResolver;
 
         private readonly IEnumerable<IFileStorage> _storages;
         private readonly IEnumerable<IFileProccessor> _fileProccessors;
@@ -21,6 +21,7 @@ namespace Filehook.Core
 
         public RegularFilehookService(
             IFileStorageNameResolver fileStorageNameResolver,
+            IFileStyleResolver fileStyleResolver,
             IEnumerable<IFileStorage> storages,
             IEnumerable<IFileProccessor> fileProccessors,
             ILocationTemplateParser locationTemplateParser,
@@ -29,6 +30,11 @@ namespace Filehook.Core
             if (fileStorageNameResolver == null)
             {
                 throw new ArgumentNullException(nameof(fileStorageNameResolver));
+            }
+
+            if (fileStyleResolver == null)
+            {
+                throw new ArgumentNullException(nameof(fileStyleResolver));
             }
 
             if (storages == null)
@@ -52,6 +58,7 @@ namespace Filehook.Core
             }
 
             _fileStorageNameResolver = fileStorageNameResolver;
+            _fileStyleResolver = fileStyleResolver;
 
             _storages = storages;
             _fileProccessors = fileProccessors;
@@ -107,6 +114,26 @@ namespace Filehook.Core
             return storage.ExistsAsync(relativeLocation);
         }
 
+        public IDictionary<string, string> GetUrls<TEntity>(
+            TEntity entity,
+            Expression<Func<TEntity, string>> propertyExpression,
+            string id) where TEntity : class
+        {
+            if (entity == null)
+            {
+                throw new ArgumentNullException(nameof(entity));
+            }
+
+            if (propertyExpression == null)
+            {
+                throw new ArgumentNullException(nameof(propertyExpression));
+            }
+
+            var styles = _fileStyleResolver.Resolve(propertyExpression);
+
+            return styles.ToDictionary(s => s.Name, s => GetUrl(entity, propertyExpression, id, s.Name));
+        }
+
         // TODO tests
         public string GetUrl<TEntity>(
             TEntity entity,
@@ -155,62 +182,8 @@ namespace Filehook.Core
             return storage.GetUrl(relativeLocation);
         }
 
-        public IDictionary<string, string> GetUrls<TEntity>(TEntity entity, Expression<Func<TEntity, string>> propertyExpression, string id) where TEntity : class
-        {
-            if (entity == null)
-            {
-                throw new ArgumentNullException(nameof(entity));
-            }
-
-            if (propertyExpression == null)
-            {
-                throw new ArgumentNullException(nameof(propertyExpression));
-            }
-
-            var memberExpression = propertyExpression.Body as MemberExpression;
-            if (memberExpression == null)
-            {
-                throw new ArgumentException($"'{propertyExpression}': is not a valid expression for this method");
-            }
-
-            var filename = GetFilename(entity, propertyExpression);
-
-            var fileExtension = Path.GetExtension(filename);
-
-            var storageName = _fileStorageNameResolver.Resolve(propertyExpression);
-
-            var storage = _storages.FirstOrDefault(s => s.Name == storageName);
-            if (storage == null)
-            {
-                throw new ArgumentException($"Storage with name '{storageName}' has not been registered");
-            }
-
-            var className = _locationParamFormatter.Format(entity.GetType().Name);
-            var attachmentName = _locationParamFormatter.Format(memberExpression.Member.Name);
-
-            // TODO move from here
-            var styleNames = memberExpression.Member.GetCustomAttributes<HasFileStyleAttribute>()
-                .Select(x => x.Name)
-                .ToList();
-
-            var styleUrls = new Dictionary<string, string>();
-            foreach (var styleName in styleNames)
-            {
-                var relativeLocation = _locationTemplateParser.Parse(
-                    className: className,
-                    attachmentName: attachmentName,
-                    attachmentId: id,
-                    style: styleName,
-                    filename: filename);
-
-                styleUrls.Add(styleName, storage.GetUrl(relativeLocation));
-            }
-
-            return styleUrls;
-        }
-
         // TODO tests
-        public async Task<Dictionary<string, string>> SaveAsync<TEntity>(
+        public async Task<IDictionary<string, string>> SaveAsync<TEntity>(
             TEntity entity,
             Expression<Func<TEntity, string>> propertyExpression,
             byte[] bytes,
@@ -254,7 +227,9 @@ namespace Filehook.Core
                 throw new NotSupportedException($"Processor for file '{fileExtension}' has not been registered");
             }
 
-            var proccessedStreams = fileProccessor.Proccess(entity, propertyExpression, bytes);
+            var styles = _fileStyleResolver.Resolve(propertyExpression);
+
+            var proccessedStreams = fileProccessor.Proccess(bytes, styles);
 
             var className = _locationParamFormatter.Format(entity.GetType().Name);
             var attachmentName = _locationParamFormatter.Format(memberExpression.Member.Name);

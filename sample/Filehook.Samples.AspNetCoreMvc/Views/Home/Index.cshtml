@@ -31,23 +31,46 @@
 <ul>
     @foreach (Article article in ViewBag.Articles)
     {
-    <li>
-        <h2>@article.Id</h2>
-        <section>
-            <h3>Cover Images</h3>
-            @{
-                var styleUrls = filehookService.GetUrls(article, a => a.CoverImageFileName, article.Id.ToString());
+        <li>
+            <h2>@article.Id</h2>
+            @if (article.CoverImageFileName != null)
+            {
+                <section>
+                    <h3>Cover Image Styles</h3>
+                    @{
+                        var coverImageUrls = filehookService.GetUrls(article, a => a.CoverImageFileName, article.Id.ToString());
+                    }
+                    <ol>
+                        @foreach (var styleUrl in coverImageUrls)
+                        {
+                            <li>
+                                <h4>@styleUrl.Key</h4>
+                                <div>@styleUrl.Value</div>
+                                <img src="@styleUrl.Value" />
+                            </li>
+                        }
+                    </ol>
+                </section>
             }
-            <ol>
-                @foreach (var styleUrl in styleUrls)
-                {
-                <li>
-                    <div>@styleUrl.Key - @styleUrl.Value</div>
-                    <img src="@styleUrl.Value" />
-                </li>
-                }
-            </ol>
-        </section>
-    </li>
+
+            @if (article.AttachmentFileName != null)
+            {
+                <section>
+                    <h3>Cover Image Styles</h3>
+                    @{
+                        var attachmentUrls = filehookService.GetUrls(article, a => a.AttachmentFileName, article.Id.ToString());
+                    }
+                    <ol>
+                        @foreach (var styleUrl in attachmentUrls)
+                        {
+                            <li>
+                                <h4>@styleUrl.Key</h4>
+                                <div>@styleUrl.Value</div>
+                            </li>
+                        }
+                    </ol>
+                </section>
+            }
+        </li>
     }
 </ul>

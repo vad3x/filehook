@@ -12,9 +12,8 @@ namespace Filehook.Proccessors.Image.Abstractions.Tests.ImageSharpProccessor
         public void ShouldReturnTrue(string fileExtension, byte[] bytes)
         {
             var mockStyleParser = new Mock<IImageTransformer>();
-            var mockImageStyleResolver = new Mock<IImageStyleResolver>();
 
-            var imageSharpImageProccessor = new ImageSharpImageProccessor(mockStyleParser.Object, mockImageStyleResolver.Object);
+            var imageSharpImageProccessor = new ImageSharpImageProccessor(mockStyleParser.Object);
 
             var result = imageSharpImageProccessor.CanProccess(fileExtension, bytes);
 
@@ -28,9 +27,8 @@ namespace Filehook.Proccessors.Image.Abstractions.Tests.ImageSharpProccessor
         public void ShouldReturnFalse(string fileExtension, byte[] bytes)
         {
             var mockStyleParser = new Mock<IImageTransformer>();
-            var mockImageStyleResolver = new Mock<IImageStyleResolver>();
 
-            var imageSharpImageProccessor = new ImageSharpImageProccessor(mockStyleParser.Object, mockImageStyleResolver.Object);
+            var imageSharpImageProccessor = new ImageSharpImageProccessor(mockStyleParser.Object);
 
             var result = imageSharpImageProccessor.CanProccess(fileExtension, bytes);
 

@@ -2,16 +2,12 @@
 
 namespace Filehook.Proccessors.Image.Abstractions
 {
-    public class ImageStyle : IFileStyle
+    public class ImageStyle : FileStyle
     {
-        public ImageStyle(string name, ImageResizeOptions resizeOptions = null)
+        public ImageStyle(string name, ImageResizeOptions resizeOptions = null) : base(name)
         {
-            Name = name;
-
             ResizeOptions = resizeOptions;
         }
-
-        public string Name { get; set; }
 
         public ImageResizeOptions ResizeOptions { get; set; }
     }

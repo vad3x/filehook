@@ -24,7 +24,7 @@ namespace Filehook.Abstractions
             string id,
             string style) where TEntity : class;
 
-        Task<Dictionary<string, string>> SaveAsync<TEntity>(
+        Task<IDictionary<string, string>> SaveAsync<TEntity>(
             TEntity entity,
             Expression<Func<TEntity, string>> propertyExpression,
             byte[] bytes,

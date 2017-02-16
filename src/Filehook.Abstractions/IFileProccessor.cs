@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Linq.Expressions;
 
 namespace Filehook.Abstractions
 {
@@ -9,11 +7,6 @@ namespace Filehook.Abstractions
     {
         bool CanProccess(string fileExtension, byte[] bytes);
 
-        Dictionary<string, MemoryStream> Proccess<TEntity>(
-            TEntity entity,
-            Expression<Func<TEntity, string>> propertyExpression,
-            byte[] bytes) where TEntity : class;
-
-        MemoryStream ProccessStyle(byte[] bytes, IFileStyle style);
+        IDictionary<string, MemoryStream> Proccess(byte[] bytes, IEnumerable<FileStyle> styles);
     }
 }

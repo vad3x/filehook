@@ -1,9 +1,8 @@
-﻿using Filehook.Core.DependencyInjection;
+﻿using Filehook.Abstractions;
+using Filehook.Core.DependencyInjection;
 using Filehook.Proccessors.Image.ImageSharpProccessor;
-using Filehook.Abstractions;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using System;
-using Filehook.Proccessors.Image.Abstractions;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -16,7 +15,6 @@ namespace Microsoft.Extensions.DependencyInjection
                 throw new ArgumentNullException(nameof(builder));
             }
 
-            builder.Services.TryAddTransient<IImageStyleResolver, AttributeImageStyleResolver>();
             builder.Services.TryAddTransient<IImageTransformer, ImageSharpImageTransformer>();
             builder.Services.AddTransient<IFileProccessor, ImageSharpImageProccessor>();
 

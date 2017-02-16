@@ -1,15 +1,15 @@
-﻿using System;
+﻿using Filehook.Abstractions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using Filehook.Core;
 
-namespace Filehook.Proccessors.Image.Abstractions
+namespace Filehook.Core
 {
-    public class AttributeImageStyleResolver : IImageStyleResolver
+    public class AttributeFileStyleResolver : IFileStyleResolver
     {
-        public IEnumerable<ImageStyle> Resolve<TEntity>(Expression<Func<TEntity, string>> propertyExpression)
+        public IEnumerable<FileStyle> Resolve<TEntity>(Expression<Func<TEntity, string>> propertyExpression)
         {
             if (propertyExpression == null)
             {
@@ -22,8 +22,8 @@ namespace Filehook.Proccessors.Image.Abstractions
                 throw new ArgumentException($"'{propertyExpression}': is not a valid expression for this method");
             }
 
-            var styles = memberExpression.Member.GetCustomAttributes<HasImageStyleAttribute>()
-                .Select(x => x.ImageStyle)
+            var styles = memberExpression.Member.GetCustomAttributes<HasFileStyleAttribute>()
+                .Select(x => x.Style)
                 .ToList();
 
             if (styles.GroupBy(s => s.Name).Any(g => g.Count() > 1))
@@ -33,7 +33,7 @@ namespace Filehook.Proccessors.Image.Abstractions
 
             if (!styles.Any(s => s.Name == FilehookConsts.OriginalStyleName))
             {
-                styles.Add(new ImageStyle(FilehookConsts.OriginalStyleName));
+                styles.Add(new FileStyle(FilehookConsts.OriginalStyleName));
             }
 
             return styles;

@@ -1,19 +1,19 @@
 ﻿using System;
 using System.Linq;
 using Filehook.Core;
-using Filehook.Proccessors.Image.Abstractions.Tests.Fixtures;
 using Xunit;
+using Filehook.Core.Tests.Fixtures;
 
 namespace Filehook.Proccessors.Image.Abstractions.Tests
 {
-    public class AttributeImageStyleResolver_Resolve
+    public class AttributeFileStyleResolver_Resolve
     {
         [Fact]
         public void EntityWithOnePropertyStyle_ReturnsTwoStyles()
         {
-            var resolver = new AttributeImageStyleResolver();
+            var resolver = new AttributeFileStyleResolver();
 
-            var result = resolver.Resolve<EntityWithOnePropertyStyle>((x) => x.ImageName);
+            var result = resolver.Resolve<EntityWithOnePropertyStyle>((x) => x.FileName);
 
             Assert.Equal(2, result.Count());
             Assert.Equal(result.First().Name, "regular");
@@ -23,9 +23,9 @@ namespace Filehook.Proccessors.Image.Abstractions.Tests
         [Fact]
         public void EntityWithDuplicatingStyle_ReturnsArgumentException()
         {
-            var resolver = new AttributeImageStyleResolver();
+            var resolver = new AttributeFileStyleResolver();
 
-            Assert.Throws(typeof(ArgumentException), () => resolver.Resolve<EntityWithDuplicatingStyleName>((x) => x.ImageName));
+            Assert.Throws(typeof(ArgumentException), () => resolver.Resolve<EntityWithDuplicatingStyleName>((x) => x.FileName));
         }
     }
 }

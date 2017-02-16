@@ -1,9 +1,7 @@
-﻿using System;
-using Filehook.Core;
+﻿using Filehook.Core;
 
 namespace Filehook.Proccessors.Image.Abstractions
 {
-    [AttributeUsage(AttributeTargets.Property, AllowMultiple = true)]
     public class HasImageStyleAttribute : HasFileStyleAttribute
     {
         /// <summary>
@@ -26,14 +24,12 @@ namespace Filehook.Proccessors.Image.Abstractions
                 Mode = resizeMode
             };
 
-            ImageStyle = new ImageStyle(name, resizeOptions);
+            Style = new ImageStyle(name, resizeOptions);
         }
 
         public HasImageStyleAttribute(string name) : base(name)
         {
-            ImageStyle = new ImageStyle(name);
+            Style = new ImageStyle(name);
         }
-
-        public ImageStyle ImageStyle { get; private set; }
     }
 }
