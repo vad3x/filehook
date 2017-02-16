@@ -7,10 +7,10 @@
   },
 
   "dependencies": {
-    "xunit": "2.2.0-*",
     "dotnet-test-xunit": "2.2.0-*",
-    "Filehook.Proccessors.Image.Abstractions": { "target": "project" },
-    "Moq": "4.6.38-*"
+    "Filehook.Core": { "target": "project" },
+    "Moq": "4.6.38-*",
+    "xunit": "2.2.0-*"
   },
   "testRunner": "xunit",
   "frameworks": {

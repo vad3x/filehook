@@ -89,19 +89,10 @@ namespace Filehook.Core
                 throw new ArgumentException($"'{propertyExpression}': is not a valid expression for this method");
             }
 
+            var storage = GetStorage(propertyExpression);
+
             var filename = GetFilename(entity, propertyExpression);
-
-            var fileExtension = Path.GetExtension(filename);
-
-            var storageName = _fileStorageNameResolver.Resolve(propertyExpression);
-
-            var storage = _storages.FirstOrDefault(s => s.Name == storageName);
-            if (storage == null)
-            {
-                throw new ArgumentException($"Storage with name '{storageName}' has not been registered");
-            }
-
-            var className = _locationParamFormatter.Format(entity.GetType().Name);
+            var className = _locationParamFormatter.Format(typeof(TEntity).ToString());
             var attachmentName = _locationParamFormatter.Format(memberExpression.Member.Name);
 
             var relativeLocation = _locationTemplateParser.Parse(
@@ -157,19 +148,10 @@ namespace Filehook.Core
                 throw new ArgumentException($"'{propertyExpression}': is not a valid expression for this method");
             }
 
+            var storage = GetStorage(propertyExpression);
+
             var filename = GetFilename(entity, propertyExpression);
-
-            var fileExtension = Path.GetExtension(filename);
-
-            var storageName = _fileStorageNameResolver.Resolve(propertyExpression);
-
-            var storage = _storages.FirstOrDefault(s => s.Name == storageName);
-            if (storage == null)
-            {
-                throw new ArgumentException($"Storage with name '{storageName}' has not been registered");
-            }
-
-            var className = _locationParamFormatter.Format(entity.GetType().Name);
+            var className = _locationParamFormatter.Format(typeof(TEntity).ToString());
             var attachmentName = _locationParamFormatter.Format(memberExpression.Member.Name);
 
             var relativeLocation = _locationTemplateParser.Parse(
@@ -210,17 +192,11 @@ namespace Filehook.Core
                 throw new ArgumentException($"'{propertyExpression}': is not a valid expression for this method");
             }
 
+            var storage = GetStorage(propertyExpression);
+
             var filename = GetFilename(entity, propertyExpression);
+
             var fileExtension = Path.GetExtension(filename).TrimStart('.');
-
-            var storageName = _fileStorageNameResolver.Resolve(propertyExpression);
-
-            var storage = _storages.FirstOrDefault(s => s.Name == storageName);
-            if (storage == null)
-            {
-                throw new NotSupportedException($"Storage with name '{storageName}' has not been registered");
-            }
-
             var fileProccessor = _fileProccessors.FirstOrDefault(p => p.CanProccess(fileExtension, bytes));
             if (fileProccessor == null)
             {
@@ -231,7 +207,7 @@ namespace Filehook.Core
 
             var proccessedStreams = fileProccessor.Proccess(bytes, styles);
 
-            var className = _locationParamFormatter.Format(entity.GetType().Name);
+            var className = _locationParamFormatter.Format(typeof(TEntity).ToString());
             var attachmentName = _locationParamFormatter.Format(memberExpression.Member.Name);
 
             var locations = new Dictionary<string, string>();
@@ -257,6 +233,17 @@ namespace Filehook.Core
             return locations;
         }
 
+        public bool CanProccess(string fileExtension, byte[] bytes)
+        {
+            var fileProccessor = _fileProccessors.FirstOrDefault(p => p.CanProccess(fileExtension, bytes));
+            if (fileProccessor == null)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
         private string GetFilename<TEntity>(TEntity entity, Expression<Func<TEntity, string>> propertyExpression)
         {
             var func = ExpressionCache<Func<TEntity, string>>.CachedCompile(propertyExpression);
@@ -269,15 +256,17 @@ namespace Filehook.Core
             return filename;
         }
 
-        public bool CanProccess(string fileExtension, byte[] bytes)
+        private IFileStorage GetStorage<TEntity>(Expression<Func<TEntity, string>> propertyExpression)
         {
-            var fileProccessor = _fileProccessors.FirstOrDefault(p => p.CanProccess(fileExtension, bytes));
-            if (fileProccessor == null)
+            var storageName = _fileStorageNameResolver.Resolve(propertyExpression);
+
+            var storage = _storages.FirstOrDefault(s => s.Name == storageName);
+            if (storage == null)
             {
-                return false;
+                throw new NotSupportedException($"Storage with name '{storageName}' has not been registered");
             }
 
-            return true;
+            return storage;
         }
     }
 }

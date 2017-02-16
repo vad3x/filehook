@@ -52,13 +52,19 @@ Mark properties with special attributes.
         }
 ```
 
-# Image Proccessing
+# Configuration
 
-Filehook uses [ImageSharp](https://github.com/JimBobSquarePants/ImageSharp) internaly to proccess your images that marked with `[HasImageStyle]` attribute
+## Image Proccessing
 
-# Storages
+Filehook uses [ImageSharp](https://github.com/JimBobSquarePants/ImageSharp) on module `Filehook.Proccessors.Image.ImageSharpProccessor` to proccess your images that marked with `[HasImageStyle]` attribute
+
+## Storages
 
 Only `FileSystemStorage` available for now. The storage allows to save files to file system
+
+## Location
+
+Default location template is `:base/public/:class/:attachmentName/:attachmentId/:style/:filename`
 
 # TODO List
 
