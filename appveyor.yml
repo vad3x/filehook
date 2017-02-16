@@ -21,10 +21,13 @@ artifacts:
   name: NuGet
 
 deploy:
-  provider: NuGet
-  server: https://www.myget.org/F/filehook/api/v2/package
-  api_key:
-    secure: uUSg50F5ec1bMyNNMvGbFfh6uZa7ItsP4Ug5TVeQPvmpYbFcov2Z1uXy7doyyd+w
-  skip_symbols: false
-  symbol_server: https://www.myget.org/F/filehook/symbols/api/v2/package
-  artifact: /.*\.nupkg/
+  - provider: NuGet
+    name: MyGet Alpha Chanel
+    on:
+      branch: dev
+    server: https://www.myget.org/F/filehook/api/v2/package
+    api_key:
+      secure: uUSg50F5ec1bMyNNMvGbFfh6uZa7ItsP4Ug5TVeQPvmpYbFcov2Z1uXy7doyyd+w
+    skip_symbols: false
+    symbol_server: https://www.myget.org/F/filehook/symbols/api/v2/package
+    artifact: /.*\.nupkg/
