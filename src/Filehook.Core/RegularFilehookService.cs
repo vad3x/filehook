@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace Filehook.Core
@@ -154,6 +155,60 @@ namespace Filehook.Core
             return storage.GetUrl(relativeLocation);
         }
 
+        public IDictionary<string, string> GetUrls<TEntity>(TEntity entity, Expression<Func<TEntity, string>> propertyExpression, string id) where TEntity : class
+        {
+            if (entity == null)
+            {
+                throw new ArgumentNullException(nameof(entity));
+            }
+
+            if (propertyExpression == null)
+            {
+                throw new ArgumentNullException(nameof(propertyExpression));
+            }
+
+            var memberExpression = propertyExpression.Body as MemberExpression;
+            if (memberExpression == null)
+            {
+                throw new ArgumentException($"'{propertyExpression}': is not a valid expression for this method");
+            }
+
+            var filename = GetFilename(entity, propertyExpression);
+
+            var fileExtension = Path.GetExtension(filename);
+
+            var storageName = _fileStorageNameResolver.Resolve(propertyExpression);
+
+            var storage = _storages.FirstOrDefault(s => s.Name == storageName);
+            if (storage == null)
+            {
+                throw new ArgumentException($"Storage with name '{storageName}' has not been registered");
+            }
+
+            var className = _locationParamFormatter.Format(entity.GetType().Name);
+            var attachmentName = _locationParamFormatter.Format(memberExpression.Member.Name);
+
+            // TODO move from here
+            var styleNames = memberExpression.Member.GetCustomAttributes<HasFileStyleAttribute>()
+                .Select(x => x.Name)
+                .ToList();
+
+            var styleUrls = new Dictionary<string, string>();
+            foreach (var styleName in styleNames)
+            {
+                var relativeLocation = _locationTemplateParser.Parse(
+                    className: className,
+                    attachmentName: attachmentName,
+                    attachmentId: id,
+                    style: styleName,
+                    filename: filename);
+
+                styleUrls.Add(styleName, storage.GetUrl(relativeLocation));
+            }
+
+            return styleUrls;
+        }
+
         // TODO tests
         public async Task<Dictionary<string, string>> SaveAsync<TEntity>(
             TEntity entity,
@@ -239,9 +294,9 @@ namespace Filehook.Core
             return filename;
         }
 
-        public bool CanProccess(byte[] bytes)
+        public bool CanProccess(string fileExtension, byte[] bytes)
         {
-            var fileProccessor = _fileProccessors.FirstOrDefault(p => p.CanProccess(null, bytes));
+            var fileProccessor = _fileProccessors.FirstOrDefault(p => p.CanProccess(fileExtension, bytes));
             if (fileProccessor == null)
             {
                 return false;

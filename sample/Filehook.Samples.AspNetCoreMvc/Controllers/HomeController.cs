@@ -22,6 +22,7 @@ namespace Filehook.Samples.AspNetCoreMvc.Controllers
         [HttpGet]
         public IActionResult Index()
         {
+            ViewBag.Articles = _articleStore;
             return View();
         }
 
@@ -49,7 +50,8 @@ namespace Filehook.Samples.AspNetCoreMvc.Controllers
                     sourceStream.CopyTo(memoryStream);
                     var bytes = memoryStream.ToArray();
 
-                    if (!_filehookService.CanProccess(memoryStream.ToArray()))
+                    var fileExtention = Path.GetExtension(viewModel.AttachmentFile.FileName)?.Trim('.');
+                    if (!_filehookService.CanProccess(fileExtention, bytes))
                     {
                         ModelState.AddModelError(nameof(viewModel.AttachmentFile), "Could not be proccessed");
                         return View();
@@ -69,7 +71,8 @@ namespace Filehook.Samples.AspNetCoreMvc.Controllers
                     sourceStream.CopyTo(memoryStream);
                     var bytes = memoryStream.ToArray();
 
-                    if (!_filehookService.CanProccess(memoryStream.ToArray()))
+                    var fileExtention = Path.GetExtension(viewModel.CoverImageFile.FileName)?.Trim('.');
+                    if (!_filehookService.CanProccess(fileExtention, bytes))
                     {
                         ModelState.AddModelError(nameof(viewModel.CoverImageFile), "Could not be proccessed");
                         return View();
