@@ -7,16 +7,14 @@
   },
 
   "dependencies": {
-    "CaseExtensions": "1.0.*",
-    "Filehook.Abstractions": { "target": "project" },
     "Filehook.DataAnnotations": { "target": "project" },
+    "Filehook.Proccessors.Image.ImageSharpProccessor": { "target": "project" },
+    "Filehook.Storages.FileSystem": { "target": "project" },
     "Microsoft.Extensions.DependencyInjection.Abstractions": "1.1.*",
-    "Microsoft.Extensions.Options": "1.1.*",
     "NETStandard.Library": "1.6.*"
   },
 
   "frameworks": {
-    "netstandard1.3": {
-    }
+    "netstandard1.3": {}
   }
 }

@@ -1,7 +1,7 @@
 ﻿using Filehook.Abstractions;
 using System;
 
-namespace Filehook.Core
+namespace Filehook.DataAnnotations
 {
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = true)]
     public class HasFileStyleAttribute : Attribute

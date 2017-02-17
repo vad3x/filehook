@@ -9,7 +9,7 @@ namespace Microsoft.Extensions.DependencyInjection
 {
     public static class FilehookServiceCollectionExtensions
     {
-        public static IFilehookBuilder AddFilehook(this IServiceCollection services, Action<FileStorageNameResolverOptions> setupAction)
+        public static IFilehookBuilder AddFilehookCore(this IServiceCollection services, Action<FileStorageNameResolverOptions> setupAction)
         {
             if (services == null)
             {
@@ -38,7 +38,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
             builder.Services.Configure(setupAction);
 
-            builder.Services.TryAddTransient<ILocationParamFormatter, KebabLocationParamFormatter>();
+            builder.Services.AddTransient<ILocationParamFormatter, KebabLocationParamFormatter>();
 
             return builder;
         }
@@ -55,7 +55,7 @@ namespace Microsoft.Extensions.DependencyInjection
                 builder.Services.Configure(setupAction);
             }
 
-            builder.Services.TryAddTransient<ILocationTemplateParser, RegularLocationTemplateParser>();
+            builder.Services.AddTransient<ILocationTemplateParser, RegularLocationTemplateParser>();
 
             return builder;
         }

@@ -10,7 +10,7 @@ namespace Filehook.Samples.AspNetCoreMvc.Controllers
 {
     public class HomeController : Controller
     {
-        private static readonly List<Article> _articleStore = new List<Article>();
+        private static readonly Stack<Article> _articleStore = new Stack<Article>();
 
         private readonly IFilehookService _filehookService;
 
@@ -30,6 +30,8 @@ namespace Filehook.Samples.AspNetCoreMvc.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Index(AttachmentViewModel viewModel)
         {
+            ViewBag.Articles = _articleStore;
+
             if (!ModelState.IsValid)
             {
                 return View();
@@ -84,7 +86,7 @@ namespace Filehook.Samples.AspNetCoreMvc.Controllers
                 }
             }
 
-            _articleStore.Add(model);
+            _articleStore.Push(model);
 
             return RedirectToAction(nameof(Index));
         }

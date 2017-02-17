@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Filehook.Core
+namespace Filehook.DataAnnotations
 {
     [AttributeUsage(AttributeTargets.Property)]
     public class UseStorageAttribute : Attribute

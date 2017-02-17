@@ -1,4 +1,5 @@
-﻿using Filehook.Proccessors.Image.Abstractions;
+﻿using Filehook.DataAnnotations;
+using Filehook.Proccessors.Image.Abstractions;
 
 namespace Filehook.Samples.AspNetCoreMvc.Models
 {

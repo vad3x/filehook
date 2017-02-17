@@ -2,10 +2,8 @@
   "userSecretsId": "aspnet-WebApplication-0799fe3e-6eaf-4c5f-b40e-7c6bfd5dfa9a",
 
   "dependencies": {
+    "Filehook": { "target": "project" },
     "Filehook.AspNetCore.Http": { "target": "project" },
-    "Filehook.Core": { "target": "project" },
-    "Filehook.Proccessors.Image.ImageSharpProccessor": { "target": "project" },
-    "Filehook.Storages.FileSystem": { "target": "project" },
     "Microsoft.AspNetCore.Diagnostics": "1.1.*",
     "Microsoft.AspNetCore.Mvc": "1.1.*",
     "Microsoft.AspNetCore.Razor.Tools": {

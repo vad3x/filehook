@@ -17,9 +17,18 @@ namespace Filehook.Storages.FileSystem
         {
             _options = options.Value;
             _locationTemplateParser = locationTemplateParser;
+
+            if (_options.Name != null)
+            {
+                Name = _options.Name;
+            }
+            else
+            {
+                Name = FileSystemConsts.FileSystemStorageName;
+            }
         }
 
-        public string Name { get { return FileSystemConsts.FileSystemStorageName; } }
+        public string Name { get; private set; }
 
         // TODO tests
         public string GetUrl(string relativeLocation)

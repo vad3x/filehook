@@ -1,4 +1,6 @@
-﻿namespace Filehook.Core.Tests.Fixtures
+﻿using Filehook.DataAnnotations;
+
+namespace Filehook.Core.Tests.Fixtures
 {
     public class EntityWithDefinedStorage
     {

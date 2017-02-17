@@ -8,6 +8,7 @@
 
   "dependencies": {
     "Filehook.Abstractions": { "target": "project" },
+    "Filehook.Proccessors.Image.Abstractions": { "target": "project" },
     "NETStandard.Library": "1.6.*"
   },
 

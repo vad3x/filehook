@@ -9,6 +9,7 @@
   "dependencies": {
     "dotnet-test-xunit": "2.2.0-*",
     "Filehook.Core": { "target": "project" },
+    "Filehook.DataAnnotations": { "target": "project" },
     "Moq": "4.6.38-*",
     "xunit": "2.2.0-*"
   },

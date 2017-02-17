@@ -1,9 +1,10 @@
-﻿using System;
+﻿using Filehook.Abstractions;
+using Filehook.DataAnnotations;
+using Microsoft.Extensions.Options;
+using System;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using Filehook.Abstractions;
-using Microsoft.Extensions.Options;
 
 namespace Filehook.Core
 {

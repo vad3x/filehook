@@ -77,7 +77,7 @@ namespace Filehook.Core.Tests
                 Name = "name1.ext"
             };
 
-            var result = regularFilehookService.SaveAsync(entity, e => e.Name, data, 1.ToString());\
+            var result = regularFilehookService.SaveAsync(entity, e => e.Name, data, 1.ToString());
 
             // TODO verify
         }

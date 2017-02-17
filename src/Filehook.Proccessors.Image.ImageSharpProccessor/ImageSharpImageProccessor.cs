@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Filehook.Proccessors.Image.ImageSharpProccessor
@@ -38,9 +39,10 @@ namespace Filehook.Proccessors.Image.ImageSharpProccessor
                 throw new ArgumentNullException(nameof(bytes));
             }
 
-            return _configuration.ImageFormats.Any(f =>  f.IsSupportedFileFormat(bytes));
+            return _configuration.ImageFormats.Any(f => f.IsSupportedFileFormat(bytes));
         }
 
+        // TODO async
         public IDictionary<string, MemoryStream> Proccess(byte[] bytes, IEnumerable<FileStyle> styles)
         {
             if (bytes == null)
@@ -53,9 +55,23 @@ namespace Filehook.Proccessors.Image.ImageSharpProccessor
                 throw new ArgumentNullException(nameof(styles));
             }
 
+            Debug.WriteLine($"processing started ...");
+
             var stopwatch = Stopwatch.StartNew();
 
-            var result = styles.ToDictionary(style => style.Name, style => ProccessStyle(bytes, style as ImageStyle));
+            // magic for better performance
+            var result = new Dictionary<string, MemoryStream>();
+            if (styles.Count() > 4 && bytes.Length > 1 * 1024 * 1024)
+            {
+                Parallel.ForEach(styles, item =>
+                {
+                    result.Add(item.Name, ProccessStyle(bytes, item as ImageStyle));
+                });
+            }
+            else
+            {
+                result = styles.ToDictionary(style => style.Name, style => ProccessStyle(bytes, style as ImageStyle));
+            }
 
             stopwatch.Stop();
 
@@ -84,7 +100,7 @@ namespace Filehook.Proccessors.Image.ImageSharpProccessor
 
             stopwatch.Stop();
 
-            Debug.WriteLine($"{stopwatch.Elapsed} for style {style.Name}");
+            Debug.WriteLine($"{stopwatch.Elapsed} for style {style.Name} {Thread.CurrentThread.ManagedThreadId}");
 
             return outputStream;
         }

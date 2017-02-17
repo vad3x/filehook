@@ -29,6 +29,7 @@ DataSources
 *.lock.json
 .vs/
 
-./test/TestResults
+test/TestResults
 
 sample/Filehook.Samples.AspNetCoreMvc/wwwroot/lib
+sample/Filehook.Samples.AspNetCoreMvc/wwwroot/public

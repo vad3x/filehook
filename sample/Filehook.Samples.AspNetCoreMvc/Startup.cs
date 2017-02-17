@@ -29,19 +29,7 @@ namespace WebApplication
         {
             services.AddMvc();
 
-            services.AddFilehook(options =>
-            {
-                options.DefaultStorageName = FileSystemConsts.FileSystemStorageName;
-            })
-                .AddKebabLocationParamFormatter(o => o.Postfix = "FileName")
-                .AddRegularLocationTemplateParser()
-                .AddImageProccessor()
-                .AddFallbackFileProccessor(o => o.AllowedExtensions = new[] { "pdf", "txt" })
-                .AddFileSystemStorage(options =>
-                {
-                    options.BasePath = "./bin";
-                    options.CdnUrl = "";
-                });
+            services.AddFilehook("FileName", "./wwwroot", "http://localhost:5000");
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -64,7 +52,7 @@ namespace WebApplication
 
             // map folders
             app.UseStaticFiles(new StaticFileOptions {
-                FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "./bin/public")),
+                FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "./wwwroot/public")),
                 RequestPath = new PathString("/public")
             });
 
