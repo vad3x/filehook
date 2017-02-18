@@ -7,9 +7,7 @@
             "taskName": "build sample web",
             "suppressTaskName": true,
             "args": [
-                "dotnet",
-                "build",
-                "sample/Filehook.Samples.AspNetCoreMvc"
+                "dotnet build sample/Filehook.Samples.AspNetCoreMvc"
             ],
             "showOutput": "always",
             "problemMatcher": "$msCompile"
