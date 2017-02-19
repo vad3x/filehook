@@ -92,7 +92,7 @@ namespace Filehook.Core
             var storage = GetStorage(propertyExpression);
 
             var filename = GetFilename(entity, propertyExpression);
-            var className = _locationParamFormatter.Format(typeof(TEntity).ToString());
+            var className = _locationParamFormatter.Format(typeof(TEntity).Name);
             var attachmentName = _locationParamFormatter.Format(memberExpression.Member.Name);
 
             var relativeLocation = _locationTemplateParser.Parse(
@@ -151,7 +151,7 @@ namespace Filehook.Core
             var storage = GetStorage(propertyExpression);
 
             var filename = GetFilename(entity, propertyExpression);
-            var className = _locationParamFormatter.Format(typeof(TEntity).ToString());
+            var className = _locationParamFormatter.Format(typeof(TEntity).Name);
             var attachmentName = _locationParamFormatter.Format(memberExpression.Member.Name);
 
             var relativeLocation = _locationTemplateParser.Parse(
@@ -205,9 +205,9 @@ namespace Filehook.Core
 
             var styles = _fileStyleResolver.Resolve(propertyExpression);
 
-            var proccessedStreams = fileProccessor.Proccess(bytes, styles);
+            var proccessedStreams = await fileProccessor.ProccessAsync(bytes, styles);
 
-            var className = _locationParamFormatter.Format(typeof(TEntity).ToString());
+            var className = _locationParamFormatter.Format(typeof(TEntity).Name);
             var attachmentName = _locationParamFormatter.Format(memberExpression.Member.Name);
 
             var locations = new Dictionary<string, string>();
@@ -217,16 +217,16 @@ namespace Filehook.Core
                     className: className,
                     attachmentName: attachmentName,
                     attachmentId: id,
-                    style: proccessed.Key,
+                    style: proccessed.Style.Name,
                     filename: filename);
 
-                using (proccessed.Value)
+                using (proccessed.Stream)
                 {
-                    await storage.SaveAsync(relativeLocation, proccessed.Value);
+                    await storage.SaveAsync(relativeLocation, proccessed.Stream);
 
                     var url = storage.GetUrl(relativeLocation);
 
-                    locations.Add(proccessed.Key, url);
+                    locations.Add(proccessed.Style.Name, url);
                 }
             }
 

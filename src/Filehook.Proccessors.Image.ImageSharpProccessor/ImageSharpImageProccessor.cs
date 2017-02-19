@@ -42,8 +42,7 @@ namespace Filehook.Proccessors.Image.ImageSharpProccessor
             return _configuration.ImageFormats.Any(f => f.IsSupportedFileFormat(bytes));
         }
 
-        // TODO async
-        public IDictionary<string, MemoryStream> Proccess(byte[] bytes, IEnumerable<FileStyle> styles)
+        public Task<IEnumerable<FileProccessingResult>> ProccessAsync(byte[] bytes, IEnumerable<FileStyle> styles)
         {
             if (bytes == null)
             {
@@ -59,50 +58,58 @@ namespace Filehook.Proccessors.Image.ImageSharpProccessor
 
             var stopwatch = Stopwatch.StartNew();
 
+            var result = new List<ImageProccessingResult>();
             // magic for better performance
-            var result = new Dictionary<string, MemoryStream>();
             if (styles.Count() > 4 && bytes.Length > 1 * 1024 * 1024)
             {
-                Parallel.ForEach(styles, item =>
+                Parallel.ForEach(styles, style =>
                 {
-                    result.Add(item.Name, ProccessStyle(bytes, item as ImageStyle));
+                    result.Add(ProccessStyle(bytes, style as ImageStyle));
                 });
             }
             else
             {
-                result = styles.ToDictionary(style => style.Name, style => ProccessStyle(bytes, style as ImageStyle));
+                result = styles.Select(style => ProccessStyle(bytes, style as ImageStyle)).ToList();
             }
 
             stopwatch.Stop();
 
             Debug.WriteLine($"{stopwatch.Elapsed} for all styles");
 
-            return result;
+            return Task.FromResult((IEnumerable<FileProccessingResult>)result);
         }
 
-        private MemoryStream ProccessStyle(byte[] bytes, ImageStyle style)
+        private ImageProccessingResult ProccessStyle(byte[] bytes, ImageStyle style)
         {
-            if (style == null)
-            {
-                return new MemoryStream(bytes, false);
-            }
-
             var stopwatch = Stopwatch.StartNew();
 
             var outputStream = new MemoryStream();
 
             using (var image = new ImageSharp.Image(bytes, _configuration))
             {
-                _imageTransformer.Transform(image, style);
+                if (style == null)
+                {
+                    outputStream = new MemoryStream(bytes, false);
+                }
+                else
+                {
+                    _imageTransformer.Transform(image, style);
 
-                image.Save(outputStream);
+                    image.Save(outputStream);
+                }
+
+                stopwatch.Stop();
+
+                Debug.WriteLine($"{stopwatch.Elapsed} for style {style.Name} {Thread.CurrentThread.ManagedThreadId}");
+
+                return new ImageProccessingResult
+                {
+                    Style = style,
+                    Stream = outputStream,
+                    Width = image.Width,
+                    Height = image.Height
+                };
             }
-
-            stopwatch.Stop();
-
-            Debug.WriteLine($"{stopwatch.Elapsed} for style {style.Name} {Thread.CurrentThread.ManagedThreadId}");
-
-            return outputStream;
         }
     }
 }

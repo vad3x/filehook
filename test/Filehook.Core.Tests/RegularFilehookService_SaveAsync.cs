@@ -52,9 +52,11 @@ namespace Filehook.Core.Tests
                 .Setup(x => x.CanProccess(It.IsAny<string>(), It.IsAny<byte[]>()))
                 .Returns(true);
 
-            mockFileProccessor
-                .Setup(x => x.Proccess(It.IsAny<byte[]>(), It.IsAny<IEnumerable<FileStyle>>()))
-                .Returns(new Dictionary<string, MemoryStream> { { style, new MemoryStream(data, false) } });
+            // TODO
+            // var fileProccessorResult = new IEnumerable<FileProccessingResult> { { style, new MemoryStream(data, false) } };
+            // mockFileProccessor
+            //     .Setup(x => x.ProccessAsync(It.IsAny<byte[]>(), It.IsAny<IEnumerable<FileStyle>>()))
+            //     .Returns(Task.FromResult(fileProccessorResult));
 
             mockLocationTemplateParser
               .Setup(x => x.Parse(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))

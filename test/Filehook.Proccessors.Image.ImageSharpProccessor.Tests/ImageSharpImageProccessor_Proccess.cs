@@ -21,7 +21,7 @@ namespace Filehook.Proccessors.Image.Abstractions.Tests
 
             var imageStyle = new ImageStyle("name");
 
-            var result = imageSharpImageProccessor.Proccess(bytes, new[] { imageStyle });
+            var result = imageSharpImageProccessor.ProccessAsync(bytes, new[] { imageStyle });
 
             Assert.NotNull(result);
             mockImageTransformer.Verify(x => x.Transform(It.IsAny<ImageSharp.Image>(), It.Is<ImageStyle>(s => s == imageStyle)), Times.Once);
@@ -39,7 +39,7 @@ namespace Filehook.Proccessors.Image.Abstractions.Tests
 
             var bytes = TestFile.Create(TestImages.Jpeg.Lake).Bytes;
 
-            var result = imageSharpImageProccessor.Proccess(bytes, new FileStyle[0]);
+            var result = imageSharpImageProccessor.ProccessAsync(bytes, new FileStyle[0]);
 
             Assert.NotNull(result);
             //Assert.Equal(bytes, result.ToArray());
