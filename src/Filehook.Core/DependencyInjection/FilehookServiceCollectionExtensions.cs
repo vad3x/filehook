@@ -22,21 +22,19 @@ namespace Microsoft.Extensions.DependencyInjection
 
             builder.Services.TryAddTransient<IFilehookService, RegularFilehookService>();
 
-            builder.Services.TryAddTransient<IFileStorageNameResolver, AttributeFileStorageNameResolver>();
-
+            builder.Services.AddTransient<IFileStorageNameResolver, AttributeFileStorageNameResolver>();
             builder.Services.AddTransient<IFileStyleResolver, AttributeFileStyleResolver>();
+            builder.Services.AddTransient<IParamNameResolver, AttributeParamNameResolver>();
 
             return builder;
         }
 
-        public static IFilehookBuilder AddKebabLocationParamFormatter(this IFilehookBuilder builder, Action<KebabLocationParamFormatterOptions> setupAction)
+        public static IFilehookBuilder AddKebabLocationParamFormatter(this IFilehookBuilder builder)
         {
             if (builder == null)
             {
                 throw new ArgumentNullException(nameof(builder));
             }
-
-            builder.Services.Configure(setupAction);
 
             builder.Services.AddTransient<ILocationParamFormatter, KebabLocationParamFormatter>();
 

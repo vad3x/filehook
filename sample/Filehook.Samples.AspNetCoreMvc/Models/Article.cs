@@ -3,6 +3,7 @@ using Filehook.Proccessors.Image.Abstractions;
 
 namespace Filehook.Samples.AspNetCoreMvc.Models
 {
+    [HasName("MyArticle")]
     public class Article
     {
         public int Id { get; set; }
@@ -16,8 +17,10 @@ namespace Filehook.Samples.AspNetCoreMvc.Models
         [HasImageStyle("desktop_hd", 0, 720)]
         [HasImageStyle("desktop_full_hd", 0, 1080, ImageResizeMode.ShrinkLarger)]
         [HasImageStyle("desktop_retina", 0, 1800, ImageResizeMode.ShrinkLarger)]
+        [HasPostfix("FileName")]
         public string CoverImageFileName { get; set; }
 
+        [HasName("Attachment")]
         public string AttachmentFileName { get; set; }
     }
 }

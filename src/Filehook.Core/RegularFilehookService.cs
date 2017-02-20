@@ -5,12 +5,14 @@ using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using System.Reflection;
 
 namespace Filehook.Core
 {
     public class RegularFilehookService : IFilehookService
     {
         private readonly IFileStorageNameResolver _fileStorageNameResolver;
+
         private readonly IFileStyleResolver _fileStyleResolver;
 
         private readonly IEnumerable<IFileStorage> _storages;
@@ -19,13 +21,16 @@ namespace Filehook.Core
         private readonly ILocationTemplateParser _locationTemplateParser;
         private readonly ILocationParamFormatter _locationParamFormatter;
 
+        private readonly IParamNameResolver _paramNameResolver;
+
         public RegularFilehookService(
             IFileStorageNameResolver fileStorageNameResolver,
             IFileStyleResolver fileStyleResolver,
             IEnumerable<IFileStorage> storages,
             IEnumerable<IFileProccessor> fileProccessors,
             ILocationTemplateParser locationTemplateParser,
-            ILocationParamFormatter locationParamFormatter)
+            ILocationParamFormatter locationParamFormatter,
+            IParamNameResolver paramNameResolver)
         {
             if (fileStorageNameResolver == null)
             {
@@ -57,6 +62,11 @@ namespace Filehook.Core
                 throw new ArgumentNullException(nameof(locationParamFormatter));
             }
 
+            if (paramNameResolver == null)
+            {
+                throw new ArgumentNullException(nameof(paramNameResolver));
+            }
+
             _fileStorageNameResolver = fileStorageNameResolver;
             _fileStyleResolver = fileStyleResolver;
 
@@ -65,6 +75,8 @@ namespace Filehook.Core
 
             _locationTemplateParser = locationTemplateParser;
             _locationParamFormatter = locationParamFormatter;
+
+            _paramNameResolver = paramNameResolver;
         }
 
         public Task<bool> ExistsAsync<TEntity>(
@@ -92,8 +104,9 @@ namespace Filehook.Core
             var storage = GetStorage(propertyExpression);
 
             var filename = GetFilename(entity, propertyExpression);
-            var className = _locationParamFormatter.Format(typeof(TEntity).Name);
-            var attachmentName = _locationParamFormatter.Format(memberExpression.Member.Name);
+
+            var className = _locationParamFormatter.Format(_paramNameResolver.Resolve(typeof(TEntity).GetTypeInfo()));
+            var attachmentName = _locationParamFormatter.Format(_paramNameResolver.Resolve(memberExpression.Member));
 
             var relativeLocation = _locationTemplateParser.Parse(
                 className: className,
@@ -151,8 +164,9 @@ namespace Filehook.Core
             var storage = GetStorage(propertyExpression);
 
             var filename = GetFilename(entity, propertyExpression);
-            var className = _locationParamFormatter.Format(typeof(TEntity).Name);
-            var attachmentName = _locationParamFormatter.Format(memberExpression.Member.Name);
+
+            var className = _locationParamFormatter.Format(_paramNameResolver.Resolve(typeof(TEntity).GetTypeInfo()));
+            var attachmentName = _locationParamFormatter.Format(_paramNameResolver.Resolve(memberExpression.Member));
 
             var relativeLocation = _locationTemplateParser.Parse(
                 className: className,
@@ -207,8 +221,8 @@ namespace Filehook.Core
 
             var proccessedStreams = await fileProccessor.ProccessAsync(bytes, styles);
 
-            var className = _locationParamFormatter.Format(typeof(TEntity).Name);
-            var attachmentName = _locationParamFormatter.Format(memberExpression.Member.Name);
+            var className = _locationParamFormatter.Format(_paramNameResolver.Resolve(typeof(TEntity).GetTypeInfo()));
+            var attachmentName = _locationParamFormatter.Format(_paramNameResolver.Resolve(memberExpression.Member));
 
             var locations = new Dictionary<string, string>();
             foreach (var proccessed in proccessedStreams)

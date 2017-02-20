@@ -9,7 +9,6 @@ namespace Microsoft.Extensions.DependencyInjection
         // params must be declared other way
         public static IFilehookBuilder AddFilehook(
             this IServiceCollection services,
-            string locationParamPostfix = null,
             string storageBasePath = null,
             string storageCdnUrl = null)
         {
@@ -22,9 +21,7 @@ namespace Microsoft.Extensions.DependencyInjection
                 options.DefaultStorageName = FileSystemConsts.FileSystemStorageName;
             });
 
-            builder.AddKebabLocationParamFormatter(options => {
-                options.Postfix = locationParamPostfix;
-            });
+            builder.AddKebabLocationParamFormatter();
 
             builder.AddRegularLocationTemplateParser();
             builder.AddImageProccessor();

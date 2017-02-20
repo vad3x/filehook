@@ -27,6 +27,7 @@ namespace Filehook.Core.Tests
             var mockFileProccessor = new Mock<IFileProccessor>();
             var mockLocationTemplateParser = new Mock<ILocationTemplateParser>();
             var mockLocationParamFormatter = new Mock<ILocationParamFormatter>();
+            var mockParamNameResolver = new Mock<IParamNameResolver>();
 
             mockFileStorageNameResolver
                 .Setup(x => x.Resolve(It.IsAny<Expression<Func<EntityWithoutStorage, string>>>()))
@@ -72,7 +73,8 @@ namespace Filehook.Core.Tests
                 new[] { mockFileStorage.Object },
                 new[] { mockFileProccessor.Object },
                 mockLocationTemplateParser.Object,
-                mockLocationParamFormatter.Object);
+                mockLocationParamFormatter.Object,
+                mockParamNameResolver.Object);
 
             var entity = new EntityWithoutStorage
             {

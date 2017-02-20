@@ -64,12 +64,12 @@ namespace Filehook.Proccessors.Image.ImageSharpProccessor
             {
                 Parallel.ForEach(styles, style =>
                 {
-                    result.Add(ProccessStyle(bytes, style as ImageStyle));
+                    result.Add(ProccessStyle(bytes, style));
                 });
             }
             else
             {
-                result = styles.Select(style => ProccessStyle(bytes, style as ImageStyle)).ToList();
+                result = styles.Select(style => ProccessStyle(bytes, style)).ToList();
             }
 
             stopwatch.Stop();
@@ -79,7 +79,7 @@ namespace Filehook.Proccessors.Image.ImageSharpProccessor
             return Task.FromResult((IEnumerable<FileProccessingResult>)result);
         }
 
-        private ImageProccessingResult ProccessStyle(byte[] bytes, ImageStyle style)
+        private ImageProccessingResult ProccessStyle(byte[] bytes, FileStyle style)
         {
             var stopwatch = Stopwatch.StartNew();
 
@@ -87,13 +87,14 @@ namespace Filehook.Proccessors.Image.ImageSharpProccessor
 
             using (var image = new ImageSharp.Image(bytes, _configuration))
             {
-                if (style == null)
+                var imageStyle = style as ImageStyle;
+                if (imageStyle == null)
                 {
                     outputStream = new MemoryStream(bytes, false);
                 }
                 else
                 {
-                    _imageTransformer.Transform(image, style);
+                    _imageTransformer.Transform(image, imageStyle);
 
                     image.Save(outputStream);
                 }
