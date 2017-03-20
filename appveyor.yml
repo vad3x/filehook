@@ -1,8 +1,11 @@
-﻿version: 1.0.0-alpha-{build}
+﻿image: Visual Studio 2017
+version: 1.0.0-alpha-{build}
 pull_requests:
   do_not_increment_build_number: true
 build_script:
 - ps: >-
+    dotnet -v
+
     dotnet restore
 
     dotnet pack src/Filehook.Core -o ../../artifacts -c Release --version-suffix $env:APPVEYOR_BUILD_NUMBER
