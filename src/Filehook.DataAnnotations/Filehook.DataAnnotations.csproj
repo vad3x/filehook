@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <VersionPrefix>1.0.0-alpha</VersionPrefix>
+    <TargetFramework>netstandard1.3</TargetFramework>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <DebugType>portable</DebugType>
+    <AssemblyName>Filehook.DataAnnotations</AssemblyName>
+    <PackageId>Filehook.DataAnnotations</PackageId>
+    <NetStandardImplicitPackageVersion>1.6.*</NetStandardImplicitPackageVersion>
+    <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
+    <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
+    <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Filehook.Abstractions\Filehook.Abstractions.csproj" />
+    <ProjectReference Include="..\Filehook.Proccessors.Image.Abstractions\Filehook.Proccessors.Image.Abstractions.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -9,7 +9,6 @@ namespace Filehook.Core.Tests
         [InlineData("ParamName")]
         [InlineData("param-name")]
         [InlineData("param_name")]
-
         public void ShouldReturnCorrectString(string param)
         {
             var formatter = new KebabLocationParamFormatter();
