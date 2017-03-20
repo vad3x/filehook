@@ -4,21 +4,19 @@ pull_requests:
   do_not_increment_build_number: true
 build_script:
 - ps: >-
-    dotnet -v
-
     dotnet restore
 
-    dotnet pack src/Filehook.Core -o ../../artifacts -c Release --version-suffix $env:APPVEYOR_BUILD_NUMBER
+    dotnet pack src/Filehook.Core -o ../../artifacts -c Release /p:Version=1.0.0-alpha-$env:APPVEYOR_BUILD_NUMBER
 
-    dotnet pack src/Filehook.Proccessors.Image.ImageSharpProccessor -c Release -o ../../artifacts --version-suffix $env:APPVEYOR_BUILD_NUMBER
+    dotnet pack src/Filehook.Proccessors.Image.ImageSharpProccessor -c Release -o ../../artifacts /p:Version=1.0.0-alpha-$env:APPVEYOR_BUILD_NUMBER
 
-    dotnet pack src/Filehook.Storages.FileSystem -c Release -o ../../artifacts --version-suffix $env:APPVEYOR_BUILD_NUMBER
+    dotnet pack src/Filehook.Storages.FileSystem -c Release -o ../../artifacts /p:Version=1.0.0-alpha-$env:APPVEYOR_BUILD_NUMBER
 
-    dotnet pack src/Filehook.AspNetCore.Http -c Release -o ../../artifacts --version-suffix $env:APPVEYOR_BUILD_NUMBER
+    dotnet pack src/Filehook.AspNetCore.Http -c Release -o ../../artifacts /p:Version=1.0.0-alpha-$env:APPVEYOR_BUILD_NUMBER
 
-    dotnet pack src/Filehook.DataAnnotations -c Release -o ../../artifacts --version-suffix $env:APPVEYOR_BUILD_NUMBER
+    dotnet pack src/Filehook.DataAnnotations -c Release -o ../../artifacts /p:Version=1.0.0-alpha-$env:APPVEYOR_BUILD_NUMBER
 
-    dotnet pack src/Filehook -c Release -o ../../artifacts --version-suffix $env:APPVEYOR_BUILD_NUMBER
+    dotnet pack src/Filehook -c Release -o ../../artifacts /p:Version=1.0.0-alpha-$env:APPVEYOR_BUILD_NUMBER
 
 test_script:
 - ps: dir test | % { dotnet test $_.FullName }
