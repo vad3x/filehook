@@ -6,27 +6,29 @@ build_script:
 - ps: >-
     dotnet restore
 
-    dotnet pack src/Filehook -c Release --include-symbols -o ../../artifacts --version-suffix $env:APPVEYOR_BUILD_NUMBER
+    dotnet pack -c Release --include-symbols -o ./artifacts --version-suffix $env:APPVEYOR_BUILD_NUMBER
 
-    dotnet pack src/Filehook.Abstractions -c Release --include-symbols -o ../../artifacts --version-suffix $env:APPVEYOR_BUILD_NUMBER
+    # dotnet pack src/Filehook -c Release --include-symbols -o ../../artifacts --version-suffix $env:APPVEYOR_BUILD_NUMBER
 
-    dotnet pack src/Filehook.Core -o ../../artifacts -c Release --include-symbols --version-suffix $env:APPVEYOR_BUILD_NUMBER
+    # dotnet pack src/Filehook.Abstractions -c Release --include-symbols -o ../../artifacts --version-suffix $env:APPVEYOR_BUILD_NUMBER
 
-    dotnet pack src/Filehook.Proccessors.Image.ImageSharpProccessor -c Release --include-symbols -o ../../artifacts --version-suffix $env:APPVEYOR_BUILD_NUMBER
+    # dotnet pack src/Filehook.Core -o ../../artifacts -c Release --include-symbols --version-suffix $env:APPVEYOR_BUILD_NUMBER
 
-    dotnet pack src/Filehook.AspNetCore.Http -c Release --include-symbols -o ../../artifacts --version-suffix $env:APPVEYOR_BUILD_NUMBER
+    # dotnet pack src/Filehook.Proccessors.Image.ImageSharpProccessor -c Release --include-symbols -o ../../artifacts --version-suffix $env:APPVEYOR_BUILD_NUMBER
 
-    dotnet pack src/Filehook.DataAnnotations -c Release --include-symbols -o ../../artifacts --version-suffix $env:APPVEYOR_BUILD_NUMBER
+    # dotnet pack src/Filehook.AspNetCore.Http -c Release --include-symbols -o ../../artifacts --version-suffix $env:APPVEYOR_BUILD_NUMBER
 
-    dotnet pack src/Filehook.Proccessors.Image.Abstractions -c Release --include-symbols -o ../../artifacts --version-suffix $env:APPVEYOR_BUILD_NUMBER
+    # dotnet pack src/Filehook.DataAnnotations -c Release --include-symbols -o ../../artifacts --version-suffix $env:APPVEYOR_BUILD_NUMBER
 
-    dotnet pack src/Filehook.Storages.FileSystem -c Release --include-symbols -o ../../artifacts --version-suffix $env:APPVEYOR_BUILD_NUMBER
+    # dotnet pack src/Filehook.Proccessors.Image.Abstractions -c Release --include-symbols -o ../../artifacts --version-suffix $env:APPVEYOR_BUILD_NUMBER
+
+    # dotnet pack src/Filehook.Storages.FileSystem -c Release --include-symbols -o ../../artifacts --version-suffix $env:APPVEYOR_BUILD_NUMBER
 
 test_script:
 - ps: dir test | % { dotnet test $_.FullName }
 
 artifacts:
-- path: .\artifacts\**\*.nupkg
+- path: ./src/**/artifacts/*.nupkg
   name: NuGet
 
 deploy:

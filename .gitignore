@@ -36,3 +36,5 @@ sample/Filehook.Samples.AspNetCoreMvc/wwwroot/lib/*
 
 sample/Filehook.Samples.AspNetCoreMvc/wwwroot/public/*
 !sample/Filehook.Samples.AspNetCoreMvc/wwwroot/public/.gitkeep
+
+artifacts
