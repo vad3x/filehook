@@ -9,6 +9,9 @@
     <AssemblyName>Filehook.Proccessors.Image.ImageSharpProccessor</AssemblyName>
     <PackageId>Filehook.Proccessors.Image.ImageSharpProccessor</PackageId>
     <NetStandardImplicitPackageVersion>1.6.*</NetStandardImplicitPackageVersion>
+    <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
+    <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
+    <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
   </PropertyGroup>
 
   <ItemGroup>
