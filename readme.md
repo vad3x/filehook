@@ -26,19 +26,7 @@ Mark properties with special attributes.
 ```csharp
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddFilehook(options =>
-            {
-                options.DefaultStorageName = FileSystemConsts.FileSystemStorageName;
-            })
-                .AddKebabLocationParamFormatter(o => o.Postfix = "FileName")
-                .AddRegularLocationTemplateParser()
-                .AddImageProccessor()
-                .AddFallbackFileProccessor(o => o.AllowedExtensions = new[] { "pdf", "txt" })
-                .AddFileSystemStorage(options =>
-                {
-                    options.BasePath = "./bin";
-                    options.CdnUrl = "";
-                });
+            services.AddFilehook("./wwwroot", "http://localhost:5000");
         }
 ```
 
@@ -46,7 +34,7 @@ Mark properties with special attributes.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
             app.UseStaticFiles(new StaticFileOptions {
-                FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "./bin/public")),
+                FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "./wwwroot/public")),
                 RequestPath = new PathString("/public")
             });
         }
