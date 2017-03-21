@@ -3,17 +3,10 @@ version: 1.0.0-alpha2-{build}
 pull_requests:
   do_not_increment_build_number: true
 build_script:
-  - ps: $versionSuffix = [string]::Format("{0:d8}", $env:APPVEYOR_BUILD_NUMBER)
-  - ps: Write-Host $versionSuffix
+  - ps: $versionSuffix = "{0:d8}" -f  $env:APPVEYOR_BUILD_NUMBER
+  - ps: Write-Host "Version Suffix:" $versionSuffix
   - ps: >-
       dotnet restore
-
-      # dotnet pack -c Release --include-symbols -o ./artifacts --version-suffix $env:APPVEYOR_BUILD_NUMBER
-
-      # dotnet build -c Release
-      # $versionSuffix = [string]::Format("{0:d8}", $env:APPVEYOR_BUILD_NUMBER)
-
-      Write-Host $versionSuffix
 
       dotnet pack src/Filehook -c Release --include-symbols -o ../../artifacts --version-suffix $versionSuffix
 
