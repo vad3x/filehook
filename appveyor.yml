@@ -11,6 +11,8 @@ build_script:
     # dotnet build -c Release
     $versionSuffix = [string]::Format("{0:d8}", $env:APPVEYOR_BUILD_NUMBER)
 
+    echo $versionSuffix
+
     dotnet pack src/Filehook -c Release --include-symbols -o ../../artifacts --version-suffix $versionSuffix
 
     dotnet pack src/Filehook.Abstractions -c Release --include-symbols -o ../../artifacts --version-suffix $versionSuffix
