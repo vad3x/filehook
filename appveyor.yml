@@ -30,7 +30,7 @@ build_script:
 # - ps: dir test | % { dotnet test $_.FullName }
 
 artifacts:
-- path: ./src/**/artifacts/*.nupkg
+- path: ./artifacts/**/*.nupkg
   name: NuGet
 
 deploy:
