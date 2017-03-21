@@ -1,5 +1,5 @@
 ﻿image: Visual Studio 2017
-version: 1.0.0-alpha-{build}
+version: 1.0.0-alpha2-{build}
 pull_requests:
   do_not_increment_build_number: true
 build_script:
@@ -10,21 +10,21 @@ build_script:
 
     # dotnet build -c Release
 
-    dotnet pack src/Filehook -c Release --include-symbols -o ../../artifacts --version-suffix $env:APPVEYOR_BUILD_NUMBER
+    dotnet pack src/Filehook -c Release --include-symbols -o ../../artifacts --version-suffix [string]::Format("{0:d8}", $env:APPVEYOR_BUILD_NUMBER)
 
-    dotnet pack src/Filehook.Abstractions -c Release --include-symbols -o ../../artifacts --version-suffix $env:APPVEYOR_BUILD_NUMBER
+    dotnet pack src/Filehook.Abstractions -c Release --include-symbols -o ../../artifacts --version-suffix [string]::Format("{0:d8}", $env:APPVEYOR_BUILD_NUMBER)
 
-    dotnet pack src/Filehook.Core -o ../../artifacts -c Release --include-symbols --version-suffix $env:APPVEYOR_BUILD_NUMBER
+    dotnet pack src/Filehook.Core -o ../../artifacts -c Release --include-symbols --version-suffix [string]::Format("{0:d8}", $env:APPVEYOR_BUILD_NUMBER)
 
-    dotnet pack src/Filehook.Proccessors.Image.ImageSharpProccessor -c Release --include-symbols -o ../../artifacts --version-suffix $env:APPVEYOR_BUILD_NUMBER
+    dotnet pack src/Filehook.Proccessors.Image.ImageSharpProccessor -c Release --include-symbols -o ../../artifacts --version-suffix [string]::Format("{0:d8}", $env:APPVEYOR_BUILD_NUMBER)
 
-    dotnet pack src/Filehook.AspNetCore.Http -c Release --include-symbols -o ../../artifacts --version-suffix $env:APPVEYOR_BUILD_NUMBER
+    dotnet pack src/Filehook.AspNetCore.Http -c Release --include-symbols -o ../../artifacts --version-suffix [string]::Format("{0:d8}", $env:APPVEYOR_BUILD_NUMBER)
 
-    dotnet pack src/Filehook.DataAnnotations -c Release --include-symbols -o ../../artifacts --version-suffix $env:APPVEYOR_BUILD_NUMBER
+    dotnet pack src/Filehook.DataAnnotations -c Release --include-symbols -o ../../artifacts --version-suffix [string]::Format("{0:d8}", $env:APPVEYOR_BUILD_NUMBER)
 
-    dotnet pack src/Filehook.Proccessors.Image.Abstractions -c Release --include-symbols -o ../../artifacts --version-suffix $env:APPVEYOR_BUILD_NUMBER
+    dotnet pack src/Filehook.Proccessors.Image.Abstractions -c Release --include-symbols -o ../../artifacts --version-suffix [string]::Format("{0:d8}", $env:APPVEYOR_BUILD_NUMBER)
 
-    dotnet pack src/Filehook.Storages.FileSystem -c Release --include-symbols -o ../../artifacts --version-suffix $env:APPVEYOR_BUILD_NUMBER
+    dotnet pack src/Filehook.Storages.FileSystem -c Release --include-symbols -o ../../artifacts --version-suffix [string]::Format("{0:d8}", $env:APPVEYOR_BUILD_NUMBER)
 
 # test_script:
 # - ps: dir test | % { dotnet test $_.FullName }
