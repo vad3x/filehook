@@ -3,7 +3,7 @@ version: 1.0.0-alpha2-{build}
 pull_requests:
   do_not_increment_build_number: true
 build_script:
-  - ps: $versionSuffix = "{0:d8}" -f [convert]::ToInt32($env:APPVEYOR_BUILD_NUMBER)
+  - ps: $versionSuffix = "alpha2-" + "{0:d8}" -f [convert]::ToInt32($env:APPVEYOR_BUILD_NUMBER)
   - ps: Write-Host "Version Suffix:" $versionSuffix
   - ps: >-
       dotnet restore /p:VersionSuffix=$versionSuffix
