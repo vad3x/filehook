@@ -179,7 +179,7 @@ namespace Filehook.Core
         }
 
         // TODO tests
-        public async Task<IDictionary<string, string>> SaveAsync<TEntity>(
+        public async Task<IDictionary<string, FilehookSavingResult>> SaveAsync<TEntity>(
             TEntity entity,
             Expression<Func<TEntity, string>> propertyExpression,
             byte[] bytes,
@@ -219,13 +219,13 @@ namespace Filehook.Core
 
             var styles = _fileStyleResolver.Resolve(propertyExpression);
 
-            var proccessedStreams = await fileProccessor.ProccessAsync(bytes, styles);
+            var proccessingResults = await fileProccessor.ProccessAsync(bytes, styles);
 
             var className = _locationParamFormatter.Format(_paramNameResolver.Resolve(typeof(TEntity).GetTypeInfo()));
             var attachmentName = _locationParamFormatter.Format(_paramNameResolver.Resolve(memberExpression.Member));
 
-            var locations = new Dictionary<string, string>();
-            foreach (var proccessed in proccessedStreams)
+            var result = new Dictionary<string, FilehookSavingResult>();
+            foreach (var proccessed in proccessingResults)
             {
                 var relativeLocation = _locationTemplateParser.Parse(
                     className: className,
@@ -236,15 +236,22 @@ namespace Filehook.Core
 
                 using (proccessed.Stream)
                 {
-                    await storage.SaveAsync(relativeLocation, proccessed.Stream);
+                    var absoluteLocation = await storage.SaveAsync(relativeLocation, proccessed.Stream);
 
                     var url = storage.GetUrl(relativeLocation);
 
-                    locations.Add(proccessed.Style.Name, url);
+                    result.Add(proccessed.Style.Name, new FilehookSavingResult
+                    {
+                        Location = absoluteLocation,
+                        Url = url,
+                        ProccessingMeta = proccessed.Meta
+                    });
+
+
                 }
             }
 
-            return locations;
+            return result;
         }
 
         public bool CanProccess(string fileExtension, byte[] bytes)

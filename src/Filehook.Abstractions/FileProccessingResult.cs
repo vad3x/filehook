@@ -7,5 +7,7 @@ namespace Filehook.Abstractions
         public FileStyle Style { get; set; }
 
         public MemoryStream Stream { get; set; }
+
+        public object Meta { get; set; }
     }
 }

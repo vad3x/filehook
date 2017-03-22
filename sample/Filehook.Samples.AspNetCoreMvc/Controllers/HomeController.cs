@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+using Filehook.Proccessors.Image.Abstractions;
 
 namespace Filehook.Samples.AspNetCoreMvc.Controllers
 {
@@ -59,9 +60,7 @@ namespace Filehook.Samples.AspNetCoreMvc.Controllers
                         return View();
                     }
 
-                    var urls = await _filehookService.SaveAsync(model, a => a.AttachmentFileName, bytes, model.Id.ToString());
-
-                    ViewBag.AttachmentUrls = urls;
+                    var results = await _filehookService.SaveAsync(model, a => a.AttachmentFileName, bytes, model.Id.ToString());
                 }
             }
 
@@ -80,9 +79,11 @@ namespace Filehook.Samples.AspNetCoreMvc.Controllers
                         return View();
                     }
 
-                    var urls = await _filehookService.SaveAsync(model, a => a.CoverImageFileName, bytes, model.Id.ToString());
-
-                    ViewBag.Urls = urls;
+                    var results = await _filehookService.SaveAsync(model, a => a.CoverImageFileName, bytes, model.Id.ToString());
+                    if (results["thumb"].ProccessingMeta is ImageProccessingResultMeta data)
+                    {
+                        model.CoverImageAspectRatio = (float)data.Width / data.Height;
+                    }
                 }
             }
 

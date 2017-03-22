@@ -58,7 +58,7 @@ namespace Filehook.Proccessors.Image.ImageSharpProccessor
 
             var stopwatch = Stopwatch.StartNew();
 
-            var result = new List<ImageProccessingResult>();
+            var result = new List<FileProccessingResult>();
             // magic for better performance
             if (styles.Count() > 4 && bytes.Length > 1 * 1024 * 1024)
             {
@@ -76,10 +76,10 @@ namespace Filehook.Proccessors.Image.ImageSharpProccessor
 
             Debug.WriteLine($"{stopwatch.Elapsed} for all styles");
 
-            return Task.FromResult((IEnumerable<FileProccessingResult>)result);
+            return Task.FromResult(result.AsEnumerable());
         }
 
-        private ImageProccessingResult ProccessStyle(byte[] bytes, FileStyle style)
+        private FileProccessingResult ProccessStyle(byte[] bytes, FileStyle style)
         {
             var stopwatch = Stopwatch.StartNew();
 
@@ -87,6 +87,9 @@ namespace Filehook.Proccessors.Image.ImageSharpProccessor
 
             using (var image = new ImageSharp.Image(bytes, _configuration))
             {
+                var originalWidth = image.Width;
+                var originalHeight = image.Height;
+
                 var imageStyle = style as ImageStyle;
                 if (imageStyle == null)
                 {
@@ -103,12 +106,17 @@ namespace Filehook.Proccessors.Image.ImageSharpProccessor
 
                 Debug.WriteLine($"{stopwatch.Elapsed} for style {style.Name} {Thread.CurrentThread.ManagedThreadId}");
 
-                return new ImageProccessingResult
+                return new FileProccessingResult
                 {
                     Style = style,
                     Stream = outputStream,
-                    Width = image.Width,
-                    Height = image.Height
+                    Meta = new ImageProccessingResultMeta
+                    {
+                        OriginalWidth = originalWidth,
+                        OriginalHeight = originalHeight,
+                        Width = image.Width,
+                        Height = image.Height
+                    }
                 };
             }
         }

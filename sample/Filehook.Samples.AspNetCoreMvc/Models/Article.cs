@@ -20,6 +20,8 @@ namespace Filehook.Samples.AspNetCoreMvc.Models
         [HasPostfix("FileName")]
         public string CoverImageFileName { get; set; }
 
+        public float CoverImageAspectRatio { get; set; }
+
         [HasName("Attachment")]
         public string AttachmentFileName { get; set; }
     }
