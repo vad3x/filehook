@@ -6,7 +6,7 @@ build_script:
   - ps: $versionSuffix = "{0:d8}" -f [convert]::ToInt32($env:APPVEYOR_BUILD_NUMBER)
   - ps: Write-Host "Version Suffix:" $versionSuffix
   - ps: >-
-      dotnet restore
+      dotnet restore /p:VersionSuffix=$versionSuffix
 
       dotnet pack src/Filehook -c Release --include-symbols -o ../../artifacts --version-suffix $versionSuffix
 
