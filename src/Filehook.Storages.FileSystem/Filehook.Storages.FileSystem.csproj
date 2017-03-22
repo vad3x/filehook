@@ -1,8 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <VersionPrefix>1.0.0-alpha2</VersionPrefix>
-    <VersionSuffix>$(VersionSuffix)</VersionSuffix>
+    <Version>1.0.0-alpha2-$(VersionSuffix)</Version>
     <TargetFramework>netstandard1.3</TargetFramework>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <DebugType>portable</DebugType>
