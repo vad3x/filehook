@@ -9,22 +9,35 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 
 namespace Filehook.Proccessors.Image.ImageSharpProccessor
 {
     public class ImageSharpImageProccessor : IFileProccessor
     {
         private readonly IImageTransformer _imageTransformer;
+
         private readonly Configuration _configuration;
 
-        public ImageSharpImageProccessor(IImageTransformer imageTransformer)
+        private readonly ILogger _logger;
+
+        public ImageSharpImageProccessor(
+            IImageTransformer imageTransformer,
+            ILogger<ImageSharpImageProccessor> logger)
         {
             if (imageTransformer == null)
             {
                 throw new ArgumentNullException(nameof(imageTransformer));
             }
 
+            if (logger == null)
+            {
+                throw new ArgumentNullException(nameof(logger));
+            }
+
             _imageTransformer = imageTransformer;
+
+            _logger = logger;
 
             _configuration = new Configuration();
             _configuration.AddImageFormat(new JpegFormat());
@@ -54,7 +67,7 @@ namespace Filehook.Proccessors.Image.ImageSharpProccessor
                 throw new ArgumentNullException(nameof(styles));
             }
 
-            Debug.WriteLine($"processing started ...");
+            _logger.LogDebug($"processing started ...");
 
             var stopwatch = Stopwatch.StartNew();
 
@@ -74,7 +87,7 @@ namespace Filehook.Proccessors.Image.ImageSharpProccessor
 
             stopwatch.Stop();
 
-            Debug.WriteLine($"{stopwatch.Elapsed} for all styles");
+            _logger.LogDebug($"{stopwatch.Elapsed} for all styles");
 
             return Task.FromResult(result.AsEnumerable());
         }
@@ -104,7 +117,9 @@ namespace Filehook.Proccessors.Image.ImageSharpProccessor
 
                 stopwatch.Stop();
 
-                Debug.WriteLine($"{stopwatch.Elapsed} for style {style.Name} {Thread.CurrentThread.ManagedThreadId}");
+                _logger.LogDebug($"{stopwatch.Elapsed} for style {style.Name} {Thread.CurrentThread.ManagedThreadId}");
+
+                _logger.LogInformation("Proccessed style '{0}' by '{1}'ms", style.Name, stopwatch.Elapsed.TotalMilliseconds);
 
                 return new FileProccessingResult
                 {

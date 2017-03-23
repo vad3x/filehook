@@ -246,8 +246,6 @@ namespace Filehook.Core
                         Url = url,
                         ProccessingMeta = proccessed.Meta
                     });
-
-
                 }
             }
 
@@ -263,6 +261,50 @@ namespace Filehook.Core
             }
 
             return true;
+        }
+
+        // TODO tests
+        public async Task RemoveAsync<TEntity>(
+            TEntity entity,
+            Expression<Func<TEntity, string>> propertyExpression,
+            string id) where TEntity : class
+        {
+            if (entity == null)
+            {
+                throw new ArgumentNullException(nameof(entity));
+            }
+
+            if (propertyExpression == null)
+            {
+                throw new ArgumentNullException(nameof(propertyExpression));
+            }
+
+            var memberExpression = propertyExpression.Body as MemberExpression;
+            if (memberExpression == null)
+            {
+                throw new ArgumentException($"'{propertyExpression}': is not a valid expression for this method");
+            }
+
+            var storage = GetStorage(propertyExpression);
+
+            var filename = GetFilename(entity, propertyExpression);
+
+            var className = _locationParamFormatter.Format(_paramNameResolver.Resolve(typeof(TEntity).GetTypeInfo()));
+            var attachmentName = _locationParamFormatter.Format(_paramNameResolver.Resolve(memberExpression.Member));
+
+            var styles = _fileStyleResolver.Resolve(propertyExpression);
+
+            foreach(var style in styles)
+            {
+                var relativeLocation = _locationTemplateParser.Parse(
+                    className: className,
+                    attachmentName: attachmentName,
+                    attachmentId: id,
+                    style: style.Name,
+                    filename: filename);
+
+                await storage.RemoveAsync(relativeLocation);
+            }
         }
 
         private string GetFilename<TEntity>(TEntity entity, Expression<Func<TEntity, string>> propertyExpression)

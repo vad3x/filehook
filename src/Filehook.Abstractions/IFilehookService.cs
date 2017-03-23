@@ -31,5 +31,10 @@ namespace Filehook.Abstractions
             string id) where TEntity : class;
 
         bool CanProccess(string fileExtension, byte[] bytes);
+
+        Task RemoveAsync<TEntity>(
+            TEntity entity,
+            Expression<Func<TEntity, string>> propertyExpression,
+            string id) where TEntity : class;
     }
 }

@@ -6,12 +6,14 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using Filehook.Proccessors.Image.Abstractions;
+using System.Linq;
+using System;
 
 namespace Filehook.Samples.AspNetCoreMvc.Controllers
 {
     public class HomeController : Controller
     {
-        private static readonly Stack<Article> _articleStore = new Stack<Article>();
+        private static readonly List<Article> _articleStore = new List<Article>();
 
         private readonly IFilehookService _filehookService;
 
@@ -23,7 +25,7 @@ namespace Filehook.Samples.AspNetCoreMvc.Controllers
         [HttpGet]
         public IActionResult Index()
         {
-            ViewBag.Articles = _articleStore;
+            ViewBag.Articles = _articleStore.OrderByDescending(a => a.CreatedAt);
             return View();
         }
 
@@ -42,7 +44,8 @@ namespace Filehook.Samples.AspNetCoreMvc.Controllers
             {
                 Id = viewModel.Id,
                 CoverImageFileName = viewModel.CoverImageFile?.FileName,
-                AttachmentFileName = viewModel.AttachmentFile?.FileName
+                AttachmentFileName = viewModel.AttachmentFile?.FileName,
+                CreatedAt = DateTime.Now
             };
 
             if (viewModel.AttachmentFile != null)
@@ -87,7 +90,32 @@ namespace Filehook.Samples.AspNetCoreMvc.Controllers
                 }
             }
 
-            _articleStore.Push(model);
+            _articleStore.Add(model);
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Remove(int id)
+        {
+            var article = _articleStore.FirstOrDefault(a => a.Id == id);
+            if (article == null)
+            {
+                return View();
+            }
+
+            if (article.CoverImageFileName != null)
+            {
+                await _filehookService.RemoveAsync(article, a => a.CoverImageFileName, article.Id.ToString());
+            }
+
+            if (article.AttachmentFileName != null)
+            {
+                await _filehookService.RemoveAsync(article, a => a.AttachmentFileName, article.Id.ToString());
+            }
+
+            _articleStore.Remove(article);
 
             return RedirectToAction(nameof(Index));
         }

@@ -24,5 +24,7 @@ namespace Filehook.Samples.AspNetCoreMvc.Models
 
         [HasName("Attachment")]
         public string AttachmentFileName { get; set; }
+
+        public System.DateTime CreatedAt { get; set; }
     }
 }

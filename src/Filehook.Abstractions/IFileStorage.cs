@@ -12,5 +12,7 @@ namespace Filehook.Abstractions
         Task<bool> ExistsAsync(string relativeLocation);
 
         Task<string> SaveAsync(string relativeLocation, Stream stream);
+
+        Task<bool> RemoveAsync(string relativeLocation);
     }
 }
