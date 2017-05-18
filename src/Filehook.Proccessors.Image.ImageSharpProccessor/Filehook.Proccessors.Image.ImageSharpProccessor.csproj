@@ -21,9 +21,9 @@
 
   <ItemGroup>
     <PackageReference Include="ImageSharp" Version="1.0.0-alpha4-00031" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="1.1.*" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="1.1.1" />
-    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="1.1.1" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="1.1.1" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="1.1.2" />
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="1.1.2" />
     <PackageReference Include="System.Linq.Parallel" Version="4.3.*" />
     <PackageReference Include="System.Threading.Thread" Version="4.3.*" />
   </ItemGroup>
