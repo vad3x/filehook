@@ -7,7 +7,7 @@ namespace Filehook.Proccessors.Image.ImageSharpProccessor
 {
     public class ImageSharpImageTransformer : IImageTransformer
     {
-        public void Transform(ImageSharp.Image image, ImageStyle style)
+        public void Transform(ImageSharp.Image<ImageSharp.Rgba32> image, ImageStyle style)
         {
             if (image == null)
             {

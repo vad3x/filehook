@@ -25,19 +25,8 @@ namespace Filehook.Proccessors.Image.ImageSharpProccessor
             IImageTransformer imageTransformer,
             ILogger<ImageSharpImageProccessor> logger)
         {
-            if (imageTransformer == null)
-            {
-                throw new ArgumentNullException(nameof(imageTransformer));
-            }
-
-            if (logger == null)
-            {
-                throw new ArgumentNullException(nameof(logger));
-            }
-
-            _imageTransformer = imageTransformer;
-
-            _logger = logger;
+            _imageTransformer = imageTransformer ?? throw new ArgumentNullException(nameof(imageTransformer));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
             _configuration = new Configuration();
             _configuration.AddImageFormat(new JpegFormat());
@@ -98,7 +87,7 @@ namespace Filehook.Proccessors.Image.ImageSharpProccessor
 
             var outputStream = new MemoryStream();
 
-            using (var image = new ImageSharp.Image(bytes, _configuration))
+            using (var image = ImageSharp.Image.Load(_configuration, bytes))
             {
                 var originalWidth = image.Width;
                 var originalHeight = image.Height;
