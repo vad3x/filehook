@@ -15,7 +15,8 @@ namespace Filehook.DataAnnotations
             string name,
             int resizeWidth,
             int resizeHeight,
-            ImageResizeMode resizeMode = ImageResizeMode.PreserveAspectRatio) : base(name)
+            ImageResizeMode resizeMode = ImageResizeMode.PreserveAspectRatio,
+            Resampler resampler = Resampler.Auto) : base(name)
         {
             var resizeOptions = new ImageResizeOptions
             {

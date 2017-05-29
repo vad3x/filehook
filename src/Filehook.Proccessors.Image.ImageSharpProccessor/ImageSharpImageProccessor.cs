@@ -101,7 +101,17 @@ namespace Filehook.Proccessors.Image.ImageSharpProccessor
                 {
                     _imageTransformer.Transform(image, imageStyle);
 
-                    image.Save(outputStream);
+                    IEncoderOptions encoderOptions = null;
+                    if (image.CurrentImageFormat.GetType() == typeof(JpegFormat))
+                    {
+                        encoderOptions = new JpegEncoderOptions
+                        {
+                            Quality = 100,
+                            Subsample = JpegSubsample.Ratio444
+                        };
+                    }
+
+                    image.Save(outputStream, encoderOptions);
                 }
 
                 stopwatch.Stop();
