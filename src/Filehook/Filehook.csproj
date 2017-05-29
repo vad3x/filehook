@@ -16,7 +16,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Filehook.DataAnnotations\Filehook.DataAnnotations.csproj" />
     <ProjectReference Include="..\Filehook.Proccessors.Image.ImageSharpProccessor\Filehook.Proccessors.Image.ImageSharpProccessor.csproj" />
-    <ProjectReference Include="..\Filehook.Storages.FileSystem\Filehook.Storages.FileSystem.csproj" />
   </ItemGroup>
 
   <ItemGroup>

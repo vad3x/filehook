@@ -22,18 +22,9 @@ namespace Filehook.Storages.FileSystem
             _options = options.Value;
             _locationTemplateParser = locationTemplateParser;
             _logger = logger;
-
-            if (_options.Name != null)
-            {
-                Name = _options.Name;
-            }
-            else
-            {
-                Name = FileSystemConsts.FileSystemStorageName;
-            }
         }
 
-        public string Name { get; private set; }
+        public string Name => _options.Name;
 
         // TODO tests
         public string GetUrl(string relativeLocation)

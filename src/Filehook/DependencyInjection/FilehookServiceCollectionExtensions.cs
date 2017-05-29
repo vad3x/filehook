@@ -1,16 +1,13 @@
-﻿using Filehook.Core.DependencyInjection;
-using Filehook.Storages.FileSystem;
-using System;
+﻿using System;
+using Filehook.Core.DependencyInjection;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
     public static class FilehookServiceCollectionExtensions
     {
-        // params must be declared other way
         public static IFilehookBuilder AddFilehook(
             this IServiceCollection services,
-            string storageBasePath = null,
-            string storageCdnUrl = null)
+            string defaultStorageName)
         {
             if (services == null)
             {
@@ -18,7 +15,7 @@ namespace Microsoft.Extensions.DependencyInjection
             }
 
             var builder = services.AddFilehookCore(options => {
-                options.DefaultStorageName = FileSystemConsts.FileSystemStorageName;
+                options.DefaultStorageName = defaultStorageName;
             });
 
             builder.AddKebabLocationParamFormatter();
@@ -26,11 +23,6 @@ namespace Microsoft.Extensions.DependencyInjection
             builder.AddRegularLocationTemplateParser();
             builder.AddImageProccessor();
             builder.AddFallbackFileProccessor();
-            builder.AddFileSystemStorage(options =>
-            {
-                options.BasePath = storageBasePath;
-                options.CdnUrl = storageCdnUrl;
-            });
 
             return builder;
         }

@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 using System.IO;
+using Filehook.Storages.S3;
 
 namespace WebApplication
 {
@@ -16,7 +17,8 @@ namespace WebApplication
             var builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true);
+                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
+                .AddUserSecrets<Startup>();
 
             Configuration = builder.Build();
         }
@@ -28,7 +30,19 @@ namespace WebApplication
         {
             services.AddMvc();
 
-            services.AddFilehook("./wwwroot", "http://localhost:5000");
+            services.AddFilehook(S3Consts.S3StorageName)
+                .AddFileSystemStorage(options =>
+                {
+                    options.BasePath = "./wwwroot";
+                    options.CdnUrl = "http://localhost:5000";
+                })
+                .AddS3Storage(options =>
+                {
+                    options.AccessKeyId = Configuration["Filehook:S3:AccessKeyId"];
+                    options.SecretAccessKey = Configuration["Filehook:S3:SecretAccessKey"];
+                    options.BucketName = Configuration["Filehook:S3:BucketName"];
+                    options.Region = Configuration["Filehook:S3:Region"];
+                });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -50,7 +64,8 @@ namespace WebApplication
             app.UseStaticFiles();
 
             // map folders
-            app.UseStaticFiles(new StaticFileOptions {
+            app.UseStaticFiles(new StaticFileOptions
+            {
                 FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "./wwwroot/public")),
                 RequestPath = new PathString("/public")
             });
