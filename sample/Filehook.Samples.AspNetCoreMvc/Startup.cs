@@ -36,14 +36,14 @@ namespace WebApplication
                 {
                     options.BasePath = "./wwwroot";
                     options.CdnUrl = "http://localhost:5000";
-                })
-                .AddS3Storage(options =>
-                {
-                    options.AccessKeyId = Configuration["Filehook:S3:AccessKeyId"];
-                    options.SecretAccessKey = Configuration["Filehook:S3:SecretAccessKey"];
-                    options.BucketName = Configuration["Filehook:S3:BucketName"];
-                    options.Region = Configuration["Filehook:S3:Region"];
                 });
+                // .AddS3Storage(options =>
+                // {
+                //     options.AccessKeyId = Configuration["Filehook:S3:AccessKeyId"];
+                //     options.SecretAccessKey = Configuration["Filehook:S3:SecretAccessKey"];
+                //     options.BucketName = Configuration["Filehook:S3:BucketName"];
+                //     options.Region = Configuration["Filehook:S3:Region"];
+                // });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -39,9 +39,22 @@ namespace Filehook.Proccessors.Image.ImageSharpProccessor
                 default: throw new NotImplementedException();
             }
 
+            var width = resizeOptions.Height;
+            var height = resizeOptions.Height;
+
+            if (width == 0)
+            {
+                width = Convert.ToInt32(Math.Round(resizeOptions.Height * image.PixelRatio));
+            }
+
+            if (height == 0)
+            {
+                height = Convert.ToInt32(Math.Round(resizeOptions.Width / image.PixelRatio));
+            }
+
             var resizeOptionsResult = new ResizeOptions
             {
-                Size = new Size(resizeOptions.Width, resizeOptions.Height),
+                Size = new Size(width, height),
                 Mode = mode
             };
 
