@@ -106,7 +106,7 @@ namespace Filehook.Proccessors.Image.ImageSharpProccessor
                     {
                         encoderOptions = new JpegEncoderOptions
                         {
-                            Quality = 100,
+                            Quality = imageStyle.DecodeOptions.Quality,
                             Subsample = JpegSubsample.Ratio444
                         };
                     }

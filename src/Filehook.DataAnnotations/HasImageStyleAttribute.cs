@@ -16,7 +16,8 @@ namespace Filehook.DataAnnotations
             int resizeWidth,
             int resizeHeight,
             ImageResizeMode resizeMode = ImageResizeMode.PreserveAspectRatio,
-            Resampler resampler = Resampler.Auto) : base(name)
+            Resampler resampler = Resampler.Auto,
+            int quality = 82) : base(name)
         {
             var resizeOptions = new ImageResizeOptions
             {
@@ -25,12 +26,17 @@ namespace Filehook.DataAnnotations
                 Mode = resizeMode
             };
 
-            Style = new ImageStyle(name, resizeOptions);
+            var decodeOptions = new ImageDecodeOptions
+            {
+                Quality = quality
+            };
+
+            Style = new ImageStyle(name, resizeOptions, decodeOptions);
         }
 
         public HasImageStyleAttribute(string name) : base(name)
         {
-            Style = new ImageStyle(name);
+            Style = new ImageStyle(name, new ImageResizeOptions(), new ImageDecodeOptions());
         }
     }
 }

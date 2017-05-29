@@ -7,6 +7,7 @@ using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 using System.IO;
 using Filehook.Storages.S3;
+using Filehook.Storages.FileSystem;
 
 namespace WebApplication
 {
@@ -30,7 +31,7 @@ namespace WebApplication
         {
             services.AddMvc();
 
-            services.AddFilehook(S3Consts.S3StorageName)
+            services.AddFilehook(FileSystemConsts.FileSystemStorageName)
                 .AddFileSystemStorage(options =>
                 {
                     options.BasePath = "./wwwroot";
