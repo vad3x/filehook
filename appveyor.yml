@@ -24,6 +24,8 @@ build_script:
 
       dotnet pack src/Filehook.Storages.FileSystem -c Release --include-symbols -o ../../artifacts --version-suffix $versionSuffix
 
+      dotnet pack src/Filehook.Storages.S3 -c Release --include-symbols -o ../../artifacts --version-suffix $versionSuffix
+
 # test_script:
 # - ps: dir test | % { dotnet test $_.FullName }
 
