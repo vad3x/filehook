@@ -1,15 +1,14 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System.IO;
+using Filehook.Proccessors.Image.Abstractions;
+using Filehook.Samples.AspNetCoreMvc.Models;
+using Filehook.Storages.FileSystem;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
-using System.IO;
-using Filehook.Storages.S3;
-using Filehook.Storages.FileSystem;
-using Filehook.Samples.AspNetCoreMvc.Models;
-using Filehook.Proccessors.Image.Abstractions;
 
 namespace WebApplication
 {
@@ -58,13 +57,6 @@ namespace WebApplication
                             .HasName("Attachment");
                     });
                 });
-                // .AddS3Storage(options =>
-                // {
-                //     options.AccessKeyId = Configuration["Filehook:S3:AccessKeyId"];
-                //     options.SecretAccessKey = Configuration["Filehook:S3:SecretAccessKey"];
-                //     options.BucketName = Configuration["Filehook:S3:BucketName"];
-                //     options.Region = Configuration["Filehook:S3:Region"];
-                // });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

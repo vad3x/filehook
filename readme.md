@@ -4,9 +4,31 @@ Filehook is a file attachment library for dotnet inspired by [Paperclip](https:/
 
 # Quick Start
 
+## Startup.cs
+
+```csharp
+        public void ConfigureServices(IServiceCollection services)
+        {
+            services.AddFilehook(FileSystemConsts.FileSystemStorageName);
+            // TODO specify storage
+        }
+```
+
+```csharp
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        {
+            app.UseStaticFiles(new StaticFileOptions {
+                FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "./wwwroot/public")),
+                RequestPath = new PathString("/public")
+            });
+        }
+```
+
 ## Models
 
-Mark properties with special attributes.
+### Data Annotations
+
+Mark properties with special attributes:
 
 ```csharp
     public class Article
@@ -21,22 +43,24 @@ Mark properties with special attributes.
     }
 ```
 
-## Startup.cs
+### Metadata
+
+The same using metadata:
 
 ```csharp
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddFilehook("./wwwroot", "http://localhost:5000");
-        }
-```
+            services.AddFilehook(FileSystemConsts.FileSystemStorageName)
+                .AddMetadata(builder => {
+                    builder.Entity<Article>(entity => {
+                        entity.HasName("MyArticle");
 
-```csharp
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
-        {
-            app.UseStaticFiles(new StaticFileOptions {
-                FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "./wwwroot/public")),
-                RequestPath = new PathString("/public")
-            });
+                        entity.Property(x => x.CoverImageFileName)
+                            .HasName("FileName")
+                            .HasImageStyle(new ImageStyle("small", new ImageResizeOptions { Height = 200 }))
+                            .HasImageStyle(new ImageStyle("large", new ImageResizeOptions { Height = 300 }));
+                    });
+                });
         }
 ```
 
@@ -48,8 +72,39 @@ Filehook uses [ImageSharp](https://github.com/JimBobSquarePants/ImageSharp) on m
 
 ## Storages
 
-Only `FileSystemStorage` available for now. The storage allows to save files to file system
+### FileSystemStorage
 
+The storage allows to save files to file system.
+
+```csharp
+        public void ConfigureServices(IServiceCollection services)
+        {
+            services.AddFilehook(FileSystemConsts.FileSystemStorageName)
+                .AddFileSystemStorage(options =>
+                {
+                    options.BasePath = "./wwwroot";
+                    options.CdnUrl = "http://localhost:5000";
+                });
+        }
+```
+
+### S3
+
+Allows to store files on S3.
+
+```csharp
+        public void ConfigureServices(IServiceCollection services)
+        {
+            services.AddFilehook(S3Consts.S3StorageName)
+                 .AddS3Storage(options =>
+                 {
+                     options.AccessKeyId = Configuration["Filehook:S3:AccessKeyId"];
+                     options.SecretAccessKey = Configuration["Filehook:S3:SecretAccessKey"];
+                     options.BucketName = Configuration["Filehook:S3:BucketName"];
+                     options.Region = Configuration["Filehook:S3:Region"];
+                 });
+        }
+```
 ## Location
 
 Default location template is `:base/public/:class/:attachmentName/:attachmentId/:style/:filename`
