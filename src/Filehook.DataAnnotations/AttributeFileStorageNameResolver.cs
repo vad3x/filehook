@@ -10,9 +10,9 @@ namespace Filehook.DataAnnotations
 {
     public class AttributeFileStorageNameResolver : IFileStorageNameResolver
     {
-        private readonly FileStorageNameResolverOptions _options;
+        private readonly FilehookOptions _options;
 
-        public AttributeFileStorageNameResolver(IOptions<FileStorageNameResolverOptions> options)
+        public AttributeFileStorageNameResolver(IOptions<FilehookOptions> options)
         {
             if (options == null)
             {

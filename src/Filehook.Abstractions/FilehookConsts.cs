@@ -1,4 +1,4 @@
-﻿namespace Filehook.DataAnnotations
+﻿namespace Filehook.Abstractions
 {
     public static class FilehookConsts
     {

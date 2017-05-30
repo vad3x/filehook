@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Xunit;
+using Microsoft.Extensions.Options;
 
 namespace Filehook.Core.Tests
 {
@@ -28,6 +29,8 @@ namespace Filehook.Core.Tests
             var mockLocationTemplateParser = new Mock<ILocationTemplateParser>();
             var mockLocationParamFormatter = new Mock<ILocationParamFormatter>();
             var mockParamNameResolver = new Mock<IParamNameResolver>();
+
+            var options = new FilehookOptions();
 
             mockFileStorageNameResolver
                 .Setup(x => x.Resolve(It.IsAny<Expression<Func<EntityWithoutStorage, string>>>()))
@@ -68,6 +71,7 @@ namespace Filehook.Core.Tests
                 .Returns("formattedValue");
 
             var regularFilehookService = new RegularFilehookService(
+                Options.Create(options),
                 mockFileStorageNameResolver.Object,
                 mockFileStyleResolver.Object,
                 new[] { mockFileStorage.Object },

@@ -8,7 +8,7 @@ namespace Microsoft.Extensions.DependencyInjection
 {
     public static class FilehookServiceCollectionExtensions
     {
-        public static IFilehookBuilder AddFilehookCore(this IServiceCollection services)
+        public static IFilehookBuilder AddFilehookCore(this IServiceCollection services, Action<FilehookOptions> setupAction)
         {
             if (services == null)
             {
@@ -16,6 +16,8 @@ namespace Microsoft.Extensions.DependencyInjection
             }
 
             var builder = new FilehookBuilder(services);
+
+            builder.Services.Configure(setupAction);
 
             builder.Services.AddTransient<IFilehookService, RegularFilehookService>();
 

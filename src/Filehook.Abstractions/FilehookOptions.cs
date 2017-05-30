@@ -1,6 +1,6 @@
 ﻿namespace Filehook.Abstractions
 {
-    public class FileStorageNameResolverOptions
+    public class FilehookOptions
     {
         public string DefaultStorageName { get; set; }
     }

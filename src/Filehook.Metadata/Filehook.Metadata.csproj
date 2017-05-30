@@ -17,4 +17,9 @@
     <PackageReference Include="Microsoft.Extensions.Options" Version="1.1.2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Filehook.Core\Filehook.Core.csproj" />
+    <ProjectReference Include="..\Filehook.Proccessors.Image.Abstractions\Filehook.Proccessors.Image.Abstractions.csproj" />
+  </ItemGroup>
+
 </Project>
