@@ -14,11 +14,11 @@ namespace Microsoft.Extensions.DependencyInjection
                 throw new ArgumentNullException(nameof(services));
             }
 
-            var builder = services.AddFilehookCore();
-
-            builder.AddDataAnnotations(options => {
+            var builder = services.AddFilehookCore(options => {
                 options.DefaultStorageName = defaultStorageName;
             });
+
+            builder.AddDataAnnotations();
 
             builder.AddKebabLocationParamFormatter();
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using Filehook.Abstractions;
 using Filehook.DataAnnotations.Tests.Fixtures;
 using Xunit;
 

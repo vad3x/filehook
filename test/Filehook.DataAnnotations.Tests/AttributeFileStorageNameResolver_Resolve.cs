@@ -10,7 +10,7 @@ namespace Filehook.DataAnnotations.Tests
         [Fact]
         public void EntityWithDefinedStorage_ReturnsStorageName()
         {
-            var options = new FileStorageNameResolverOptions
+            var options = new FilehookOptions
             {
                 DefaultStorageName = "default"
             };
@@ -25,7 +25,7 @@ namespace Filehook.DataAnnotations.Tests
         [Fact]
         public void EntityWithoutStorage_ReturnsDefault()
         {
-            var options = new FileStorageNameResolverOptions
+            var options = new FilehookOptions
             {
                 DefaultStorageName = "default"
             };

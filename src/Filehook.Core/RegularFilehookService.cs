@@ -6,11 +6,14 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using System.Reflection;
+using Microsoft.Extensions.Options;
 
 namespace Filehook.Core
 {
     public class RegularFilehookService : IFilehookService
     {
+        private readonly FilehookOptions _options;
+
         private readonly IFileStorageNameResolver _fileStorageNameResolver;
 
         private readonly IFileStyleResolver _fileStyleResolver;
@@ -24,6 +27,7 @@ namespace Filehook.Core
         private readonly IParamNameResolver _paramNameResolver;
 
         public RegularFilehookService(
+            IOptions<FilehookOptions> fileStorageNameResolverOptions,
             IFileStorageNameResolver fileStorageNameResolver,
             IFileStyleResolver fileStyleResolver,
             IEnumerable<IFileStorage> storages,
@@ -32,51 +36,22 @@ namespace Filehook.Core
             ILocationParamFormatter locationParamFormatter,
             IParamNameResolver paramNameResolver)
         {
-            if (fileStorageNameResolver == null)
+            if (fileStorageNameResolverOptions == null)
             {
-                throw new ArgumentNullException(nameof(fileStorageNameResolver));
+                throw new ArgumentNullException(nameof(fileStorageNameResolverOptions));
             }
 
-            if (fileStyleResolver == null)
-            {
-                throw new ArgumentNullException(nameof(fileStyleResolver));
-            }
+            _options = fileStorageNameResolverOptions.Value;
+            _fileStorageNameResolver = fileStorageNameResolver ?? throw new ArgumentNullException(nameof(fileStorageNameResolver));
+            _fileStyleResolver = fileStyleResolver ?? throw new ArgumentNullException(nameof(fileStyleResolver));
 
-            if (storages == null)
-            {
-                throw new ArgumentNullException(nameof(storages));
-            }
+            _storages = storages ?? throw new ArgumentNullException(nameof(storages));
+            _fileProccessors = fileProccessors ?? throw new ArgumentNullException(nameof(fileProccessors));
 
-            if (fileProccessors == null)
-            {
-                throw new ArgumentNullException(nameof(fileProccessors));
-            }
+            _locationTemplateParser = locationTemplateParser ?? throw new ArgumentNullException(nameof(locationTemplateParser));
+            _locationParamFormatter = locationParamFormatter ?? throw new ArgumentNullException(nameof(locationParamFormatter));
 
-            if (locationTemplateParser == null)
-            {
-                throw new ArgumentNullException(nameof(locationTemplateParser));
-            }
-
-            if (locationParamFormatter == null)
-            {
-                throw new ArgumentNullException(nameof(locationParamFormatter));
-            }
-
-            if (paramNameResolver == null)
-            {
-                throw new ArgumentNullException(nameof(paramNameResolver));
-            }
-
-            _fileStorageNameResolver = fileStorageNameResolver;
-            _fileStyleResolver = fileStyleResolver;
-
-            _storages = storages;
-            _fileProccessors = fileProccessors;
-
-            _locationTemplateParser = locationTemplateParser;
-            _locationParamFormatter = locationParamFormatter;
-
-            _paramNameResolver = paramNameResolver;
+            _paramNameResolver = paramNameResolver ?? throw new ArgumentNullException(nameof(paramNameResolver));
         }
 
         public Task<bool> ExistsAsync<TEntity>(
@@ -322,6 +297,11 @@ namespace Filehook.Core
         private IFileStorage GetStorage<TEntity>(Expression<Func<TEntity, string>> propertyExpression)
         {
             var storageName = _fileStorageNameResolver.Resolve(propertyExpression);
+
+            if (storageName == null)
+            {
+                storageName = _options.DefaultStorageName;
+            }
 
             var storage = _storages.FirstOrDefault(s => s.Name == storageName);
             if (storage == null)

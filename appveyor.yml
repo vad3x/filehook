@@ -22,6 +22,8 @@ build_script:
 
       dotnet pack src/Filehook.DataAnnotations -c Release --include-symbols -o ../../artifacts --version-suffix $versionSuffix
 
+      dotnet pack src/Filehook.Metadata -c Release --include-symbols -o ../../artifacts --version-suffix $versionSuffix
+
       dotnet pack src/Filehook.Proccessors.Image.Abstractions -c Release --include-symbols -o ../../artifacts --version-suffix $versionSuffix
 
       dotnet pack src/Filehook.Storages.FileSystem -c Release --include-symbols -o ../../artifacts --version-suffix $versionSuffix
