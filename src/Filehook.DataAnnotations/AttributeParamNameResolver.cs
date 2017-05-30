@@ -1,10 +1,10 @@
-using System;
+﻿using System;
 using System.Linq;
 using System.Reflection;
 using Filehook.Abstractions;
-using Filehook.DataAnnotations;
+using Filehook.DataAnnotations.Abstractions;
 
-namespace Filehook.Core
+namespace Filehook.DataAnnotations
 {
     public class AttributeParamNameResolver : IParamNameResolver
     {

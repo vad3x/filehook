@@ -1,4 +1,4 @@
-﻿namespace Filehook.Core
+﻿namespace Filehook.DataAnnotations
 {
     public static class FilehookConsts
     {

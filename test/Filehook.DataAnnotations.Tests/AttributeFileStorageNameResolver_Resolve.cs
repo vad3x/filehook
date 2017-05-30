@@ -1,8 +1,9 @@
-﻿using Filehook.Core.Tests.Fixtures;
+﻿using Filehook.Abstractions;
+using Filehook.DataAnnotations.Tests.Fixtures;
 using Microsoft.Extensions.Options;
 using Xunit;
 
-namespace Filehook.Core.Tests
+namespace Filehook.DataAnnotations.Tests
 {
     public class AttributeFileStorageNameResolver_Resolve
     {

@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Linq;
-using Filehook.Core;
+using Filehook.DataAnnotations.Tests.Fixtures;
 using Xunit;
-using Filehook.Core.Tests.Fixtures;
 
-namespace Filehook.Proccessors.Image.Abstractions.Tests
+namespace Filehook.DataAnnotations.Tests
 {
     public class AttributeFileStyleResolver_Resolve
     {

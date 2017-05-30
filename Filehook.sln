@@ -45,6 +45,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Filehook.DataAnnotations", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Filehook.Storages.S3", "src\Filehook.Storages.S3\Filehook.Storages.S3.csproj", "{F8212133-1B0C-455B-9755-1D3F60315261}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Filehook.DataAnnotations.Tests", "test\Filehook.DataAnnotations.Tests\Filehook.DataAnnotations.Tests.csproj", "{3223128A-9821-465B-A47C-9650FA38B965}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Filehook.DataAnnotations.Abstractions", "src\Filehook.DataAnnotations.Abstractions\Filehook.DataAnnotations.Abstractions.csproj", "{81F7BEC6-D17C-4233-92AF-17E9686B0B6F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -107,6 +111,14 @@ Global
 		{F8212133-1B0C-455B-9755-1D3F60315261}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F8212133-1B0C-455B-9755-1D3F60315261}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F8212133-1B0C-455B-9755-1D3F60315261}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3223128A-9821-465B-A47C-9650FA38B965}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3223128A-9821-465B-A47C-9650FA38B965}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3223128A-9821-465B-A47C-9650FA38B965}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3223128A-9821-465B-A47C-9650FA38B965}.Release|Any CPU.Build.0 = Release|Any CPU
+		{81F7BEC6-D17C-4233-92AF-17E9686B0B6F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{81F7BEC6-D17C-4233-92AF-17E9686B0B6F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{81F7BEC6-D17C-4233-92AF-17E9686B0B6F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{81F7BEC6-D17C-4233-92AF-17E9686B0B6F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -126,5 +138,7 @@ Global
 		{38F9AC0D-6DAD-4F38-8FFA-31020364BEE5} = {647C14F5-7DF2-4A77-9A20-421516BC3274}
 		{0ABE5E6A-3F9B-414A-8300-577E217FCD45} = {647C14F5-7DF2-4A77-9A20-421516BC3274}
 		{F8212133-1B0C-455B-9755-1D3F60315261} = {647C14F5-7DF2-4A77-9A20-421516BC3274}
+		{3223128A-9821-465B-A47C-9650FA38B965} = {FE345C39-62B0-4BD5-826C-8AD4C79D1654}
+		{81F7BEC6-D17C-4233-92AF-17E9686B0B6F} = {647C14F5-7DF2-4A77-9A20-421516BC3274}
 	EndGlobalSection
 EndGlobal

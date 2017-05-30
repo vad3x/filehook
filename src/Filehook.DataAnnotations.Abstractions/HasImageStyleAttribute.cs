@@ -1,6 +1,6 @@
 ﻿using Filehook.Proccessors.Image.Abstractions;
 
-namespace Filehook.DataAnnotations
+namespace Filehook.DataAnnotations.Abstractions
 {
     public class HasImageStyleAttribute : HasFileStyleAttribute
     {

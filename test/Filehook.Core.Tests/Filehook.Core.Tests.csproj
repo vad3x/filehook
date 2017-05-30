@@ -15,7 +15,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Filehook.Core\Filehook.Core.csproj" />
-    <ProjectReference Include="..\..\src\Filehook.DataAnnotations\Filehook.DataAnnotations.csproj" />
   </ItemGroup>
 
   <ItemGroup>

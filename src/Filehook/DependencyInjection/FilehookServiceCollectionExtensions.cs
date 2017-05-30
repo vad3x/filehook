@@ -14,7 +14,9 @@ namespace Microsoft.Extensions.DependencyInjection
                 throw new ArgumentNullException(nameof(services));
             }
 
-            var builder = services.AddFilehookCore(options => {
+            var builder = services.AddFilehookCore();
+
+            builder.AddDataAnnotations(options => {
                 options.DefaultStorageName = defaultStorageName;
             });
 

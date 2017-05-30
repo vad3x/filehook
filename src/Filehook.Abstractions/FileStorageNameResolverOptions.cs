@@ -1,4 +1,4 @@
-﻿namespace Filehook.Core
+﻿namespace Filehook.Abstractions
 {
     public class FileStorageNameResolverOptions
     {

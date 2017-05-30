@@ -1,15 +1,14 @@
-﻿using Filehook.Core.DependencyInjection;
-using Filehook.Core.Internal;
-using System;
-using Microsoft.Extensions.DependencyInjection.Extensions;
+﻿using System;
 using Filehook.Abstractions;
 using Filehook.Core;
+using Filehook.Core.DependencyInjection;
+using Filehook.Core.Internal;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
     public static class FilehookServiceCollectionExtensions
     {
-        public static IFilehookBuilder AddFilehookCore(this IServiceCollection services, Action<FileStorageNameResolverOptions> setupAction)
+        public static IFilehookBuilder AddFilehookCore(this IServiceCollection services)
         {
             if (services == null)
             {
@@ -18,13 +17,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
             var builder = new FilehookBuilder(services);
 
-            builder.Services.Configure(setupAction);
-
-            builder.Services.TryAddTransient<IFilehookService, RegularFilehookService>();
-
-            builder.Services.AddTransient<IFileStorageNameResolver, AttributeFileStorageNameResolver>();
-            builder.Services.AddTransient<IFileStyleResolver, AttributeFileStyleResolver>();
-            builder.Services.AddTransient<IParamNameResolver, AttributeParamNameResolver>();
+            builder.Services.AddTransient<IFilehookService, RegularFilehookService>();
 
             return builder;
         }
