@@ -5,6 +5,6 @@
         /// <summary>
         /// Must be between 0 and 100 (compression from max to min).
         /// </summary>
-        public int Quality { get; set; }
+        public int Quality { get; set; } = 100;
     }
 }

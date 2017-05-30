@@ -17,7 +17,7 @@ namespace Filehook.DataAnnotations.Abstractions
             int resizeHeight,
             ImageResizeMode resizeMode = ImageResizeMode.PreserveAspectRatio,
             Resampler resampler = Resampler.Auto,
-            int quality = 82) : base(name)
+            int quality = 100) : base(name)
         {
             var resizeOptions = new ImageResizeOptions
             {
