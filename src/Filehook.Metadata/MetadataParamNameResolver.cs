@@ -24,7 +24,8 @@ namespace Filehook.Metadata
             string postfix;
             if (memberInfo.DeclaringType == null)
             {
-                var entityMetadata = _modelMetadata.FindEntityMetadataByType(memberInfo.GetType());
+                // TODO remove (Type)(object)
+                var entityMetadata = _modelMetadata.FindEntityMetadataByType((Type)(object)memberInfo);
                 name = entityMetadata?.Name;
                 postfix = entityMetadata?.Postfix;
             }

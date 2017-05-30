@@ -43,7 +43,7 @@ namespace WebApplication
                         entity.HasName("MyArticle");
 
                         entity.Property(x => x.CoverImageFileName)
-                            .HasName("FileName")
+                            .HasPostfix("FileName")
                             .HasImageStyle(new ImageStyle("thumb", new ImageResizeOptions { Width = 310 }))
                             .HasImageStyle(new ImageStyle("retina_thumb", new ImageResizeOptions { Height = 220 }))
                             .HasImageStyle(new ImageStyle("iphone", new ImageResizeOptions { Width = 640, Height = 1136 }))
