@@ -22,16 +22,15 @@ namespace Filehook.Metadata
 
             string name;
             string postfix;
-            if (memberInfo.DeclaringType == null)
+            if (memberInfo is TypeInfo typeInfo)
             {
-                // TODO remove (Type)(object)
-                var entityMetadata = _modelMetadata.FindEntityMetadataByType((Type)(object)memberInfo);
+                var entityMetadata = _modelMetadata.FindEntityMetadataByFullName(typeInfo.FullName);
                 name = entityMetadata?.Name;
                 postfix = entityMetadata?.Postfix;
             }
             else
             {
-                var propertyMetadata = _modelMetadata.FindEntityMetadataByType(memberInfo.DeclaringType)?.FindPropertyMetadata(memberInfo);
+                var propertyMetadata = _modelMetadata.FindEntityMetadataByFullName(memberInfo.DeclaringType.FullName)?.FindPropertyMetadata(memberInfo.Name);
                 name = propertyMetadata.Name;
                 postfix = propertyMetadata.Postfix;
             }

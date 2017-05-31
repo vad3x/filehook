@@ -15,7 +15,7 @@ namespace Filehook.Metadata.Builders
         {
             var type = typeof(TEntity);
 
-            var entityMetadata = Metadata.AddType(type);
+            var entityMetadata = Metadata.AddType(type.FullName);
 
             buildAction(new EntityTypeBuilder<TEntity>(type, entityMetadata));
 

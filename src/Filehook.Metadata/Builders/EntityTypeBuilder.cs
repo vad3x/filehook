@@ -39,7 +39,7 @@ namespace Filehook.Metadata.Builders
                 throw new ArgumentException($"'{propertyExpression}': is not a valid expression for this method");
             }
 
-            var propertyMetadata = _entityMetadata.AddProperty(memberExpression.Member);
+            var propertyMetadata = _entityMetadata.AddProperty(memberExpression.Member.Name);
 
             return new PropertyBuilder<TProperty>(propertyMetadata);
         }

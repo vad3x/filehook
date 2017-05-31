@@ -26,8 +26,8 @@ namespace Filehook.Metadata
                 throw new ArgumentException($"'{propertyExpression}': is not a valid expression for this method");
             }
 
-            var storageName = _modelMetadata.FindEntityMetadataByType(memberExpression.Member.DeclaringType)
-                ?.FindPropertyMetadata(memberExpression.Member)
+            var storageName = _modelMetadata.FindEntityMetadataByFullName(memberExpression.Member.DeclaringType.FullName)
+                ?.FindPropertyMetadata(memberExpression.Member.Name)
                 ?.StorageName;
 
             return storageName;

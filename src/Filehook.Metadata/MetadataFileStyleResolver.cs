@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Reflection;
 using Filehook.Abstractions;
 
 namespace Filehook.Metadata
@@ -29,8 +28,8 @@ namespace Filehook.Metadata
                 throw new ArgumentException($"'{propertyExpression}': is not a valid expression for this method");
             }
 
-            var propertyMetadata = _modelMetadata.FindEntityMetadataByType(memberExpression.Member.DeclaringType)?
-                .FindPropertyMetadata(memberExpression.Member);
+            var propertyMetadata = _modelMetadata.FindEntityMetadataByFullName(memberExpression.Member.DeclaringType.FullName)?
+                .FindPropertyMetadata(memberExpression.Member.Name);
 
             var styles = propertyMetadata.Styles.ToList();
 

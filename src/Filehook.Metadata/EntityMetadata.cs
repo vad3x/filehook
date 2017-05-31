@@ -1,44 +1,43 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Reflection;
 
 namespace Filehook.Metadata
 {
     public class EntityMetadata
     {
-        private Dictionary<MemberInfo, PropertyMetadata> _propertyMetadatas = new Dictionary<MemberInfo, PropertyMetadata>();
+        private Dictionary<string, PropertyMetadata> _propertyMetadatas = new Dictionary<string, PropertyMetadata>();
 
         public string Name { get; internal set; }
 
         public string Postfix { get; internal set; }
 
-        public PropertyMetadata AddProperty(MemberInfo member)
+        public PropertyMetadata AddProperty(string key)
         {
-            if (member == null)
+            if (key == null)
             {
-                throw new ArgumentNullException(nameof(member));
+                throw new ArgumentNullException(nameof(key));
             }
 
-            if (_propertyMetadatas.ContainsKey(member))
+            if (_propertyMetadatas.ContainsKey(key))
             {
-                throw new ArgumentException($"'{member.Name}' property is already registered");
+                throw new ArgumentException($"'{key}' property is already registered");
             }
 
             var propertyMetadata = new PropertyMetadata();
 
-            _propertyMetadatas.Add(member, propertyMetadata);
+            _propertyMetadatas.Add(key, propertyMetadata);
 
             return propertyMetadata;
         }
 
-        public PropertyMetadata FindPropertyMetadata(MemberInfo member)
+        public PropertyMetadata FindPropertyMetadata(string key)
         {
-            if (member == null)
+            if (key == null)
             {
-                throw new ArgumentNullException(nameof(member));
+                throw new ArgumentNullException(nameof(key));
             }
 
-            if (_propertyMetadatas.TryGetValue(member, out var propertyMetadata))
+            if (_propertyMetadatas.TryGetValue(key, out var propertyMetadata))
             {
                 return propertyMetadata;
             }

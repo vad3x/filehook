@@ -5,35 +5,35 @@ namespace Filehook.Metadata
 {
     public class ModelMetadata
     {
-        private Dictionary<Type, EntityMetadata> _entityMetadatas = new Dictionary<Type, EntityMetadata>();
+        private Dictionary<string, EntityMetadata> _entityMetadatas = new Dictionary<string, EntityMetadata>();
 
-        public EntityMetadata AddType(Type type)
+        public EntityMetadata AddType(string key)
         {
-            if (type == null)
+            if (key == null)
             {
-                throw new ArgumentNullException(nameof(type));
+                throw new ArgumentNullException(nameof(key));
             }
 
-            if (_entityMetadatas.ContainsKey(type))
+            if (_entityMetadatas.ContainsKey(key))
             {
-                throw new ArgumentException($"'{type}' entity is already registered");
+                throw new ArgumentException($"'{key}' entity is already registered");
             }
 
             var entityMetadata = new EntityMetadata();
 
-            _entityMetadatas.Add(type, entityMetadata);
+            _entityMetadatas.Add(key, entityMetadata);
 
             return entityMetadata;
         }
 
-        public EntityMetadata FindEntityMetadataByType(Type type)
+        public EntityMetadata FindEntityMetadataByFullName(string key)
         {
-            if (type == null)
+            if (key == null)
             {
-                throw new ArgumentNullException(nameof(type));
+                throw new ArgumentNullException(nameof(key));
             }
 
-            if (_entityMetadatas.TryGetValue(type, out var entityMetadata))
+            if (_entityMetadatas.TryGetValue(key, out var entityMetadata))
             {
                 return entityMetadata;
             }
