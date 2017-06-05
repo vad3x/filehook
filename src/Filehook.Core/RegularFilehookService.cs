@@ -81,12 +81,12 @@ namespace Filehook.Core
             var filename = GetFilename(entity, propertyExpression);
 
             var className = _locationParamFormatter.Format(_paramNameResolver.Resolve(typeof(TEntity).GetTypeInfo()));
-            var attachmentName = _locationParamFormatter.Format(_paramNameResolver.Resolve(memberExpression.Member));
+            var propertyName = _locationParamFormatter.Format(_paramNameResolver.Resolve(memberExpression.Member));
 
             var relativeLocation = _locationTemplateParser.Parse(
                 className: className,
-                attachmentName: attachmentName,
-                attachmentId: id,
+                propertyName: propertyName,
+                objectId: id,
                 style: style,
                 filename: filename);
 
@@ -141,12 +141,12 @@ namespace Filehook.Core
             var filename = GetFilename(entity, propertyExpression);
 
             var className = _locationParamFormatter.Format(_paramNameResolver.Resolve(typeof(TEntity).GetTypeInfo()));
-            var attachmentName = _locationParamFormatter.Format(_paramNameResolver.Resolve(memberExpression.Member));
+            var propertyName = _locationParamFormatter.Format(_paramNameResolver.Resolve(memberExpression.Member));
 
             var relativeLocation = _locationTemplateParser.Parse(
                 className: className,
-                attachmentName: attachmentName,
-                attachmentId: id,
+                propertyName: propertyName,
+                objectId: id,
                 style: style,
                 filename: filename);
 
@@ -197,15 +197,15 @@ namespace Filehook.Core
             var proccessingResults = await fileProccessor.ProccessAsync(bytes, styles);
 
             var className = _locationParamFormatter.Format(_paramNameResolver.Resolve(typeof(TEntity).GetTypeInfo()));
-            var attachmentName = _locationParamFormatter.Format(_paramNameResolver.Resolve(memberExpression.Member));
+            var propertyName = _locationParamFormatter.Format(_paramNameResolver.Resolve(memberExpression.Member));
 
             var result = new Dictionary<string, FilehookSavingResult>();
             foreach (var proccessed in proccessingResults)
             {
                 var relativeLocation = _locationTemplateParser.Parse(
                     className: className,
-                    attachmentName: attachmentName,
-                    attachmentId: id,
+                    propertyName: propertyName,
+                    objectId: id,
                     style: proccessed.Style.Name,
                     filename: filename);
 
@@ -265,7 +265,7 @@ namespace Filehook.Core
             var filename = GetFilename(entity, propertyExpression);
 
             var className = _locationParamFormatter.Format(_paramNameResolver.Resolve(typeof(TEntity).GetTypeInfo()));
-            var attachmentName = _locationParamFormatter.Format(_paramNameResolver.Resolve(memberExpression.Member));
+            var propertyName = _locationParamFormatter.Format(_paramNameResolver.Resolve(memberExpression.Member));
 
             var styles = _fileStyleResolver.Resolve(propertyExpression);
 
@@ -273,8 +273,8 @@ namespace Filehook.Core
             {
                 var relativeLocation = _locationTemplateParser.Parse(
                     className: className,
-                    attachmentName: attachmentName,
-                    attachmentId: id,
+                    propertyName: propertyName,
+                    objectId: id,
                     style: style.Name,
                     filename: filename);
 

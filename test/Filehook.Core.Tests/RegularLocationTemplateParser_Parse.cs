@@ -7,7 +7,7 @@ namespace Filehook.Core.Tests
     {
         [Theory]
         [InlineData(
-            ":base/public/:class/:attachmentName/:attachmentId/:style/:filename",
+            ":base/public/:objectClass/:propertyName/:objectId/:style/:filename",
             "Klass",
             "Name",
             "Id",
@@ -15,18 +15,18 @@ namespace Filehook.Core.Tests
             "FileName",
             ":base/public/Klass/Name/Id/SomeStyle/FileName")]
         [InlineData(
-            ":base/public/:class/:attachmentName/:attachmentId/:style/:filename",
+            ":base/public/:objectClass/:propertyName/:objectId/:style/:filename",
             null,
             "Name",
             "Id",
             "SomeStyle",
             "FileName",
-            ":base/public/:class/Name/Id/SomeStyle/FileName")]
+            ":base/public/:objectClass/Name/Id/SomeStyle/FileName")]
         public void WithSpecificLocationTemplate_ShouldReturnCorrectString(
             string locationTemplate,
             string className,
-            string attachmentName,
-            string attachmentId,
+            string propertyName,
+            string objectId,
             string style,
             string filename,
             string expected)
@@ -37,8 +37,8 @@ namespace Filehook.Core.Tests
 
             var result = formatter.Parse(
                     className: className,
-                    attachmentName: attachmentName,
-                    attachmentId: attachmentId,
+                    propertyName: propertyName,
+                    objectId: objectId,
                     style: style,
                     filename: filename,
                     locationTemplate: locationTemplate);
