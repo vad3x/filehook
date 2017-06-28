@@ -4,8 +4,8 @@
     {
          string Parse(
              string className = null,
-             string attachmentName = null,
-             string attachmentId = null,
+             string propertyName = null,
+             string objectId = null,
              string style = null,
              string filename = null,
              string locationTemplate = null);

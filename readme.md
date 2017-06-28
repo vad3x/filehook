@@ -107,7 +107,7 @@ Allows to store files on S3.
 ```
 ## Location
 
-Default location template is `:base/public/:class/:attachmentName/:attachmentId/:style/:filename`
+Default location template is `:base/public/:objectClass/:propertyName/:objectId/:style/:filename`
 
 # TODO List
 
