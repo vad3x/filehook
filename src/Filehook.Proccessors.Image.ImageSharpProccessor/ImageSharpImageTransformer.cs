@@ -2,6 +2,7 @@
 using ImageSharp;
 using ImageSharp.Processing;
 using System;
+using SixLabors.Primitives;
 
 namespace Filehook.Proccessors.Image.ImageSharpProccessor
 {
