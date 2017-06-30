@@ -62,17 +62,17 @@ namespace Filehook.Proccessors.Image.ImageSharpProccessor
 
             var result = new List<FileProccessingResult>();
             // magic for better performance
-            if (styles.Count() > 4 && bytes.Length > 1 * 1024 * 1024)
-            {
-                Parallel.ForEach(styles, style =>
-                {
-                    result.Add(ProccessStyle(bytes, style));
-                });
-            }
-            else
-            {
+            //if (styles.Count() > 4 && bytes.Length > 1 * 1024 * 1024)
+            //{
+            //    Parallel.ForEach(styles, style =>
+            //    {
+            //        result.Add(ProccessStyle(bytes, style));
+            //    });
+            //}
+            //else
+            //{
                 result = styles.Select(style => ProccessStyle(bytes, style)).ToList();
-            }
+            //}
 
             stopwatch.Stop();
 
