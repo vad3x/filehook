@@ -4,6 +4,6 @@ namespace Filehook.Proccessors.Image.ImageSharpProccessor
 {
     public interface IImageTransformer
     {
-        void Transform(ImageSharp.Image<ImageSharp.Rgba32> image, ImageStyle style);
+        void Transform(SixLabors.ImageSharp.Image<SixLabors.ImageSharp.Rgba32> image, ImageStyle style);
     }
 }

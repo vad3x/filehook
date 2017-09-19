@@ -1,6 +1,5 @@
 ﻿using Filehook.Abstractions;
 using Filehook.Proccessors.Image.Abstractions;
-using SixLabors.ImageSharp;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -9,27 +8,22 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using SixLabors.ImageSharp.Formats.Jpeg;
-using SixLabors.ImageSharp.Formats;
+using ImageMagick;
 
-namespace Filehook.Proccessors.Image.ImageSharpProccessor
+namespace Filehook.Proccessors.Image.MagickNetProccessor
 {
-    public class ImageSharpImageProccessor : IFileProccessor
+    public class MagickNetImageProccessor : IFileProccessor
     {
         private readonly IImageTransformer _imageTransformer;
 
-        private readonly Configuration _configuration;
-
         private readonly ILogger _logger;
 
-        public ImageSharpImageProccessor(
+        public MagickNetImageProccessor(
             IImageTransformer imageTransformer,
-            ILogger<ImageSharpImageProccessor> logger)
+            ILogger<MagickNetImageProccessor> logger)
         {
             _imageTransformer = imageTransformer ?? throw new ArgumentNullException(nameof(imageTransformer));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-
-            _configuration = Configuration.Default;
         }
 
         public bool CanProccess(string fileExtension, byte[] bytes)
@@ -39,7 +33,7 @@ namespace Filehook.Proccessors.Image.ImageSharpProccessor
                 throw new ArgumentNullException(nameof(bytes));
             }
 
-            return _configuration.FindFormatByFileExtension(fileExtension) != null;
+            return fileExtension == "jpg" || fileExtension == "jpeg";
         }
 
         public Task<IEnumerable<FileProccessingResult>> ProccessAsync(byte[] bytes, IEnumerable<FileStyle> styles)
@@ -85,7 +79,7 @@ namespace Filehook.Proccessors.Image.ImageSharpProccessor
 
             var outputStream = new MemoryStream();
 
-            using (var image = SixLabors.ImageSharp.Image.Load(_configuration, bytes, out var imageFormat))
+            using (var image = new MagickImage(bytes))
             {
                 var originalWidth = image.Width;
                 var originalHeight = image.Height;
@@ -99,22 +93,26 @@ namespace Filehook.Proccessors.Image.ImageSharpProccessor
                 {
                     _imageTransformer.Transform(image, imageStyle);
 
-                    IImageEncoder imageEncoder = null;
-                    if (imageFormat.Name == ImageFormats.Jpeg.Name) // TODO other formats
-                    {
-                        imageEncoder = new JpegEncoder
-                        {
-                            Quality = imageStyle.DecodeOptions.Quality,
-                            Subsample = JpegSubsample.Ratio444
-                        };
-                    }
+                    //IEncoderOptions encoderOptions = null;
+                    //if (image.CurrentImageFormat.GetType() == typeof(JpegFormat))
+                    //{
+                    //    encoderOptions = new JpegEncoderOptions
+                    //    {
+                    //        Quality = imageStyle.DecodeOptions.Quality,
+                    //        Subsample = JpegSubsample.Ratio444
+                    //    };
+                    //}
 
-                    image.Save(outputStream, imageEncoder);
+                    // TODO switch
+                    image.Format = MagickFormat.Pjpeg;
+                    image.Quality = imageStyle.DecodeOptions.Quality;
+
+                    image.Write(outputStream);
                 }
 
                 stopwatch.Stop();
 
-                _logger.LogDebug($"{stopwatch.Elapsed} for style {style.Name} {Thread.CurrentThread.ManagedThreadId}");
+                _logger.LogDebug($"{stopwatch.Elapsed} for style {style.Name}");
 
                 _logger.LogInformation("Proccessed style '{0}' by '{1}'ms", style.Name, stopwatch.Elapsed.TotalMilliseconds);
 

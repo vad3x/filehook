@@ -1,6 +1,6 @@
 ﻿using Filehook.Proccessors.Image.Abstractions;
-using ImageSharp;
-using ImageSharp.Processing;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Processing;
 using System;
 using SixLabors.Primitives;
 
@@ -22,7 +22,7 @@ namespace Filehook.Proccessors.Image.ImageSharpProccessor
 
             if (style.ResizeOptions != null)
             {
-                image.Resize(ToResizeOptions(image, style.ResizeOptions));
+                image.Mutate(x => x.Resize(ToResizeOptions(image, style.ResizeOptions)));
             }
 
             // TODO other

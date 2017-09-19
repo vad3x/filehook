@@ -10,6 +10,7 @@
 *.docstates
 *.dat
 *.log
+*.userprefs
 
 [Oo]bj/
 [Bb]in/
