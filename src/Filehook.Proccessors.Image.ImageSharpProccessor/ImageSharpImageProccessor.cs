@@ -78,58 +78,61 @@ namespace Filehook.Proccessors.Image.ImageSharpProccessor
 
         private FileProccessingResult ProccessStyle(
             byte[] bytes,
-            Image<Rgba32> image,
+            Image<Rgba32> originalImage,
             IImageFormat imageFormat,
             FileStyle style)
         {
-            var outputStream = new MemoryStream();
+            var stopwatch = Stopwatch.StartNew();
 
-            var originalWidth = image.Width;
-            var originalHeight = image.Height;
-
-            var imageStyle = style as ImageStyle;
-            if (imageStyle == null)
+            using (var image = originalImage.Clone())
             {
-                outputStream = new MemoryStream(bytes, false);
-            }
-            else
-            {
-                var stopwatch = Stopwatch.StartNew();
+                var outputStream = new MemoryStream();
 
-                _imageTransformer.Transform(image, imageStyle);
+                var originalWidth = image.Width;
+                var originalHeight = image.Height;
 
-                IImageEncoder imageEncoder = null;
-                if (imageFormat.Name == ImageFormats.Jpeg.Name) // TODO other formats
+                var imageStyle = style as ImageStyle;
+                if (imageStyle == null)
                 {
-                    imageEncoder = new JpegEncoder
+                    outputStream = new MemoryStream(bytes, false);
+                }
+                else
+                {
+                    _imageTransformer.Transform(image, imageStyle);
+
+                    IImageEncoder imageEncoder = null;
+                    if (imageFormat.Name == ImageFormats.Jpeg.Name) // TODO other formats
                     {
-                        Quality = imageStyle.DecodeOptions.Quality,
-                        Subsample = JpegSubsample.Ratio444
-                    };
+                        imageEncoder = new JpegEncoder
+                        {
+                            Quality = imageStyle.DecodeOptions.Quality,
+                            Subsample = JpegSubsample.Ratio444
+                        };
+                    }
+
+                    stopwatch.Stop();
+                    _logger.LogInformation("Transformed '{0}' in '{1}'ms", style.Name, stopwatch.Elapsed.TotalMilliseconds);
+                    stopwatch.Restart();
+
+                    image.Save(outputStream, imageEncoder);
+
+                    stopwatch.Stop();
+                    _logger.LogInformation("Saved '{0}' in '{1}'ms", style.Name, stopwatch.Elapsed.TotalMilliseconds);
                 }
 
-                stopwatch.Stop();
-                _logger.LogInformation("Transformed '{0}' in '{1}'ms", style.Name, stopwatch.Elapsed.TotalMilliseconds);
-                stopwatch.Restart();
-
-                image.Save(outputStream, imageEncoder);
-
-                stopwatch.Stop();
-                _logger.LogInformation("Saved '{0}' in '{1}'ms", style.Name, stopwatch.Elapsed.TotalMilliseconds);
-            }
-
-            return new FileProccessingResult
-            {
-                Style = style,
-                Stream = outputStream,
-                Meta = new ImageProccessingResultMeta
+                return new FileProccessingResult
                 {
-                    OriginalWidth = originalWidth,
-                    OriginalHeight = originalHeight,
-                    Width = image.Width,
-                    Height = image.Height
-                }
-            };
+                    Style = style,
+                    Stream = outputStream,
+                    Meta = new ImageProccessingResultMeta
+                    {
+                        OriginalWidth = originalWidth,
+                        OriginalHeight = originalHeight,
+                        Width = image.Width,
+                        Height = image.Height
+                    }
+                };
+            }
         }
     }
 }
