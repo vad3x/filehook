@@ -54,83 +54,82 @@ namespace Filehook.Proccessors.Image.ImageSharpProccessor
                 throw new ArgumentNullException(nameof(styles));
             }
 
-            _logger.LogDebug($"processing started ...");
+            _logger.LogInformation($"processing started ...");
+
+            var result = new List<FileProccessingResult>();
 
             var stopwatch = Stopwatch.StartNew();
 
-            var result = new List<FileProccessingResult>();
-            // magic for better performance
-            //if (styles.Count() > 4 && bytes.Length > 1 * 1024 * 1024)
-            //{
-            //    Parallel.ForEach(styles, style =>
-            //    {
-            //        result.Add(ProccessStyle(bytes, style));
-            //    });
-            //}
-            //else
-            //{
-                result = styles.Select(style => ProccessStyle(bytes, style)).ToList();
-            //}
+            using (var image = SixLabors.ImageSharp.Image.Load(_configuration, bytes, out var imageFormat))
+            {
+                stopwatch.Stop();
+                _logger.LogInformation("Loaded '{0}' in '{1}'ms", imageFormat.MimeTypes, stopwatch.Elapsed.TotalMilliseconds);
+                stopwatch.Restart();
+
+                result = styles.Select(style => ProccessStyle(bytes, image, imageFormat, style)).ToList();
+            }
 
             stopwatch.Stop();
 
-            _logger.LogDebug($"{stopwatch.Elapsed} for all styles");
+            _logger.LogDebug($"{stopwatch.Elapsed.TotalMilliseconds} for all styles");
 
             return Task.FromResult(result.AsEnumerable());
         }
 
-        private FileProccessingResult ProccessStyle(byte[] bytes, FileStyle style)
+        private FileProccessingResult ProccessStyle(
+            byte[] bytes,
+            Image<Rgba32> image,
+            IImageFormat imageFormat,
+            FileStyle style)
         {
-            var stopwatch = Stopwatch.StartNew();
-
             var outputStream = new MemoryStream();
 
-            using (var image = SixLabors.ImageSharp.Image.Load(_configuration, bytes, out var imageFormat))
+            var originalWidth = image.Width;
+            var originalHeight = image.Height;
+
+            var imageStyle = style as ImageStyle;
+            if (imageStyle == null)
             {
-                var originalWidth = image.Width;
-                var originalHeight = image.Height;
+                outputStream = new MemoryStream(bytes, false);
+            }
+            else
+            {
+                var stopwatch = Stopwatch.StartNew();
 
-                var imageStyle = style as ImageStyle;
-                if (imageStyle == null)
-                {
-                    outputStream = new MemoryStream(bytes, false);
-                }
-                else
-                {
-                    _imageTransformer.Transform(image, imageStyle);
+                _imageTransformer.Transform(image, imageStyle);
 
-                    IImageEncoder imageEncoder = null;
-                    if (imageFormat.Name == ImageFormats.Jpeg.Name) // TODO other formats
+                IImageEncoder imageEncoder = null;
+                if (imageFormat.Name == ImageFormats.Jpeg.Name) // TODO other formats
+                {
+                    imageEncoder = new JpegEncoder
                     {
-                        imageEncoder = new JpegEncoder
-                        {
-                            Quality = imageStyle.DecodeOptions.Quality,
-                            Subsample = JpegSubsample.Ratio444
-                        };
-                    }
-
-                    image.Save(outputStream, imageEncoder);
+                        Quality = imageStyle.DecodeOptions.Quality,
+                        Subsample = JpegSubsample.Ratio444
+                    };
                 }
 
                 stopwatch.Stop();
+                _logger.LogInformation("Transformed '{0}' in '{1}'ms", style.Name, stopwatch.Elapsed.TotalMilliseconds);
+                stopwatch.Restart();
 
-                _logger.LogDebug($"{stopwatch.Elapsed} for style {style.Name} {Thread.CurrentThread.ManagedThreadId}");
+                image.Save(outputStream, imageEncoder);
 
-                _logger.LogInformation("Proccessed style '{0}' by '{1}'ms", style.Name, stopwatch.Elapsed.TotalMilliseconds);
-
-                return new FileProccessingResult
-                {
-                    Style = style,
-                    Stream = outputStream,
-                    Meta = new ImageProccessingResultMeta
-                    {
-                        OriginalWidth = originalWidth,
-                        OriginalHeight = originalHeight,
-                        Width = image.Width,
-                        Height = image.Height
-                    }
-                };
+                stopwatch.Stop();
+                _logger.LogInformation("Saved '{0}' in '{1}'ms", style.Name, stopwatch.Elapsed.TotalMilliseconds);
             }
+
+            return new FileProccessingResult
+            {
+                Style = style,
+                Stream = outputStream,
+                Meta = new ImageProccessingResultMeta
+                {
+                    OriginalWidth = originalWidth,
+                    OriginalHeight = originalHeight,
+                    Width = image.Width,
+                    Height = image.Height
+                }
+            };
         }
     }
 }

@@ -33,7 +33,7 @@ namespace WebApplication
             services.AddMvc();
 
             services.AddFilehook(FileSystemConsts.FileSystemStorageName)
-                .AddImageMagickNetProccessor()
+                .AddImageSharpImageProccessor()
                 .AddFallbackFileProccessor()
                 .AddFileSystemStorage(options =>
                 {
