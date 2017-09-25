@@ -8,7 +8,7 @@ namespace Microsoft.Extensions.DependencyInjection
 {
     public static class ImageSharpFilehookBuilderExtensions
     {
-        public static IFilehookBuilder AddImageProccessor(this IFilehookBuilder builder)
+        public static IFilehookBuilder AddImageSharpImageProccessor(this IFilehookBuilder builder)
         {
             if (builder == null)
             {

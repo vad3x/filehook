@@ -14,9 +14,6 @@
     <ProjectReference Include="..\Filehook.Core\Filehook.Core.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Remove="Class1.cs" />
-  </ItemGroup>
-  <ItemGroup>
     <Folder Include="DependencyInjection\" />
   </ItemGroup>
 </Project>

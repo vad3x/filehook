@@ -23,8 +23,8 @@ namespace Microsoft.Extensions.DependencyInjection
             builder.AddKebabLocationParamFormatter();
 
             builder.AddRegularLocationTemplateParser();
-            builder.AddImageProccessor();
-            builder.AddFallbackFileProccessor();
+            // builder.AddImageSharpImageProccessor();
+            // builder.AddFallbackFileProccessor();
 
             return builder;
         }
