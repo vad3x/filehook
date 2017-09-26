@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime;
 using System.Threading.Tasks;
 using Filehook.Abstractions;
 using Filehook.Proccessors.Image.Abstractions;
@@ -86,6 +87,9 @@ namespace Filehook.Proccessors.Image.ImageSharpProccessor
                     _logger.LogInformation("Processed '{imageFormatName}' in '{elapsed}'ms", imageFormat.Name, stopwatch.Elapsed.TotalMilliseconds);
                 }
             }
+
+            GCSettings.LargeObjectHeapCompactionMode = GCLargeObjectHeapCompactionMode.CompactOnce;
+            GC.Collect();
 
             return Task.FromResult(result.AsEnumerable());
         }
