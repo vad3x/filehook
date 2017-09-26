@@ -1,21 +1,23 @@
-﻿using Filehook.Abstractions;
-using Filehook.Proccessors.Image.Abstractions;
-using SixLabors.ImageSharp;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
+using Filehook.Abstractions;
+using Filehook.Proccessors.Image.Abstractions;
 using Microsoft.Extensions.Logging;
-using SixLabors.ImageSharp.Formats.Jpeg;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats;
+using SixLabors.ImageSharp.Formats.Jpeg;
 
 namespace Filehook.Proccessors.Image.ImageSharpProccessor
 {
     public class ImageSharpImageProccessor : IFileProccessor
     {
+        // TODO to options
+        private const int MAX_DEGREE_OF_PARALLELISM = 10;
+
         private readonly IImageTransformer _imageTransformer;
 
         private readonly Configuration _configuration;
@@ -58,20 +60,32 @@ namespace Filehook.Proccessors.Image.ImageSharpProccessor
 
             var result = new List<FileProccessingResult>();
 
-            var stopwatch = Stopwatch.StartNew();
-
-            using (var image = SixLabors.ImageSharp.Image.Load(_configuration, bytes, out var imageFormat))
+            Stopwatch stopwatch = null;
+            if (_logger.IsEnabled(LogLevel.Information))
             {
-                stopwatch.Stop();
-                _logger.LogInformation("Loaded '{0}' in '{1}'ms", imageFormat.MimeTypes, stopwatch.Elapsed.TotalMilliseconds);
-                stopwatch.Restart();
-
-                result = styles.Select(style => ProccessStyle(bytes, image, imageFormat, style)).ToList();
+                stopwatch = Stopwatch.StartNew();
             }
 
-            stopwatch.Stop();
+            using (var originalImage = SixLabors.ImageSharp.Image.Load(_configuration, bytes, out var imageFormat))
+            {
+                if (_logger.IsEnabled(LogLevel.Information))
+                {
+                    stopwatch.Stop();
+                    _logger.LogInformation("Loaded '{imageFormatName}' in '{elapsed}'ms", imageFormat.Name, stopwatch.Elapsed.TotalMilliseconds);
+                    stopwatch.Start();
+                }
 
-            _logger.LogDebug($"{stopwatch.Elapsed.TotalMilliseconds} for all styles");
+                Parallel.ForEach(styles, new ParallelOptions { MaxDegreeOfParallelism = MAX_DEGREE_OF_PARALLELISM }, style =>
+                {
+                    result.Add(ProccessStyle(bytes, originalImage, imageFormat, style));
+                });
+
+                if (_logger.IsEnabled(LogLevel.Information))
+                {
+                    stopwatch.Stop();
+                    _logger.LogInformation("Processed '{imageFormatName}' in '{elapsed}'ms", imageFormat.Name, stopwatch.Elapsed.TotalMilliseconds);
+                }
+            }
 
             return Task.FromResult(result.AsEnumerable());
         }
@@ -82,57 +96,87 @@ namespace Filehook.Proccessors.Image.ImageSharpProccessor
             IImageFormat imageFormat,
             FileStyle style)
         {
-            var stopwatch = Stopwatch.StartNew();
-
-            using (var image = originalImage.Clone())
+            Stopwatch stopwatch = null;
+            if (_logger.IsEnabled(LogLevel.Information))
             {
-                var outputStream = new MemoryStream();
+                stopwatch = Stopwatch.StartNew();
+            }
 
-                var originalWidth = image.Width;
-                var originalHeight = image.Height;
+            var outputStream = new MemoryStream();
 
-                var imageStyle = style as ImageStyle;
-                if (imageStyle == null)
+            var originalWidth = originalImage.Width;
+            var originalHeight = originalImage.Height;
+
+            int width;
+            int height;
+
+            var imageStyle = style as ImageStyle;
+            if (imageStyle == null)
+            {
+                width = originalImage.Width;
+                height = originalImage.Height;
+
+                outputStream = new MemoryStream(bytes, false);
+            }
+            else
+            {
+                using (var image = originalImage.Clone())
                 {
-                    outputStream = new MemoryStream(bytes, false);
-                }
-                else
-                {
+                    if (_logger.IsEnabled(LogLevel.Information))
+                    {
+                        stopwatch.Stop();
+                        _logger.LogInformation("Cloned '{styleName}' in '{elapsed}'ms", style.Name, stopwatch.Elapsed.TotalMilliseconds);
+                        stopwatch.Restart();
+                    }
+
                     _imageTransformer.Transform(image, imageStyle);
 
-                    IImageEncoder imageEncoder = null;
-                    if (imageFormat.Name == ImageFormats.Jpeg.Name) // TODO other formats
+                    if (_logger.IsEnabled(LogLevel.Information))
                     {
-                        imageEncoder = new JpegEncoder
-                        {
-                            Quality = imageStyle.DecodeOptions.Quality,
-                            Subsample = JpegSubsample.Ratio444
-                        };
+                        stopwatch.Stop();
+                        _logger.LogInformation("Transformed '{styleName}' in '{elapsed}'ms", style.Name, stopwatch.Elapsed.TotalMilliseconds);
+                        stopwatch.Restart();
                     }
 
-                    stopwatch.Stop();
-                    _logger.LogInformation("Transformed '{0}' in '{1}'ms", style.Name, stopwatch.Elapsed.TotalMilliseconds);
-                    stopwatch.Restart();
+                    image.Save(outputStream, GetEncoder(imageFormat, imageStyle));
 
-                    image.Save(outputStream, imageEncoder);
+                    if (_logger.IsEnabled(LogLevel.Information))
+                    {
+                        stopwatch.Stop();
+                        _logger.LogInformation("Saved '{styleName}' in '{elapsed}'ms", style.Name, stopwatch.Elapsed.TotalMilliseconds);
+                    }
 
-                    stopwatch.Stop();
-                    _logger.LogInformation("Saved '{0}' in '{1}'ms", style.Name, stopwatch.Elapsed.TotalMilliseconds);
+                    width = image.Width;
+                    height = image.Height;
                 }
+            }
 
-                return new FileProccessingResult
+            return new FileProccessingResult
+            {
+                Style = style,
+                Stream = outputStream,
+                Meta = new ImageProccessingResultMeta
                 {
-                    Style = style,
-                    Stream = outputStream,
-                    Meta = new ImageProccessingResultMeta
-                    {
-                        OriginalWidth = originalWidth,
-                        OriginalHeight = originalHeight,
-                        Width = image.Width,
-                        Height = image.Height
-                    }
+                    OriginalWidth = originalWidth,
+                    OriginalHeight = originalHeight,
+                    Width = width,
+                    Height = height
+                }
+            };
+        }
+
+        private IImageEncoder GetEncoder(IImageFormat imageFormat, ImageStyle imageStyle)
+        {
+            if (imageFormat.Name == ImageFormats.Jpeg.Name) // TODO other formats
+            {
+                return new JpegEncoder
+                {
+                    Quality = imageStyle.EncodeOptions.Quality,
+                    Subsample = JpegSubsample.Ratio444
                 };
             }
+
+            throw new NotImplementedException($"No Encoder configured for '{imageStyle.EncodeOptions.MimeType}' MimeType");
         }
     }
 }

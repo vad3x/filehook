@@ -1,11 +1,11 @@
-﻿using System;
+using System;
 using Filehook.Abstractions;
 
 namespace Filehook.Proccessors.Image.Abstractions
 {
     public class ImageStyle : FileStyle
     {
-        public ImageStyle(string name, ImageResizeOptions resizeOptions = null, ImageDecodeOptions decodeOptions = null) : base(name)
+        public ImageStyle(string name, ImageResizeOptions resizeOptions = null, ImageEncodeOptions decodeOptions = null) : base(name)
         {
             if (name == null)
             {
@@ -13,7 +13,7 @@ namespace Filehook.Proccessors.Image.Abstractions
             }
 
             ResizeOptions = resizeOptions;
-            DecodeOptions = decodeOptions;
+            EncodeOptions = decodeOptions;
 
             if (resizeOptions == null)
             {
@@ -22,12 +22,12 @@ namespace Filehook.Proccessors.Image.Abstractions
 
             if (decodeOptions == null)
             {
-                DecodeOptions = new ImageDecodeOptions();
+                EncodeOptions = new ImageEncodeOptions();
             }
         }
 
         public ImageResizeOptions ResizeOptions { get; set; }
 
-        public ImageDecodeOptions DecodeOptions { get; set; }
+        public ImageEncodeOptions EncodeOptions { get; set; }
     }
 }

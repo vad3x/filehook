@@ -1,6 +1,6 @@
-﻿namespace Filehook.Proccessors.Image.Abstractions
+namespace Filehook.Proccessors.Image.Abstractions
 {
-    public class ImageDecodeOptions
+    public class ImageEncodeOptions
     {
         /// <summary>
         /// Must be between 0 and 100 (compression from max to min).

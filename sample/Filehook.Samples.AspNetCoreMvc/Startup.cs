@@ -44,7 +44,7 @@ namespace WebApplication
                     builder.Entity<Article>(entity => {
                         entity.HasName("MyArticle");
 
-                        var decodeOptions = new ImageDecodeOptions { MimeType = "image/jpeg" };
+                        var decodeOptions = new ImageEncodeOptions { MimeType = "image/jpeg" };
 
                         entity.Property(x => x.CoverImageFileName)
                             .HasPostfix("FileName")
