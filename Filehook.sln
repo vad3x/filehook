@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26228.4
+VisualStudioVersion = 15.0.26730.16
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Src", "Src", "{647C14F5-7DF2-4A77-9A20-421516BC3274}"
 EndProject
@@ -50,8 +50,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Filehook.DataAnnotations.Abstractions", "src\Filehook.DataAnnotations.Abstractions\Filehook.DataAnnotations.Abstractions.csproj", "{81F7BEC6-D17C-4233-92AF-17E9686B0B6F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Filehook.Metadata", "src\Filehook.Metadata\Filehook.Metadata.csproj", "{F3D7C4F5-3D45-4567-8996-D5D7E7C1F6AE}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Filehook.Processors.Image.MagickNetProcessor", "src\Filehook.Processors.Image.MagickNetProcessor\Filehook.Processors.Image.MagickNetProcessor.csproj", "{70DB2B9F-EF56-400C-8B4C-29D79F772634}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -127,10 +125,6 @@ Global
 		{F3D7C4F5-3D45-4567-8996-D5D7E7C1F6AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F3D7C4F5-3D45-4567-8996-D5D7E7C1F6AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F3D7C4F5-3D45-4567-8996-D5D7E7C1F6AE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{70DB2B9F-EF56-400C-8B4C-29D79F772634}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{70DB2B9F-EF56-400C-8B4C-29D79F772634}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{70DB2B9F-EF56-400C-8B4C-29D79F772634}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{70DB2B9F-EF56-400C-8B4C-29D79F772634}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -153,6 +147,8 @@ Global
 		{3223128A-9821-465B-A47C-9650FA38B965} = {FE345C39-62B0-4BD5-826C-8AD4C79D1654}
 		{81F7BEC6-D17C-4233-92AF-17E9686B0B6F} = {647C14F5-7DF2-4A77-9A20-421516BC3274}
 		{F3D7C4F5-3D45-4567-8996-D5D7E7C1F6AE} = {647C14F5-7DF2-4A77-9A20-421516BC3274}
-		{70DB2B9F-EF56-400C-8B4C-29D79F772634} = {647C14F5-7DF2-4A77-9A20-421516BC3274}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {825AF119-5D16-467C-AB8F-EC8F16A77B66}
 	EndGlobalSection
 EndGlobal

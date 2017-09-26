@@ -26,7 +26,7 @@ namespace Filehook.DataAnnotations.Abstractions
                 Mode = resizeMode
             };
 
-            var decodeOptions = new ImageDecodeOptions
+            var decodeOptions = new ImageEncodeOptions
             {
                 Quality = quality
             };
@@ -36,7 +36,7 @@ namespace Filehook.DataAnnotations.Abstractions
 
         public HasImageStyleAttribute(string name) : base(name)
         {
-            Style = new ImageStyle(name, new ImageResizeOptions(), new ImageDecodeOptions());
+            Style = new ImageStyle(name, new ImageResizeOptions(), new ImageEncodeOptions());
         }
     }
 }
