@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Filehook.Abstractions;
 using Filehook.Proccessors.Image.Abstractions;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats;
 using SixLabors.ImageSharp.Formats.Jpeg;
@@ -16,20 +17,21 @@ namespace Filehook.Proccessors.Image.ImageSharpProccessor
 {
     public class ImageSharpImageProccessor : IFileProccessor
     {
-        // TODO to options
-        private const int MAX_DEGREE_OF_PARALLELISM = 10;
-
         private readonly IImageTransformer _imageTransformer;
 
         private readonly Configuration _configuration;
 
         private readonly ILogger _logger;
 
+        private readonly ImageSharpImageProccessorOptions _options;
+
         public ImageSharpImageProccessor(
             IImageTransformer imageTransformer,
+            IOptions<ImageSharpImageProccessorOptions> options,
             ILogger<ImageSharpImageProccessor> logger)
         {
             _imageTransformer = imageTransformer ?? throw new ArgumentNullException(nameof(imageTransformer));
+            _options = options.Value ?? throw new ArgumentNullException(nameof(options));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
             _configuration = Configuration.Default;
@@ -76,7 +78,7 @@ namespace Filehook.Proccessors.Image.ImageSharpProccessor
                     stopwatch.Start();
                 }
 
-                Parallel.ForEach(styles, new ParallelOptions { MaxDegreeOfParallelism = MAX_DEGREE_OF_PARALLELISM }, style =>
+                Parallel.ForEach(styles, _options.ParallelOptions, style =>
                 {
                     result.Add(ProccessStyle(bytes, originalImage, imageFormat, style));
                 });
