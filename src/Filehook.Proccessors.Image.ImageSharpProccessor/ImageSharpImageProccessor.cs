@@ -12,6 +12,7 @@ using Microsoft.Extensions.Options;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats;
 using SixLabors.ImageSharp.Formats.Jpeg;
+using SixLabors.ImageSharp.Formats.Png;
 
 namespace Filehook.Proccessors.Image.ImageSharpProccessor
 {
@@ -173,13 +174,18 @@ namespace Filehook.Proccessors.Image.ImageSharpProccessor
 
         private IImageEncoder GetEncoder(IImageFormat imageFormat, ImageStyle imageStyle)
         {
-            if (imageFormat.Name == ImageFormats.Jpeg.Name) // TODO other formats
+            if (imageFormat.Name == ImageFormats.Jpeg.Name)
             {
                 return new JpegEncoder
                 {
                     Quality = imageStyle.EncodeOptions.Quality,
                     Subsample = JpegSubsample.Ratio444
                 };
+            }
+
+            if (imageFormat.Name == ImageFormats.Png.Name) // TODO other formats
+            {
+                return new PngEncoder();
             }
 
             throw new NotImplementedException($"No Encoder configured for '{imageStyle.EncodeOptions.MimeType}' MimeType");
