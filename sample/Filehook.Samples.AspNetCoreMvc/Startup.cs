@@ -42,6 +42,7 @@ namespace WebApplication
                 })
                 .AddMetadata(builder => {
                     builder.Entity<Article>(entity => {
+                        entity.HasId(x => x.Id.ToString());
                         entity.HasName("MyArticle");
 
                         var decodeOptions = new ImageEncodeOptions { MimeType = "image/jpeg" };

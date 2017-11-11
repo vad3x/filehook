@@ -41,7 +41,7 @@
                 <section>
                     <h3>Cover Image Styles (@article.CoverImageAspectRatio)</h3>
                     @{
-                        var coverImageUrls = filehookService.GetUrls(article, a => a.CoverImageFileName, article.Id.ToString());
+                        var coverImageUrls = filehookService.GetUrls(article, a => a.CoverImageFileName);
                     }
                     <ol>
                         @foreach (var styleUrl in coverImageUrls)
@@ -61,7 +61,7 @@
                 <section>
                     <h3>Cover Image Styles</h3>
                     @{
-                        var attachmentUrls = filehookService.GetUrls(article, a => a.AttachmentFileName, article.Id.ToString());
+                        var attachmentUrls = filehookService.GetUrls(article, a => a.AttachmentFileName);
                     }
                     <ol>
                         @foreach (var styleUrl in attachmentUrls)

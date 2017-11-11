@@ -53,6 +53,7 @@ The same using metadata:
             services.AddFilehook(FileSystemConsts.FileSystemStorageName)
                 .AddMetadata(builder => {
                     builder.Entity<Article>(entity => {
+                        entity.HasId(x => x.Id.ToString());
                         entity.HasName("MyArticle");
 
                         entity.Property(x => x.CoverImageFileName)

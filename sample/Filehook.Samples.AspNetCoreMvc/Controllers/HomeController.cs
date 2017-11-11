@@ -63,7 +63,7 @@ namespace Filehook.Samples.AspNetCoreMvc.Controllers
                         return View();
                     }
 
-                    var results = await _filehookService.SaveAsync(model, a => a.AttachmentFileName, bytes, model.Id.ToString());
+                    var results = await _filehookService.SaveAsync(model, a => a.AttachmentFileName, bytes);
                 }
             }
 
@@ -82,7 +82,7 @@ namespace Filehook.Samples.AspNetCoreMvc.Controllers
                         return View();
                     }
 
-                    var results = await _filehookService.SaveAsync(model, a => a.CoverImageFileName, bytes, model.Id.ToString());
+                    var results = await _filehookService.SaveAsync(model, a => a.CoverImageFileName, bytes);
                     if (results["thumb"].ProccessingMeta is ImageProccessingResultMeta data)
                     {
                         model.CoverImageAspectRatio = (float)data.Width / data.Height;

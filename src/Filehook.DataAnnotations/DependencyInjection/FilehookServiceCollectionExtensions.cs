@@ -17,6 +17,7 @@ namespace Microsoft.Extensions.DependencyInjection
             builder.Services.AddTransient<IFileStorageNameResolver, AttributeFileStorageNameResolver>();
             builder.Services.AddTransient<IFileStyleResolver, AttributeFileStyleResolver>();
             builder.Services.AddTransient<IParamNameResolver, AttributeParamNameResolver>();
+            builder.Services.AddTransient<IEntityIdResolver, AttributeEntityIdResolver>();
 
             return builder;
         }

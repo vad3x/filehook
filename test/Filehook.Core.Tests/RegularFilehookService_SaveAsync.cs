@@ -29,6 +29,7 @@ namespace Filehook.Core.Tests
             var mockLocationTemplateParser = new Mock<ILocationTemplateParser>();
             var mockLocationParamFormatter = new Mock<ILocationParamFormatter>();
             var mockParamNameResolver = new Mock<IParamNameResolver>();
+            var mockEntityIdResolver = new Mock<IEntityIdResolver>();
 
             var options = new FilehookOptions();
 
@@ -78,14 +79,16 @@ namespace Filehook.Core.Tests
                 new[] { mockFileProccessor.Object },
                 mockLocationTemplateParser.Object,
                 mockLocationParamFormatter.Object,
-                mockParamNameResolver.Object);
+                mockParamNameResolver.Object,
+                mockEntityIdResolver.Object);
 
             var entity = new EntityWithoutStorage
             {
+                Id = "1",
                 Name = "name1.ext"
             };
 
-            var result = regularFilehookService.SaveAsync(entity, e => e.Name, data, 1.ToString());
+            var result = regularFilehookService.SaveAsync(entity, e => e.Name, data);
 
             // TODO verify
         }

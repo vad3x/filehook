@@ -5,11 +5,23 @@ namespace Filehook.Metadata.Builders
 {
     public class EntityTypeBuilder<TEntity> where TEntity : class
     {
-        private readonly EntityMetadata _entityMetadata;
+        private readonly EntityMetadata<TEntity> _entityMetadata;
 
-        public EntityTypeBuilder(Type type, EntityMetadata metadata)
+        public EntityTypeBuilder(EntityMetadata<TEntity> metadata)
         {
             _entityMetadata = metadata;
+        }
+
+        public EntityTypeBuilder<TEntity> HasId(Expression<Func<TEntity, string>> propertyExpression)
+        {
+            if (propertyExpression == null)
+            {
+                throw new ArgumentNullException(nameof(propertyExpression));
+            }
+
+            _entityMetadata.GetId = propertyExpression.Compile();
+
+            return this;
         }
 
         public EntityTypeBuilder<TEntity> HasName(string name)

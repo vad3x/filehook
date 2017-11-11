@@ -7,23 +7,25 @@ namespace Filehook.Metadata
     {
         private Dictionary<string, EntityMetadata> _entityMetadatas = new Dictionary<string, EntityMetadata>();
 
-        public EntityMetadata AddType(string key)
+        public EntityMetadata<TEntity> AddType<TEntity>()
         {
-            if (key == null)
-            {
-                throw new ArgumentNullException(nameof(key));
-            }
+            var key = typeof(TEntity).FullName;
 
             if (_entityMetadatas.ContainsKey(key))
             {
                 throw new ArgumentException($"'{key}' entity is already registered");
             }
 
-            var entityMetadata = new EntityMetadata();
+            var entityMetadata = new EntityMetadata<TEntity>();
 
             _entityMetadatas.Add(key, entityMetadata);
 
             return entityMetadata;
+        }
+
+        public EntityMetadata<TEntity> FindEntityMetadata<TEntity>()
+        {
+            return (EntityMetadata<TEntity>)FindEntityMetadataByFullName(typeof(TEntity).FullName);
         }
 
         public EntityMetadata FindEntityMetadataByFullName(string key)

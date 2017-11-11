@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Filehook.Metadata
 {
-    public class EntityMetadata
+    public abstract class EntityMetadata
     {
         private Dictionary<string, PropertyMetadata> _propertyMetadatas = new Dictionary<string, PropertyMetadata>();
 
@@ -44,5 +44,10 @@ namespace Filehook.Metadata
 
             return null;
         }
+    }
+
+    public class EntityMetadata<TEntity> : EntityMetadata
+    {
+        public Func<TEntity, string> GetId { get; internal set; }
     }
 }

@@ -25,6 +25,7 @@ namespace Filehook.Core
         private readonly ILocationParamFormatter _locationParamFormatter;
 
         private readonly IParamNameResolver _paramNameResolver;
+        private readonly IEntityIdResolver _entityIdResolver;
 
         public RegularFilehookService(
             IOptions<FilehookOptions> fileStorageNameResolverOptions,
@@ -34,7 +35,8 @@ namespace Filehook.Core
             IEnumerable<IFileProccessor> fileProccessors,
             ILocationTemplateParser locationTemplateParser,
             ILocationParamFormatter locationParamFormatter,
-            IParamNameResolver paramNameResolver)
+            IParamNameResolver paramNameResolver,
+            IEntityIdResolver entityIdResolver)
         {
             if (fileStorageNameResolverOptions == null)
             {
@@ -52,12 +54,12 @@ namespace Filehook.Core
             _locationParamFormatter = locationParamFormatter ?? throw new ArgumentNullException(nameof(locationParamFormatter));
 
             _paramNameResolver = paramNameResolver ?? throw new ArgumentNullException(nameof(paramNameResolver));
+            _entityIdResolver = entityIdResolver ?? throw new ArgumentNullException(nameof(entityIdResolver));
         }
 
         public Task<bool> ExistsAsync<TEntity>(
             TEntity entity,
             Expression<Func<TEntity, string>> propertyExpression,
-            string id,
             string style) where TEntity : class
         {
             if (entity == null)
@@ -82,11 +84,16 @@ namespace Filehook.Core
 
             var className = _locationParamFormatter.Format(_paramNameResolver.Resolve(typeof(TEntity).GetTypeInfo()));
             var propertyName = _locationParamFormatter.Format(_paramNameResolver.Resolve(memberExpression.Member));
+            var objectId = _entityIdResolver.Resolve(entity);
+            if (objectId == null)
+            {
+                throw new ArgumentNullException(nameof(objectId));
+            }
 
             var relativeLocation = _locationTemplateParser.Parse(
                 className: className,
                 propertyName: propertyName,
-                objectId: id,
+                objectId: objectId,
                 style: style,
                 filename: filename);
 
@@ -95,8 +102,7 @@ namespace Filehook.Core
 
         public IDictionary<string, string> GetUrls<TEntity>(
             TEntity entity,
-            Expression<Func<TEntity, string>> propertyExpression,
-            string id) where TEntity : class
+            Expression<Func<TEntity, string>> propertyExpression) where TEntity : class
         {
             if (entity == null)
             {
@@ -110,14 +116,13 @@ namespace Filehook.Core
 
             var styles = _fileStyleResolver.Resolve(propertyExpression);
 
-            return styles.ToDictionary(s => s.Name, s => GetUrl(entity, propertyExpression, id, s.Name));
+            return styles.ToDictionary(s => s.Name, s => GetUrl(entity, propertyExpression, s.Name));
         }
 
         // TODO tests
         public string GetUrl<TEntity>(
             TEntity entity,
             Expression<Func<TEntity, string>> propertyExpression,
-            string id,
             string style) where TEntity : class
         {
             if (entity == null)
@@ -136,6 +141,12 @@ namespace Filehook.Core
                 throw new ArgumentException($"'{propertyExpression}': is not a valid expression for this method");
             }
 
+            var objectId = _entityIdResolver.Resolve(entity);
+            if (objectId == null)
+            {
+                throw new ArgumentException($"{nameof(objectId)} is null");
+            }
+
             var storage = GetStorage(propertyExpression);
 
             var filename = GetFilename(entity, propertyExpression);
@@ -146,7 +157,7 @@ namespace Filehook.Core
             var relativeLocation = _locationTemplateParser.Parse(
                 className: className,
                 propertyName: propertyName,
-                objectId: id,
+                objectId: objectId,
                 style: style,
                 filename: filename);
 
@@ -157,8 +168,7 @@ namespace Filehook.Core
         public async Task<IDictionary<string, FilehookSavingResult>> SaveAsync<TEntity>(
             TEntity entity,
             Expression<Func<TEntity, string>> propertyExpression,
-            byte[] bytes,
-            string id) where TEntity : class
+            byte[] bytes) where TEntity : class
         {
             if (entity == null)
             {
@@ -179,6 +189,12 @@ namespace Filehook.Core
             if (memberExpression == null)
             {
                 throw new ArgumentException($"'{propertyExpression}': is not a valid expression for this method");
+            }
+
+            var objectId = _entityIdResolver.Resolve(entity);
+            if (objectId == null)
+            {
+                throw new ArgumentException($"{nameof(objectId)} is null");
             }
 
             var storage = GetStorage(propertyExpression);
@@ -205,7 +221,7 @@ namespace Filehook.Core
                 var relativeLocation = _locationTemplateParser.Parse(
                     className: className,
                     propertyName: propertyName,
-                    objectId: id,
+                    objectId: objectId,
                     style: proccessed.Style.Name,
                     filename: filename);
 
@@ -269,7 +285,7 @@ namespace Filehook.Core
 
             var styles = _fileStyleResolver.Resolve(propertyExpression);
 
-            foreach(var style in styles)
+            foreach (var style in styles)
             {
                 var relativeLocation = _locationTemplateParser.Parse(
                     className: className,
