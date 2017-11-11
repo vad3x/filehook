@@ -25,7 +25,7 @@ namespace Filehook.DataAnnotations
                 throw new Exception($"There is no HasIdAttribute for type '{entity.GetType()}'");
             }
 
-            return (string)idProperty.GetValue(entity);
+            return idProperty.GetValue(entity)?.ToString();
         }
     }
 }

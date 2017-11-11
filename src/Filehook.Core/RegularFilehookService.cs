@@ -7,6 +7,7 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using System.Reflection;
 using Microsoft.Extensions.Options;
+using System.Text.RegularExpressions;
 
 namespace Filehook.Core
 {
@@ -168,6 +169,7 @@ namespace Filehook.Core
         public async Task<IDictionary<string, FilehookSavingResult>> SaveAsync<TEntity>(
             TEntity entity,
             Expression<Func<TEntity, string>> propertyExpression,
+            string filename,
             byte[] bytes) where TEntity : class
         {
             if (entity == null)
@@ -178,6 +180,11 @@ namespace Filehook.Core
             if (propertyExpression == null)
             {
                 throw new ArgumentNullException(nameof(propertyExpression));
+            }
+
+            if (filename == null)
+            {
+                throw new ArgumentNullException(nameof(filename));
             }
 
             if (bytes == null)
@@ -199,9 +206,11 @@ namespace Filehook.Core
 
             var storage = GetStorage(propertyExpression);
 
-            var filename = GetFilename(entity, propertyExpression);
-
+            var filenameWithoutExtension = Path.GetFileNameWithoutExtension(filename);
             var fileExtension = Path.GetExtension(filename).TrimStart('.');
+
+            var newFilename = $"{filenameWithoutExtension.GenerateSlug()}.{fileExtension}";
+
             var fileProccessor = _fileProccessors.FirstOrDefault(p => p.CanProccess(fileExtension, bytes));
             if (fileProccessor == null)
             {
@@ -215,6 +224,8 @@ namespace Filehook.Core
             var className = _locationParamFormatter.Format(_paramNameResolver.Resolve(typeof(TEntity).GetTypeInfo()));
             var propertyName = _locationParamFormatter.Format(_paramNameResolver.Resolve(memberExpression.Member));
 
+            var oldFilename = GetFilename(entity, propertyExpression);
+
             var result = new Dictionary<string, FilehookSavingResult>();
             foreach (var proccessed in proccessingResults)
             {
@@ -223,7 +234,7 @@ namespace Filehook.Core
                     propertyName: propertyName,
                     objectId: objectId,
                     style: proccessed.Style.Name,
-                    filename: filename);
+                    filename: newFilename);
 
                 using (proccessed.Stream)
                 {
@@ -238,6 +249,23 @@ namespace Filehook.Core
                         ProccessingMeta = proccessed.Meta
                     });
                 }
+
+                if (!string.IsNullOrWhiteSpace(oldFilename) && oldFilename != newFilename)
+                {
+                    var oldRelativeLocation = _locationTemplateParser.Parse(
+                        className: className,
+                        propertyName: propertyName,
+                        objectId: objectId,
+                        style: proccessed.Style.Name,
+                        filename: oldFilename);
+
+                    await storage.RemoveAsync(oldRelativeLocation);
+                }
+            }
+
+            if (memberExpression.Member is PropertyInfo propertyInfo)
+            {
+                propertyInfo.SetValue(entity, newFilename);
             }
 
             return result;
@@ -257,8 +285,7 @@ namespace Filehook.Core
         // TODO tests
         public async Task RemoveAsync<TEntity>(
             TEntity entity,
-            Expression<Func<TEntity, string>> propertyExpression,
-            string id) where TEntity : class
+            Expression<Func<TEntity, string>> propertyExpression) where TEntity : class
         {
             if (entity == null)
             {
@@ -276,6 +303,12 @@ namespace Filehook.Core
                 throw new ArgumentException($"'{propertyExpression}': is not a valid expression for this method");
             }
 
+            var objectId = _entityIdResolver.Resolve(entity);
+            if (objectId == null)
+            {
+                throw new ArgumentException($"{nameof(objectId)} is null");
+            }
+
             var storage = GetStorage(propertyExpression);
 
             var filename = GetFilename(entity, propertyExpression);
@@ -290,11 +323,16 @@ namespace Filehook.Core
                 var relativeLocation = _locationTemplateParser.Parse(
                     className: className,
                     propertyName: propertyName,
-                    objectId: id,
+                    objectId: objectId,
                     style: style.Name,
                     filename: filename);
 
                 await storage.RemoveAsync(relativeLocation);
+            }
+
+            if (memberExpression.Member is PropertyInfo propertyInfo)
+            {
+                propertyInfo.SetValue(entity, null);
             }
         }
 
@@ -302,10 +340,6 @@ namespace Filehook.Core
         {
             var func = ExpressionCache<Func<TEntity, string>>.CachedCompile(propertyExpression);
             var filename = func(entity);
-            if (string.IsNullOrWhiteSpace(filename))
-            {
-                throw new ArgumentException($"'{propertyExpression}': returned invalid string");
-            }
 
             return filename;
         }

@@ -2,6 +2,12 @@
 
 Filehook is a file attachment library for dotnet inspired by [Paperclip](https://github.com/thoughtbot/paperclip).
 
+## Myget Feed (Alpha)
+
+```
+https://www.myget.org/F/filehook/api/v3/index.json
+```
+
 # Quick Start
 
 ## Startup.cs
@@ -33,6 +39,7 @@ Mark properties with special attributes:
 ```csharp
     public class Article
     {
+        [HasId]
         public int Id { get; set; }
 
         [HasImageStyle("small", 0, 200)]

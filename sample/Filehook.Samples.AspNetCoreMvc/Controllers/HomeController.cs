@@ -43,8 +43,6 @@ namespace Filehook.Samples.AspNetCoreMvc.Controllers
             var model = new Article
             {
                 Id = viewModel.Id,
-                CoverImageFileName = viewModel.CoverImageFile?.FileName,
-                AttachmentFileName = viewModel.AttachmentFile?.FileName,
                 CreatedAt = DateTime.Now
             };
 
@@ -63,7 +61,7 @@ namespace Filehook.Samples.AspNetCoreMvc.Controllers
                         return View();
                     }
 
-                    var results = await _filehookService.SaveAsync(model, a => a.AttachmentFileName, bytes);
+                    var results = await _filehookService.SaveAsync(model, a => a.AttachmentFileName, viewModel.AttachmentFile.FileName, bytes);
                 }
             }
 
@@ -82,7 +80,7 @@ namespace Filehook.Samples.AspNetCoreMvc.Controllers
                         return View();
                     }
 
-                    var results = await _filehookService.SaveAsync(model, a => a.CoverImageFileName, bytes);
+                    var results = await _filehookService.SaveAsync(model, a => a.CoverImageFileName, viewModel.CoverImageFile.FileName, bytes);
                     if (results["thumb"].ProccessingMeta is ImageProccessingResultMeta data)
                     {
                         model.CoverImageAspectRatio = (float)data.Width / data.Height;
@@ -107,12 +105,12 @@ namespace Filehook.Samples.AspNetCoreMvc.Controllers
 
             if (article.CoverImageFileName != null)
             {
-                await _filehookService.RemoveAsync(article, a => a.CoverImageFileName, article.Id.ToString());
+                await _filehookService.RemoveAsync(article, a => a.CoverImageFileName);
             }
 
             if (article.AttachmentFileName != null)
             {
-                await _filehookService.RemoveAsync(article, a => a.AttachmentFileName, article.Id.ToString());
+                await _filehookService.RemoveAsync(article, a => a.AttachmentFileName);
             }
 
             _articleStore.Remove(article);

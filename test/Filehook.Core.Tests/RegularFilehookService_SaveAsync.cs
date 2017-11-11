@@ -84,11 +84,10 @@ namespace Filehook.Core.Tests
 
             var entity = new EntityWithoutStorage
             {
-                Id = "1",
-                Name = "name1.ext"
+                Id = "1"
             };
 
-            var result = regularFilehookService.SaveAsync(entity, e => e.Name, data);
+            var result = regularFilehookService.SaveAsync(entity, e => e.Name, "name1.ext", data);
 
             // TODO verify
         }

@@ -24,13 +24,13 @@ namespace Filehook.Abstractions
         Task<IDictionary<string, FilehookSavingResult>> SaveAsync<TEntity>(
             TEntity entity,
             Expression<Func<TEntity, string>> propertyExpression,
+            string filename,
             byte[] bytes) where TEntity : class;
 
         bool CanProccess(string fileExtension, byte[] bytes);
 
         Task RemoveAsync<TEntity>(
             TEntity entity,
-            Expression<Func<TEntity, string>> propertyExpression,
-            string id) where TEntity : class;
+            Expression<Func<TEntity, string>> propertyExpression) where TEntity : class;
     }
 }
