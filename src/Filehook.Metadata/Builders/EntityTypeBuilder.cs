@@ -12,14 +12,14 @@ namespace Filehook.Metadata.Builders
             _entityMetadata = metadata;
         }
 
-        public EntityTypeBuilder<TEntity> HasId(Expression<Func<TEntity, string>> propertyExpression)
+        public EntityTypeBuilder<TEntity> HasId(Func<TEntity, string> getIdAction)
         {
-            if (propertyExpression == null)
+            if (getIdAction == null)
             {
-                throw new ArgumentNullException(nameof(propertyExpression));
+                throw new ArgumentNullException(nameof(getIdAction));
             }
 
-            _entityMetadata.GetId = propertyExpression.Compile();
+            _entityMetadata.GetId = getIdAction;
 
             return this;
         }
