@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Filehook.Proccessors.Image.Abstractions;
 using System.Linq;
 using System;
+using Microsoft.AspNetCore.Http;
 
 namespace Filehook.Samples.AspNetCoreMvc.Controllers
 {
@@ -48,43 +49,33 @@ namespace Filehook.Samples.AspNetCoreMvc.Controllers
 
             if (viewModel.AttachmentFile != null)
             {
-                using (var memoryStream = new MemoryStream())
-                using (var sourceStream = viewModel.AttachmentFile.OpenReadStream())
+                var bytes = await viewModel.AttachmentFile.GetBytesAsync();
+
+                var fileExtention = Path.GetExtension(viewModel.AttachmentFile.FileName)?.Trim('.');
+                if (!_filehookService.CanProccess(fileExtention, bytes))
                 {
-                    sourceStream.CopyTo(memoryStream);
-                    var bytes = memoryStream.ToArray();
-
-                    var fileExtention = Path.GetExtension(viewModel.AttachmentFile.FileName)?.Trim('.');
-                    if (!_filehookService.CanProccess(fileExtention, bytes))
-                    {
-                        ModelState.AddModelError(nameof(viewModel.AttachmentFile), "Could not be proccessed");
-                        return View();
-                    }
-
-                    var results = await _filehookService.SaveAsync(model, a => a.AttachmentFileName, viewModel.AttachmentFile.FileName, bytes);
+                    ModelState.AddModelError(nameof(viewModel.AttachmentFile), "Could not be proccessed");
+                    return View();
                 }
+
+                var results = await _filehookService.SaveAsync(model, a => a.AttachmentFileName, viewModel.AttachmentFile.FileName, bytes);
             }
 
             if (viewModel.CoverImageFile != null)
             {
-                using (var memoryStream = new MemoryStream())
-                using (var sourceStream = viewModel.CoverImageFile.OpenReadStream())
+                var bytes = await viewModel.CoverImageFile.GetBytesAsync();
+
+                var fileExtention = Path.GetExtension(viewModel.CoverImageFile.FileName)?.Trim('.');
+                if (!_filehookService.CanProccess(fileExtention, bytes))
                 {
-                    sourceStream.CopyTo(memoryStream);
-                    var bytes = memoryStream.ToArray();
+                    ModelState.AddModelError(nameof(viewModel.CoverImageFile), "Could not be proccessed");
+                    return View();
+                }
 
-                    var fileExtention = Path.GetExtension(viewModel.CoverImageFile.FileName)?.Trim('.');
-                    if (!_filehookService.CanProccess(fileExtention, bytes))
-                    {
-                        ModelState.AddModelError(nameof(viewModel.CoverImageFile), "Could not be proccessed");
-                        return View();
-                    }
-
-                    var results = await _filehookService.SaveAsync(model, a => a.CoverImageFileName, viewModel.CoverImageFile.FileName, bytes);
-                    if (results["thumb"].ProccessingMeta is ImageProccessingResultMeta data)
-                    {
-                        model.CoverImageAspectRatio = (float)data.Width / data.Height;
-                    }
+                var results = await _filehookService.SaveAsync(model, a => a.CoverImageFileName, viewModel.CoverImageFile.FileName, bytes);
+                if (results["thumb"].ProccessingMeta is ImageProccessingResultMeta data)
+                {
+                    model.CoverImageAspectRatio = (float)data.Width / data.Height;
                 }
             }
 
