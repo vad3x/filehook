@@ -1,6 +1,5 @@
-﻿using Filehook.Proccessors.Image.ImageSharpProccessor;
-using ImageSharp;
-using ImageSharp.Formats;
+using Filehook.Proccessors.Image.ImageSharpProccessor;
+using SixLabors.ImageSharp;
 using Xunit;
 
 namespace Filehook.Proccessors.Image.Abstractions.Tests.ImageSharpProccessor
@@ -52,7 +51,7 @@ namespace Filehook.Proccessors.Image.Abstractions.Tests.ImageSharpProccessor
             Assert.Equal(853, image.Height);
         }
 
-        private ImageSharp.Image Transform(int width, int height, ImageResizeMode mode)
+        private Image<Rgba32> Transform(int width, int height, ImageResizeMode mode)
         {
             var transformer = new ImageSharpImageTransformer();
 
@@ -66,12 +65,11 @@ namespace Filehook.Proccessors.Image.Abstractions.Tests.ImageSharpProccessor
                 }
             };
 
-            var configuration = new Configuration();
-            configuration.AddImageFormat(new JpegFormat());
+            var configuration = Configuration.Default;
 
             var bytes = TestFile.Create(TestImages.Jpeg.Lake).Bytes;
 
-            var image = new ImageSharp.Image(bytes, configuration);
+            var image = SixLabors.ImageSharp.Image.Load(configuration, bytes);
 
             transformer.Transform(image, imageStyle);
 

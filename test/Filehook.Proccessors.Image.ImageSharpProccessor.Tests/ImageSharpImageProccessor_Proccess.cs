@@ -1,6 +1,9 @@
-﻿using Filehook.Abstractions;
+using Filehook.Abstractions;
 using Filehook.Proccessors.Image.ImageSharpProccessor;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Moq;
+using SixLabors.ImageSharp;
 using Xunit;
 
 namespace Filehook.Proccessors.Image.Abstractions.Tests
@@ -11,11 +14,13 @@ namespace Filehook.Proccessors.Image.Abstractions.Tests
         public void EmptyOption_ReturnsEqualStream()
         {
             var mockImageTransformer = new Mock<IImageTransformer>();
+            var mockOptions = new Mock<IOptions<ImageSharpImageProccessorOptions>>();
+            var mockLogger = new Mock<ILogger<ImageSharpImageProccessor>>();
 
             mockImageTransformer
-                .Setup(x => x.Transform(It.IsAny<ImageSharp.Image>(), It.IsAny<ImageStyle>()));
+                .Setup(x => x.Transform(It.IsAny<Image<Rgba32>>(), It.IsAny<ImageStyle>()));
 
-            var imageSharpImageProccessor = new ImageSharpImageProccessor(mockImageTransformer.Object);
+            var imageSharpImageProccessor = new ImageSharpImageProccessor(mockImageTransformer.Object, mockOptions.Object, mockLogger.Object);
 
             var bytes = TestFile.Create(TestImages.Jpeg.Lake).Bytes;
 
@@ -24,18 +29,20 @@ namespace Filehook.Proccessors.Image.Abstractions.Tests
             var result = imageSharpImageProccessor.ProccessAsync(bytes, new[] { imageStyle });
 
             Assert.NotNull(result);
-            mockImageTransformer.Verify(x => x.Transform(It.IsAny<ImageSharp.Image>(), It.Is<ImageStyle>(s => s == imageStyle)), Times.Once);
+            mockImageTransformer.Verify(x => x.Transform(It.IsAny<Image<Rgba32>>(), It.Is<ImageStyle>(s => s == imageStyle)), Times.Once);
         }
 
         [Fact]
         public void NullOptions_ReturnsEqualStream()
         {
             var mockStyleParser = new Mock<IImageTransformer>();
+            var mockOptions = new Mock<IOptions<ImageSharpImageProccessorOptions>>();
+            var mockLogger = new Mock<ILogger<ImageSharpImageProccessor>>();
 
             mockStyleParser
-                .Setup(x => x.Transform(It.IsAny<ImageSharp.Image>(), It.Is<ImageStyle>(null)));
+                .Setup(x => x.Transform(It.IsAny<Image<Rgba32>>(), It.Is<ImageStyle>(null)));
 
-            var imageSharpImageProccessor = new ImageSharpImageProccessor(mockStyleParser.Object);
+            var imageSharpImageProccessor = new ImageSharpImageProccessor(mockStyleParser.Object, mockOptions.Object, mockLogger.Object);
 
             var bytes = TestFile.Create(TestImages.Jpeg.Lake).Bytes;
 
