@@ -49,17 +49,19 @@ namespace Filehook.Storages.Ssh
 
         public Task<bool> RemoveAsync(string relativeLocation)
         {
+            var fullPath = _locationTemplateParser.SetBase(relativeLocation, _options.BasePath);
+
             using (var client = new SftpClient(_options.HostName, _options.Port, _options.UserName, _options.Password))
             {
                 client.Connect();
 
                 try
                 {
-                    client.DeleteFile(relativeLocation);
+                    client.DeleteFile(fullPath);
                 }
                 catch (SftpPathNotFoundException)
                 {
-                    _logger.LogError("File with path '{path}' could not be found", relativeLocation);
+                    _logger.LogError("File with path '{path}' could not be found", fullPath);
 
                     return Task.FromResult(false);
                 }
