@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Amazon;
 using Amazon.S3;
 using Filehook.Abstractions;
@@ -10,16 +10,16 @@ namespace Microsoft.Extensions.DependencyInjection
 {
     public static class S3FilehookBuilderExtensions
     {
-        public static IFilehookBuilder AddS3Storage(this IFilehookBuilder builder, Action<S3StorageOptions> setupAction)
+        public static IFilehookBuilder AddS3Storage(this IFilehookBuilder builder, Action<S3StorageOptions> setupAction = null)
         {
             if (builder == null)
             {
                 throw new ArgumentNullException(nameof(builder));
             }
 
-            if (setupAction == null)
+            if (setupAction != null)
             {
-                throw new ArgumentNullException(nameof(setupAction));
+                builder.Services.Configure(setupAction);
             }
 
             builder.Services.Configure(setupAction);

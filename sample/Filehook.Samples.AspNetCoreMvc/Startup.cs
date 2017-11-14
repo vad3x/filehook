@@ -1,4 +1,4 @@
-﻿using System.IO;
+using System.IO;
 using Filehook.Proccessors.Image.Abstractions;
 using Filehook.Samples.AspNetCoreMvc.Models;
 using Filehook.Storages.FileSystem;

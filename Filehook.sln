@@ -51,6 +51,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Filehook.DataAnnotations.Ab
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Filehook.Metadata", "src\Filehook.Metadata\Filehook.Metadata.csproj", "{F3D7C4F5-3D45-4567-8996-D5D7E7C1F6AE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Filehook.Storages.Ssh", "src\Filehook.Storages.Ssh\Filehook.Storages.Ssh.csproj", "{6E94BFD0-5BE7-4664-87C8-98B93D5BC3CF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -125,6 +127,10 @@ Global
 		{F3D7C4F5-3D45-4567-8996-D5D7E7C1F6AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F3D7C4F5-3D45-4567-8996-D5D7E7C1F6AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F3D7C4F5-3D45-4567-8996-D5D7E7C1F6AE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6E94BFD0-5BE7-4664-87C8-98B93D5BC3CF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6E94BFD0-5BE7-4664-87C8-98B93D5BC3CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6E94BFD0-5BE7-4664-87C8-98B93D5BC3CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6E94BFD0-5BE7-4664-87C8-98B93D5BC3CF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -147,6 +153,7 @@ Global
 		{3223128A-9821-465B-A47C-9650FA38B965} = {FE345C39-62B0-4BD5-826C-8AD4C79D1654}
 		{81F7BEC6-D17C-4233-92AF-17E9686B0B6F} = {647C14F5-7DF2-4A77-9A20-421516BC3274}
 		{F3D7C4F5-3D45-4567-8996-D5D7E7C1F6AE} = {647C14F5-7DF2-4A77-9A20-421516BC3274}
+		{6E94BFD0-5BE7-4664-87C8-98B93D5BC3CF} = {647C14F5-7DF2-4A77-9A20-421516BC3274}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {825AF119-5D16-467C-AB8F-EC8F16A77B66}

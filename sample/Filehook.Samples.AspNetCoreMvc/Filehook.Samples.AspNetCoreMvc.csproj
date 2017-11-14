@@ -20,6 +20,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\Filehook.Storages.FileSystem\Filehook.Storages.FileSystem.csproj" />
     <ProjectReference Include="..\..\src\Filehook.Storages.S3\Filehook.Storages.S3.csproj" />
+    <ProjectReference Include="..\..\src\Filehook.Storages.Ssh\Filehook.Storages.Ssh.csproj" />
     <ProjectReference Include="..\..\src\Filehook\Filehook.csproj" />
     <ProjectReference Include="..\..\src\Filehook.AspNetCore.Http\Filehook.AspNetCore.Http.csproj" />
   </ItemGroup>
