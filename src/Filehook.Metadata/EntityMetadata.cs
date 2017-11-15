@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace Filehook.Metadata
@@ -10,6 +10,8 @@ namespace Filehook.Metadata
         public string Name { get; internal set; }
 
         public string Postfix { get; internal set; }
+
+        public string StorageName { get; internal set; }
 
         public PropertyMetadata AddProperty(string key)
         {

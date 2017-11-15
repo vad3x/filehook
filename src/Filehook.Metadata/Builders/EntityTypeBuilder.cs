@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq.Expressions;
 
 namespace Filehook.Metadata.Builders
@@ -14,12 +14,7 @@ namespace Filehook.Metadata.Builders
 
         public EntityTypeBuilder<TEntity> HasId(Func<TEntity, string> getIdAction)
         {
-            if (getIdAction == null)
-            {
-                throw new ArgumentNullException(nameof(getIdAction));
-            }
-
-            _entityMetadata.GetId = getIdAction;
+            _entityMetadata.GetId = getIdAction ?? throw new ArgumentNullException(nameof(getIdAction));
 
             return this;
         }
@@ -27,6 +22,13 @@ namespace Filehook.Metadata.Builders
         public EntityTypeBuilder<TEntity> HasName(string name)
         {
             _entityMetadata.Name = name ?? throw new ArgumentNullException(nameof(name));
+
+            return this;
+        }
+
+        public EntityTypeBuilder<TEntity> HasStorage(string storageName)
+        {
+            _entityMetadata.StorageName = storageName ?? throw new ArgumentNullException(nameof(storageName));
 
             return this;
         }

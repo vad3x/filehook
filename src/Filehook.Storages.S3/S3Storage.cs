@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using Amazon.S3;
@@ -41,7 +41,7 @@ namespace Filehook.Storages.S3
 
         public string GetUrl(string relativeLocation)
         {
-            return ToAbsoluteLocation(relativeLocation);
+            return ToAbsoluteUrl(relativeLocation);
         }
 
         public async Task<bool> RemoveAsync(string relativeLocation)
@@ -65,14 +65,14 @@ namespace Filehook.Storages.S3
 
             var result = await _amazonS3Client.PutObjectAsync(request);
 
-            var location = ToAbsoluteLocation(relativeLocation);
+            var location = ToAbsoluteUrl(relativeLocation);
 
             _logger.LogInformation($"Created '{location}'");
 
             return location;
         }
 
-        private string ToAbsoluteLocation(string relativeLocation)
+        private string ToAbsoluteUrl(string relativeLocation)
         {
             var baseLocation = $"{_options.Protocol}://s3-{_options.Region}.{_options.HostName}/{_options.BucketName}";
 

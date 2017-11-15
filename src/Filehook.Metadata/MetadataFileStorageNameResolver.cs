@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq.Expressions;
 using Filehook.Abstractions;
 
@@ -26,9 +26,20 @@ namespace Filehook.Metadata
                 throw new ArgumentException($"'{propertyExpression}': is not a valid expression for this method");
             }
 
-            var storageName = _modelMetadata.FindEntityMetadataByFullName(memberExpression.Member.DeclaringType.FullName)
-                ?.FindPropertyMetadata(memberExpression.Member.Name)
-                ?.StorageName;
+            string storageName = null;
+            var entityMetadata = _modelMetadata.FindEntityMetadataByFullName(memberExpression.Member.DeclaringType.FullName);
+
+            if (entityMetadata != null)
+            {
+                storageName = entityMetadata.StorageName;
+
+                var propertyMetadata = entityMetadata.FindPropertyMetadata(memberExpression.Member.Name);
+
+                if (propertyMetadata?.StorageName != null)
+                {
+                    storageName = propertyMetadata.StorageName;
+                }
+            }
 
             return storageName;
         }

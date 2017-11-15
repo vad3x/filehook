@@ -1,4 +1,4 @@
-﻿# Filehook
+# Filehook
 
 Filehook is a file attachment library for dotnet inspired by [Paperclip](https://github.com/thoughtbot/paperclip).
 
@@ -113,12 +113,18 @@ Allows to store files on S3.
                  });
         }
 ```
+
+### SSH
+
+TODO
+
 ## Location
 
 Default location template is `:base/public/:objectClass/:propertyName/:objectId/:style/:filename`
 
 # TODO List
 
+* Split file saving and url generation
 * Validators ?
 * Tests
 
