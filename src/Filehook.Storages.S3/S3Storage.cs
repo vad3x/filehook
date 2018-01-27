@@ -35,7 +35,10 @@ namespace Filehook.Storages.S3
 
         public async Task<bool> ExistsAsync(string relativeLocation)
         {
-            var response = await _amazonS3Client.GetObjectAsync(_options.BucketName, relativeLocation);
+            var key = _locationTemplateParser.SetBase(relativeLocation, string.Empty).TrimStart('/');
+            _logger.LogInformation($"Does exist file: '{key}' on '{_options.BucketName}' bucket");
+
+            var response = await _amazonS3Client.GetObjectAsync(_options.BucketName, key);
             return response.Key != null;
         }
 
@@ -46,7 +49,10 @@ namespace Filehook.Storages.S3
 
         public async Task<bool> RemoveAsync(string relativeLocation)
         {
-            await _amazonS3Client.DeleteAsync(_options.BucketName, relativeLocation, new Dictionary<string, object>());
+            var key = _locationTemplateParser.SetBase(relativeLocation, string.Empty).TrimStart('/');
+            _logger.LogInformation($"Delete file: '{key}' from '{_options.BucketName}' bucket");
+
+            await _amazonS3Client.DeleteAsync(_options.BucketName, key, new Dictionary<string, object>());
             return true;
         }
 
