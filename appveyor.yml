@@ -5,9 +5,8 @@ pull_requests:
 build_script:
   - ps: $buildNumber = "{0:d8}" -f [convert]::ToInt32($env:APPVEYOR_BUILD_NUMBER)
   - ps: Write-Host "Version Suffix:" $buildNumber
-  - ps: >-
-    - dotnet restore
-    - dotnet pack -c Release /p:BuildNumber=$buildNumber --include-symbols --output ../../nupkgs/beta
+  - ps: dotnet restore
+  - ps: dotnet pack -c Release /p:BuildNumber=$buildNumber --include-symbols --output ../../nupkgs/beta
 
 # test_script:
 # - ps: dir test | % { dotnet test $_.FullName }
