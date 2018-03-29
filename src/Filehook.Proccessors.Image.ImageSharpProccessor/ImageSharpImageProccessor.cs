@@ -13,6 +13,7 @@ using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats;
 using SixLabors.ImageSharp.Formats.Jpeg;
 using SixLabors.ImageSharp.Formats.Png;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Filehook.Proccessors.Image.ImageSharpProccessor
 {
@@ -45,7 +46,7 @@ namespace Filehook.Proccessors.Image.ImageSharpProccessor
                 throw new ArgumentNullException(nameof(bytes));
             }
 
-            return _configuration.FindFormatByFileExtension(fileExtension) != null;
+            return _configuration.ImageFormatsManager.FindFormatByFileExtension(fileExtension) != null;
         }
 
         public Task<IEnumerable<FileProccessingResult>> ProccessAsync(byte[] bytes, IEnumerable<FileStyle> styles)

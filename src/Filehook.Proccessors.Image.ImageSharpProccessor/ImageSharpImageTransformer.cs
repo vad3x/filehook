@@ -1,7 +1,10 @@
-﻿using Filehook.Proccessors.Image.Abstractions;
+﻿using System;
+using Filehook.Proccessors.Image.Abstractions;
 using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
-using System;
+using SixLabors.ImageSharp.Processing.Transforms;
+using SixLabors.ImageSharp.Processing.Transforms.Resamplers;
 using SixLabors.Primitives;
 
 namespace Filehook.Proccessors.Image.ImageSharpProccessor
