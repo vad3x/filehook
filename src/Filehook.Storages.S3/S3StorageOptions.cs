@@ -10,6 +10,8 @@
 
         public string HostName { get; set; } = "amazonaws.com";
 
+        public string ProxyUri { get; set; }
+
         public string BucketName { get; set; }
 
         public string AccessKeyId { get; set; }

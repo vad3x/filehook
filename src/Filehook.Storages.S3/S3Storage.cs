@@ -80,6 +80,11 @@ namespace Filehook.Storages.S3
 
         private string ToAbsoluteUrl(string relativeLocation)
         {
+            if (!string.IsNullOrWhiteSpace(_options.ProxyUri))
+            {
+                return _locationTemplateParser.SetBase(relativeLocation, _options.ProxyUri);
+            }
+
             var baseLocation = $"{_options.Protocol}://s3-{_options.Region}.{_options.HostName}/{_options.BucketName}";
 
             return _locationTemplateParser.SetBase(relativeLocation, baseLocation);
