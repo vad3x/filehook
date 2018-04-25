@@ -17,7 +17,7 @@ artifacts:
 
 deploy:
   - provider: NuGet
-    name: MyGet Alpha Chanel
+    name: MyGet Alpha Channel
     on:
       branch: dev
     server: https://www.myget.org/F/filehook/api/v2/package
@@ -25,4 +25,13 @@ deploy:
       secure: uUSg50F5ec1bMyNNMvGbFfh6uZa7ItsP4Ug5TVeQPvmpYbFcov2Z1uXy7doyyd+w
     skip_symbols: false
     symbol_server: https://www.myget.org/F/filehook/symbols/api/v2/package
+    artifact: /.*\.nupkg/
+  - provider: NuGet
+    name: NuGet Channel
+    on:
+      branch: master
+    server: https://api.nuget.org/v3/index.jsone
+    api_key:
+      secure: 8dZVSJGj14GW04Rwa+Qk9UwYkBeeApG5PA32GBBDI3iS5TXUZ8i4ZugU61gCLh+Z
+    skip_symbols: true
     artifact: /.*\.nupkg/
