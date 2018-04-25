@@ -20,8 +20,8 @@ namespace Filehook.Core
 
         public string Parse(
             string className = null,
-            string attachmentName = null,
-            string attachmentId = null,
+            string propertyName = null,
+            string objectId = null,
             string style = null,
             string filename = null,
             string locationTemplate = null)
@@ -30,17 +30,17 @@ namespace Filehook.Core
 
             if (className != null)
             {
-                location = location.Replace(":class", className);
+                location = location.Replace(":objectClass", className);
             }
 
-            if (attachmentName != null)
+            if (propertyName != null)
             {
-                location = location.Replace(":attachmentName", attachmentName);
+                location = location.Replace(":propertyName", propertyName);
             }
 
-            if (attachmentId != null)
+            if (objectId != null)
             {
-                location = location.Replace(":attachmentId", attachmentId);
+                location = location.Replace(":objectId", objectId);
             }
 
             if (style != null)

@@ -5,5 +5,6 @@
         public int Width { get; set; }
         public int Height { get; set; }
         public ImageResizeMode Mode { get; set; }
+        public Resampler Resampler { get; set; }
     }
 }

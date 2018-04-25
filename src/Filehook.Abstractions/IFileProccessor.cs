@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using System.IO;
+using System.Threading.Tasks;
 
 namespace Filehook.Abstractions
 {
@@ -7,6 +7,6 @@ namespace Filehook.Abstractions
     {
         bool CanProccess(string fileExtension, byte[] bytes);
 
-        IDictionary<string, MemoryStream> Proccess(byte[] bytes, IEnumerable<FileStyle> styles);
+        Task<IEnumerable<FileProccessingResult>> ProccessAsync(byte[] bytes, IEnumerable<FileStyle> styles);
     }
 }

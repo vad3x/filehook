@@ -1,15 +1,14 @@
-﻿using Filehook.Core.DependencyInjection;
-using Filehook.Core.Internal;
-using System;
-using Microsoft.Extensions.DependencyInjection.Extensions;
+﻿using System;
 using Filehook.Abstractions;
 using Filehook.Core;
+using Filehook.Core.DependencyInjection;
+using Filehook.Core.Internal;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
     public static class FilehookServiceCollectionExtensions
     {
-        public static IFilehookBuilder AddFilehook(this IServiceCollection services, Action<FileStorageNameResolverOptions> setupAction)
+        public static IFilehookBuilder AddFilehookCore(this IServiceCollection services, Action<FilehookOptions> setupAction)
         {
             if (services == null)
             {
@@ -20,25 +19,19 @@ namespace Microsoft.Extensions.DependencyInjection
 
             builder.Services.Configure(setupAction);
 
-            builder.Services.TryAddTransient<IFilehookService, RegularFilehookService>();
-
-            builder.Services.TryAddTransient<IFileStorageNameResolver, AttributeFileStorageNameResolver>();
-
-            builder.Services.AddTransient<IFileStyleResolver, AttributeFileStyleResolver>();
+            builder.Services.AddTransient<IFilehookService, RegularFilehookService>();
 
             return builder;
         }
 
-        public static IFilehookBuilder AddKebabLocationParamFormatter(this IFilehookBuilder builder, Action<KebabLocationParamFormatterOptions> setupAction)
+        public static IFilehookBuilder AddKebabLocationParamFormatter(this IFilehookBuilder builder)
         {
             if (builder == null)
             {
                 throw new ArgumentNullException(nameof(builder));
             }
 
-            builder.Services.Configure(setupAction);
-
-            builder.Services.TryAddTransient<ILocationParamFormatter, KebabLocationParamFormatter>();
+            builder.Services.AddTransient<ILocationParamFormatter, KebabLocationParamFormatter>();
 
             return builder;
         }
@@ -55,7 +48,7 @@ namespace Microsoft.Extensions.DependencyInjection
                 builder.Services.Configure(setupAction);
             }
 
-            builder.Services.TryAddTransient<ILocationTemplateParser, RegularLocationTemplateParser>();
+            builder.Services.AddTransient<ILocationTemplateParser, RegularLocationTemplateParser>();
 
             return builder;
         }

@@ -1,9 +1,10 @@
-﻿using Filehook.Abstractions;
+using Filehook.Abstractions;
 using System.Threading.Tasks;
 using Moq;
 using Xunit;
 using Microsoft.Extensions.Options;
 using System.IO;
+using Microsoft.Extensions.Logging;
 
 namespace Filehook.Storages.FileSystem.Tests
 {
@@ -14,6 +15,7 @@ namespace Filehook.Storages.FileSystem.Tests
         {
             const string relativeLocation = "./bin/helloworld.txt";
             var mockLocationTemplateParser = new Mock<ILocationTemplateParser>();
+            var mockLogger = new Mock<ILogger<FileSystemStorage>>();
 
             mockLocationTemplateParser.Setup(x => x.SetBase(relativeLocation, It.IsAny<string>()))
                 .Returns(relativeLocation);
@@ -25,7 +27,7 @@ namespace Filehook.Storages.FileSystem.Tests
                 BasePath = ""
             };
 
-            var fileSystemStorage = new FileSystemStorage(Options.Create(storageOptions), locationTemplateParser);
+            var fileSystemStorage = new FileSystemStorage(Options.Create(storageOptions), locationTemplateParser, mockLogger.Object);
 
             var stream = new MemoryStream();
 

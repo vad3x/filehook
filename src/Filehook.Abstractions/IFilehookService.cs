@@ -10,26 +10,27 @@ namespace Filehook.Abstractions
         Task<bool> ExistsAsync<TEntity>(
             TEntity entity,
             Expression<Func<TEntity, string>> propertyExpression,
-            string id,
             string style) where TEntity : class;
 
         IDictionary<string, string> GetUrls<TEntity>(
             TEntity entity,
-            Expression<Func<TEntity, string>> propertyExpression,
-            string id) where TEntity : class;
+            Expression<Func<TEntity, string>> propertyExpression) where TEntity : class;
 
         string GetUrl<TEntity>(
             TEntity entity,
             Expression<Func<TEntity, string>> propertyExpression,
-            string id,
             string style) where TEntity : class;
 
-        Task<IDictionary<string, string>> SaveAsync<TEntity>(
+        Task<IDictionary<string, FilehookSavingResult>> SaveAsync<TEntity>(
             TEntity entity,
             Expression<Func<TEntity, string>> propertyExpression,
-            byte[] bytes,
-            string id) where TEntity : class;
+            string filename,
+            byte[] bytes) where TEntity : class;
 
         bool CanProccess(string fileExtension, byte[] bytes);
+
+        Task RemoveAsync<TEntity>(
+            TEntity entity,
+            Expression<Func<TEntity, string>> propertyExpression) where TEntity : class;
     }
 }

@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Options;
 using System.IO;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 
 namespace Filehook.Storages.FileSystem
 {
@@ -11,15 +12,19 @@ namespace Filehook.Storages.FileSystem
 
         private readonly ILocationTemplateParser _locationTemplateParser;
 
+        private readonly ILogger _logger;
+
         public FileSystemStorage(
             IOptions<FileSystemStorageOptions> options,
-            ILocationTemplateParser locationTemplateParser)
+            ILocationTemplateParser locationTemplateParser,
+            ILogger<FileSystemStorage> logger)
         {
             _options = options.Value;
             _locationTemplateParser = locationTemplateParser;
+            _logger = logger;
         }
 
-        public string Name { get { return FileSystemConsts.FileSystemStorageName; } }
+        public string Name => _options.Name;
 
         // TODO tests
         public string GetUrl(string relativeLocation)
@@ -30,7 +35,7 @@ namespace Filehook.Storages.FileSystem
         // TODO tests
         public Task<bool> ExistsAsync(string relativeLocation)
         {
-            var location = _locationTemplateParser.SetBase(relativeLocation, _options.CdnUrl);
+            var location = _locationTemplateParser.SetBase(relativeLocation, _options.BasePath);
 
             return Task.FromResult(File.Exists(location));
         }
@@ -43,6 +48,8 @@ namespace Filehook.Storages.FileSystem
 
             if (!Directory.Exists(directoryPath))
             {
+                _logger.LogDebug("Created empty directory '{0}'", directoryPath);
+
                 Directory.CreateDirectory(directoryPath);
             }
 
@@ -52,7 +59,28 @@ namespace Filehook.Storages.FileSystem
                 await stream.CopyToAsync(fileStream);
             }
 
+            _logger.LogInformation("Saved file on location '{0}'", location);
+
             return location;
+        }
+
+        // TODO tests
+        public Task<bool> RemoveAsync(string relativeLocation)
+        {
+            var location = _locationTemplateParser.SetBase(relativeLocation, _options.BasePath);
+
+            if (File.Exists(location))
+            {
+                File.Delete(location);
+
+                _logger.LogInformation("Removed file from location '{0}'", location);
+
+                return Task.FromResult(true);
+            }
+
+            _logger.LogDebug("File on location '{0}' is not found", location);
+
+            return Task.FromResult(false);
         }
     }
 }

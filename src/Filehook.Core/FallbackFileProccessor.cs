@@ -3,6 +3,7 @@ using Microsoft.Extensions.Options;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Filehook.Core
 {
@@ -25,9 +26,15 @@ namespace Filehook.Core
             return _options.AllowedExtensions.Any(e => e == fileExtension);
         }
 
-        public IDictionary<string, MemoryStream> Proccess(byte[] bytes, IEnumerable<FileStyle> styles)
+        public Task<IEnumerable<FileProccessingResult>> ProccessAsync(byte[] bytes, IEnumerable<FileStyle> styles)
         {
-            return styles.ToDictionary(style => style.Name, style => new MemoryStream(bytes, false));
+            var result = styles.Select(style => new FileProccessingResult
+            {
+                Style = style,
+                Stream = new MemoryStream(bytes, false)
+            });
+
+            return Task.FromResult(result);
         }
     }
 }

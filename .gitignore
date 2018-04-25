@@ -10,6 +10,7 @@
 *.docstates
 *.dat
 *.log
+*.userprefs
 
 [Oo]bj/
 [Bb]in/
@@ -29,6 +30,12 @@ DataSources
 *.lock.json
 .vs/
 
-./test/TestResults
+test/TestResults
 
-sample/Filehook.Samples.AspNetCoreMvc/wwwroot/lib
+sample/Filehook.Samples.AspNetCoreMvc/wwwroot/lib/*
+!sample/Filehook.Samples.AspNetCoreMvc/wwwroot/lib/.gitkeep
+
+sample/Filehook.Samples.AspNetCoreMvc/wwwroot/public/*
+!sample/Filehook.Samples.AspNetCoreMvc/wwwroot/public/.gitkeep
+
+artifacts

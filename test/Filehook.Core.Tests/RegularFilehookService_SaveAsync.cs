@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Xunit;
+using Microsoft.Extensions.Options;
 
 namespace Filehook.Core.Tests
 {
@@ -27,6 +28,10 @@ namespace Filehook.Core.Tests
             var mockFileProccessor = new Mock<IFileProccessor>();
             var mockLocationTemplateParser = new Mock<ILocationTemplateParser>();
             var mockLocationParamFormatter = new Mock<ILocationParamFormatter>();
+            var mockParamNameResolver = new Mock<IParamNameResolver>();
+            var mockEntityIdResolver = new Mock<IEntityIdResolver>();
+
+            var options = new FilehookOptions();
 
             mockFileStorageNameResolver
                 .Setup(x => x.Resolve(It.IsAny<Expression<Func<EntityWithoutStorage, string>>>()))
@@ -52,9 +57,11 @@ namespace Filehook.Core.Tests
                 .Setup(x => x.CanProccess(It.IsAny<string>(), It.IsAny<byte[]>()))
                 .Returns(true);
 
-            mockFileProccessor
-                .Setup(x => x.Proccess(It.IsAny<byte[]>(), It.IsAny<IEnumerable<FileStyle>>()))
-                .Returns(new Dictionary<string, MemoryStream> { { style, new MemoryStream(data, false) } });
+            // TODO
+            // var fileProccessorResult = new IEnumerable<FileProccessingResult> { { style, new MemoryStream(data, false) } };
+            // mockFileProccessor
+            //     .Setup(x => x.ProccessAsync(It.IsAny<byte[]>(), It.IsAny<IEnumerable<FileStyle>>()))
+            //     .Returns(Task.FromResult(fileProccessorResult));
 
             mockLocationTemplateParser
               .Setup(x => x.Parse(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
@@ -65,19 +72,22 @@ namespace Filehook.Core.Tests
                 .Returns("formattedValue");
 
             var regularFilehookService = new RegularFilehookService(
+                Options.Create(options),
                 mockFileStorageNameResolver.Object,
                 mockFileStyleResolver.Object,
                 new[] { mockFileStorage.Object },
                 new[] { mockFileProccessor.Object },
                 mockLocationTemplateParser.Object,
-                mockLocationParamFormatter.Object);
+                mockLocationParamFormatter.Object,
+                mockParamNameResolver.Object,
+                mockEntityIdResolver.Object);
 
             var entity = new EntityWithoutStorage
             {
-                Name = "name1.ext"
+                Id = "1"
             };
 
-            var result = regularFilehookService.SaveAsync(entity, e => e.Name, data, 1.ToString());\
+            var result = regularFilehookService.SaveAsync(entity, e => e.Name, "name1.ext", data);
 
             // TODO verify
         }

@@ -1,28 +1,23 @@
-version: 1.0.0-alpha-{build}
+image: Visual Studio 2017
+version: 1.0.0-beta-{build}
 pull_requests:
   do_not_increment_build_number: true
 build_script:
-- ps: >-
-    dotnet restore
+  - ps: $buildNumber = "{0:d8}" -f [convert]::ToInt32($env:APPVEYOR_BUILD_NUMBER)
+  - ps: Write-Host "Version Suffix:" $buildNumber
+  - ps: dotnet restore
+  - ps: dotnet pack -c Release /p:BuildNumber=$buildNumber --include-symbols --output ../../nupkgs/beta
 
-    dotnet pack src/Filehook.Core -o ./artifacts -c Release --version-suffix $env:APPVEYOR_BUILD_NUMBER
-
-    dotnet pack src/Filehook.Proccessors.Image.ImageSharpProccessor -c Release -o ./artifacts --version-suffix $env:APPVEYOR_BUILD_NUMBER
-
-    dotnet pack src/Filehook.Storages.FileSystem -c Release -o ./artifacts --version-suffix $env:APPVEYOR_BUILD_NUMBER
-
-    dotnet pack src/Filehook.AspNetCore.Http -c Release -o ./artifacts --version-suffix $env:APPVEYOR_BUILD_NUMBER
-
-test_script:
-- ps: dir test | % { dotnet test $_.FullName }
+# test_script:
+# - ps: dir test | % { dotnet test $_.FullName }
 
 artifacts:
-- path: .\artifacts\**\*.nupkg
-  name: NuGet
+  - path: ./nupkgs/beta/**/*.nupkg
+    name: NuGet
 
 deploy:
   - provider: NuGet
-    name: MyGet Alpha Chanel
+    name: MyGet Alpha Channel
     on:
       branch: dev
     server: https://www.myget.org/F/filehook/api/v2/package
@@ -30,4 +25,13 @@ deploy:
       secure: uUSg50F5ec1bMyNNMvGbFfh6uZa7ItsP4Ug5TVeQPvmpYbFcov2Z1uXy7doyyd+w
     skip_symbols: false
     symbol_server: https://www.myget.org/F/filehook/symbols/api/v2/package
+    artifact: /.*\.nupkg/
+  - provider: NuGet
+    name: NuGet Channel
+    on:
+      branch: master
+    server: https://api.nuget.org/v3/index.json
+    api_key:
+      secure: 8dZVSJGj14GW04Rwa+Qk9UwYkBeeApG5PA32GBBDI3iS5TXUZ8i4ZugU61gCLh+Z
+    skip_symbols: true
     artifact: /.*\.nupkg/

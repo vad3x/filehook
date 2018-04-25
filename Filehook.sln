@@ -1,7 +1,6 @@
-﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.26730.16
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Src", "Src", "{647C14F5-7DF2-4A77-9A20-421516BC3274}"
 EndProject
@@ -10,36 +9,49 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.editorconfig = .editorconfig
 		.gitignore = .gitignore
 		appveyor.yml = appveyor.yml
-		global.json = global.json
 		nuget.config = nuget.config
 		readme.md = readme.md
 	EndProjectSection
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Filehook.Abstractions", "src\Filehook.Abstractions\Filehook.Abstractions.xproj", "{D77D28C7-CB75-4CB3-8BB3-F9B0A654F91C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Filehook.Abstractions", "src\Filehook.Abstractions\Filehook.Abstractions.csproj", "{D77D28C7-CB75-4CB3-8BB3-F9B0A654F91C}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{FE345C39-62B0-4BD5-826C-8AD4C79D1654}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Filehook.Storages.FileSystem.Tests", "test\Filehook.Storages.FileSystem.Tests\Filehook.Storages.FileSystem.Tests.xproj", "{80990289-E848-4EBB-AB0D-2CDD8B941EF0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Filehook.Storages.FileSystem.Tests", "test\Filehook.Storages.FileSystem.Tests\Filehook.Storages.FileSystem.Tests.csproj", "{80990289-E848-4EBB-AB0D-2CDD8B941EF0}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Filehook.Storages.FileSystem", "src\Filehook.Storages.FileSystem\Filehook.Storages.FileSystem.xproj", "{A056EAA9-9337-4181-AE01-863E42B42168}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Filehook.Storages.FileSystem", "src\Filehook.Storages.FileSystem\Filehook.Storages.FileSystem.csproj", "{A056EAA9-9337-4181-AE01-863E42B42168}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Filehook.Proccessors.Image.Abstractions", "src\Filehook.Proccessors.Image.Abstractions\Filehook.Proccessors.Image.Abstractions.xproj", "{E268CBDC-64BC-44C2-88D4-B68CE5CE4947}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Filehook.Proccessors.Image.Abstractions", "src\Filehook.Proccessors.Image.Abstractions\Filehook.Proccessors.Image.Abstractions.csproj", "{E268CBDC-64BC-44C2-88D4-B68CE5CE4947}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Filehook.Core", "src\Filehook.Core\Filehook.Core.xproj", "{D49F825B-1BCC-4B0E-80DF-A8088300C12A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Filehook.Core", "src\Filehook.Core\Filehook.Core.csproj", "{D49F825B-1BCC-4B0E-80DF-A8088300C12A}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Filehook.Core.Tests", "test\Filehook.Core.Tests\Filehook.Core.Tests.xproj", "{642CB992-E0D3-49AA-8D51-569376B961B7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Filehook.Core.Tests", "test\Filehook.Core.Tests\Filehook.Core.Tests.csproj", "{642CB992-E0D3-49AA-8D51-569376B961B7}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Filehook.Proccessors.Image.Abstractions.Tests", "test\Filehook.Proccessors.Image.Abstractions.Tests\Filehook.Proccessors.Image.Abstractions.Tests.xproj", "{973C22D7-0255-47DC-A5A0-CAED03E610E7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Filehook.Proccessors.Image.Abstractions.Tests", "test\Filehook.Proccessors.Image.Abstractions.Tests\Filehook.Proccessors.Image.Abstractions.Tests.csproj", "{973C22D7-0255-47DC-A5A0-CAED03E610E7}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sample", "Sample", "{71E8A7A2-E062-4B46-99E8-B37A3A49DBE8}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Filehook.Samples.AspNetCoreMvc", "sample\Filehook.Samples.AspNetCoreMvc\Filehook.Samples.AspNetCoreMvc.xproj", "{9434BDAF-17D9-4675-AFA7-8D4A72191BAE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Filehook.Samples.AspNetCoreMvc", "sample\Filehook.Samples.AspNetCoreMvc\Filehook.Samples.AspNetCoreMvc.csproj", "{9434BDAF-17D9-4675-AFA7-8D4A72191BAE}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Filehook.Proccessors.Image.ImageSharpProccessor", "src\Filehook.Proccessors.Image.ImageSharpProccessor\Filehook.Proccessors.Image.ImageSharpProccessor.xproj", "{87EC6062-BACA-4D15-9E0C-616CDCC21837}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Filehook.Proccessors.Image.ImageSharpProccessor", "src\Filehook.Proccessors.Image.ImageSharpProccessor\Filehook.Proccessors.Image.ImageSharpProccessor.csproj", "{87EC6062-BACA-4D15-9E0C-616CDCC21837}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Filehook.Proccessors.Image.ImageSharpProccessor.Tests", "test\Filehook.Proccessors.Image.ImageSharpProccessor.Tests\Filehook.Proccessors.Image.ImageSharpProccessor.Tests.xproj", "{6659E373-106D-4D33-AD95-2E79A22C7FCF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Filehook.Proccessors.Image.ImageSharpProccessor.Tests", "test\Filehook.Proccessors.Image.ImageSharpProccessor.Tests\Filehook.Proccessors.Image.ImageSharpProccessor.Tests.csproj", "{6659E373-106D-4D33-AD95-2E79A22C7FCF}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Filehook.AspNetCore.Http", "src\Filehook.AspNetCore.Http\Filehook.AspNetCore.Http.xproj", "{47C4E063-23FF-4C29-BE5E-B14A18DFAB8A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Filehook.AspNetCore.Http", "src\Filehook.AspNetCore.Http\Filehook.AspNetCore.Http.csproj", "{47C4E063-23FF-4C29-BE5E-B14A18DFAB8A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Filehook", "src\Filehook\Filehook.csproj", "{38F9AC0D-6DAD-4F38-8FFA-31020364BEE5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Filehook.DataAnnotations", "src\Filehook.DataAnnotations\Filehook.DataAnnotations.csproj", "{0ABE5E6A-3F9B-414A-8300-577E217FCD45}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Filehook.Storages.S3", "src\Filehook.Storages.S3\Filehook.Storages.S3.csproj", "{F8212133-1B0C-455B-9755-1D3F60315261}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Filehook.DataAnnotations.Tests", "test\Filehook.DataAnnotations.Tests\Filehook.DataAnnotations.Tests.csproj", "{3223128A-9821-465B-A47C-9650FA38B965}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Filehook.DataAnnotations.Abstractions", "src\Filehook.DataAnnotations.Abstractions\Filehook.DataAnnotations.Abstractions.csproj", "{81F7BEC6-D17C-4233-92AF-17E9686B0B6F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Filehook.Metadata", "src\Filehook.Metadata\Filehook.Metadata.csproj", "{F3D7C4F5-3D45-4567-8996-D5D7E7C1F6AE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Filehook.Storages.Ssh", "src\Filehook.Storages.Ssh\Filehook.Storages.Ssh.csproj", "{6E94BFD0-5BE7-4664-87C8-98B93D5BC3CF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -91,6 +103,34 @@ Global
 		{47C4E063-23FF-4C29-BE5E-B14A18DFAB8A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{47C4E063-23FF-4C29-BE5E-B14A18DFAB8A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{47C4E063-23FF-4C29-BE5E-B14A18DFAB8A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{38F9AC0D-6DAD-4F38-8FFA-31020364BEE5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{38F9AC0D-6DAD-4F38-8FFA-31020364BEE5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{38F9AC0D-6DAD-4F38-8FFA-31020364BEE5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{38F9AC0D-6DAD-4F38-8FFA-31020364BEE5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0ABE5E6A-3F9B-414A-8300-577E217FCD45}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0ABE5E6A-3F9B-414A-8300-577E217FCD45}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0ABE5E6A-3F9B-414A-8300-577E217FCD45}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0ABE5E6A-3F9B-414A-8300-577E217FCD45}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F8212133-1B0C-455B-9755-1D3F60315261}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F8212133-1B0C-455B-9755-1D3F60315261}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F8212133-1B0C-455B-9755-1D3F60315261}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F8212133-1B0C-455B-9755-1D3F60315261}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3223128A-9821-465B-A47C-9650FA38B965}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3223128A-9821-465B-A47C-9650FA38B965}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3223128A-9821-465B-A47C-9650FA38B965}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3223128A-9821-465B-A47C-9650FA38B965}.Release|Any CPU.Build.0 = Release|Any CPU
+		{81F7BEC6-D17C-4233-92AF-17E9686B0B6F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{81F7BEC6-D17C-4233-92AF-17E9686B0B6F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{81F7BEC6-D17C-4233-92AF-17E9686B0B6F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{81F7BEC6-D17C-4233-92AF-17E9686B0B6F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F3D7C4F5-3D45-4567-8996-D5D7E7C1F6AE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F3D7C4F5-3D45-4567-8996-D5D7E7C1F6AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F3D7C4F5-3D45-4567-8996-D5D7E7C1F6AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F3D7C4F5-3D45-4567-8996-D5D7E7C1F6AE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6E94BFD0-5BE7-4664-87C8-98B93D5BC3CF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6E94BFD0-5BE7-4664-87C8-98B93D5BC3CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6E94BFD0-5BE7-4664-87C8-98B93D5BC3CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6E94BFD0-5BE7-4664-87C8-98B93D5BC3CF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -107,5 +147,15 @@ Global
 		{87EC6062-BACA-4D15-9E0C-616CDCC21837} = {647C14F5-7DF2-4A77-9A20-421516BC3274}
 		{6659E373-106D-4D33-AD95-2E79A22C7FCF} = {FE345C39-62B0-4BD5-826C-8AD4C79D1654}
 		{47C4E063-23FF-4C29-BE5E-B14A18DFAB8A} = {647C14F5-7DF2-4A77-9A20-421516BC3274}
+		{38F9AC0D-6DAD-4F38-8FFA-31020364BEE5} = {647C14F5-7DF2-4A77-9A20-421516BC3274}
+		{0ABE5E6A-3F9B-414A-8300-577E217FCD45} = {647C14F5-7DF2-4A77-9A20-421516BC3274}
+		{F8212133-1B0C-455B-9755-1D3F60315261} = {647C14F5-7DF2-4A77-9A20-421516BC3274}
+		{3223128A-9821-465B-A47C-9650FA38B965} = {FE345C39-62B0-4BD5-826C-8AD4C79D1654}
+		{81F7BEC6-D17C-4233-92AF-17E9686B0B6F} = {647C14F5-7DF2-4A77-9A20-421516BC3274}
+		{F3D7C4F5-3D45-4567-8996-D5D7E7C1F6AE} = {647C14F5-7DF2-4A77-9A20-421516BC3274}
+		{6E94BFD0-5BE7-4664-87C8-98B93D5BC3CF} = {647C14F5-7DF2-4A77-9A20-421516BC3274}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {825AF119-5D16-467C-AB8F-EC8F16A77B66}
 	EndGlobalSection
 EndGlobal
