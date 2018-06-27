@@ -2,8 +2,8 @@
   <Import Project=".\version.props" />
   <PropertyGroup>
     <Authors>Vadim Orekhov</Authors>
-    <Product>IPL Schema</Product>
-    <Description>IPL Schema</Description>
+    <Product>Filehook</Product>
+    <Description></Description>
     <Copyright>Vadim Orekhov</Copyright>
 
     <VersionSuffix Condition="'$(BuildNumber)' != ''">-beta$(BuildNumber)</VersionSuffix>
