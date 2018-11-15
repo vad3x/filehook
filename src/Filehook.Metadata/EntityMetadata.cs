@@ -5,7 +5,7 @@ namespace Filehook.Metadata
 {
     public abstract class EntityMetadata
     {
-        private Dictionary<string, PropertyMetadata> _propertyMetadatas = new Dictionary<string, PropertyMetadata>();
+        private readonly Dictionary<string, PropertyMetadata> _propertyMetadatas = new Dictionary<string, PropertyMetadata>();
 
         public string Name { get; internal set; }
 

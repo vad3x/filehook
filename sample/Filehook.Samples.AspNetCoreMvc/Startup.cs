@@ -1,10 +1,12 @@
 using System.IO;
 using Filehook.Proccessors.Image.Abstractions;
+using Filehook.Samples.AspNetCoreMvc.Infrastructure;
 using Filehook.Samples.AspNetCoreMvc.Models;
 using Filehook.Storages.FileSystem;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
@@ -31,6 +33,9 @@ namespace WebApplication
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
+
+            services.AddDbContext<ExampleDbContext>(
+                o => o.UseMySql(Configuration.GetConnectionString("ExampleConnection")));
 
             services.AddFilehook(FileSystemConsts.FileSystemStorageName)
                 .AddImageSharpImageProccessor()

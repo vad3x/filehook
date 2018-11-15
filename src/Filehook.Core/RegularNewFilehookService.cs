@@ -6,13 +6,16 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Threading.Tasks;
 
+using Dawn;
+
 using Filehook.Abstractions;
+using Filehook.Abstractions.Stores;
 
 using Microsoft.Extensions.Options;
 
 namespace Filehook.Core
 {
-    public class RegularFilehookService : IFilehookService
+    public class RegularNewFilehookService : INewFilehookService
     {
         private readonly FilehookOptions _options;
 
@@ -28,8 +31,11 @@ namespace Filehook.Core
 
         private readonly IParamNameResolver _paramNameResolver;
         private readonly IEntityIdResolver _entityIdResolver;
+        private readonly IBlobStore _blobStore;
+        private readonly IAttachmentStore _attachmentStore;
+        private readonly IEnumerable<IBlobMetadataExtender> _blobMetadataExtenders;
 
-        public RegularFilehookService(
+        public RegularNewFilehookService(
             IOptions<FilehookOptions> fileStorageNameResolverOptions,
             IFileStorageNameResolver fileStorageNameResolver,
             IFileStyleResolver fileStyleResolver,
@@ -38,7 +44,10 @@ namespace Filehook.Core
             ILocationTemplateParser locationTemplateParser,
             ILocationParamFormatter locationParamFormatter,
             IParamNameResolver paramNameResolver,
-            IEntityIdResolver entityIdResolver)
+            IEntityIdResolver entityIdResolver,
+            IBlobStore blobStore,
+            IAttachmentStore attachmentStore,
+            IEnumerable<IBlobMetadataExtender> blobMetadataExtenders)
         {
             if (fileStorageNameResolverOptions == null)
             {
@@ -57,49 +66,135 @@ namespace Filehook.Core
 
             _paramNameResolver = paramNameResolver ?? throw new ArgumentNullException(nameof(paramNameResolver));
             _entityIdResolver = entityIdResolver ?? throw new ArgumentNullException(nameof(entityIdResolver));
+            _blobStore = Guard.Argument(blobStore, nameof(blobStore)).NotNull().Value;
+            _attachmentStore = Guard.Argument(attachmentStore, nameof(attachmentStore)).NotNull().Value;
+            _blobMetadataExtenders = Guard.Argument(blobMetadataExtenders, nameof(blobMetadataExtenders)).NotNull().Value;
         }
 
-        public Task<bool> ExistsAsync<TEntity>(
+        public Task<FilehookBlob[]> GetBlobsAsync<TEntity>(
             TEntity entity,
-            Expression<Func<TEntity, string>> propertyExpression,
-            string style) where TEntity : class
+            string name) where TEntity : class
         {
+            Guard.Argument(entity, nameof(entity)).NotNull();
+            Guard.Argument(name, nameof(name)).NotNull().NotEmpty();
+            Guard.Argument(entity, nameof(entity)).NotNull();
+
             if (entity == null)
             {
                 throw new ArgumentNullException(nameof(entity));
             }
 
-            if (propertyExpression == null)
-            {
-                throw new ArgumentNullException(nameof(propertyExpression));
-            }
-
-            var memberExpression = propertyExpression.Body as MemberExpression;
-            if (memberExpression == null)
-            {
-                throw new ArgumentException($"'{propertyExpression}': is not a valid expression for this method");
-            }
-
-            var storage = GetStorage(propertyExpression);
-
-            var filename = GetFilename(entity, propertyExpression);
-
             var className = _locationParamFormatter.Format(_paramNameResolver.Resolve(typeof(TEntity).GetTypeInfo()));
-            var propertyName = _locationParamFormatter.Format(_paramNameResolver.Resolve(memberExpression.Member));
             var objectId = _entityIdResolver.Resolve(entity);
             if (objectId == null)
             {
-                throw new ArgumentNullException(nameof(objectId));
+                throw new NotImplementedException("Configuration error, `objectId` has not beed mapped.");
             }
+
+            return _attachmentStore.GetBlobsAsync(name, objectId, className);
+        }
+
+        public async Task<FilehookBlob> SaveAsync<TEntity>(TEntity entity, string name, FilehookFileInfo fileInfo) where TEntity : class
+        {
+            Guard.Argument(entity, nameof(entity)).NotNull();
+            Guard.Argument(name, nameof(name)).NotNull().NotEmpty();
+
+            var objectId = _entityIdResolver.Resolve(entity);
+            if (objectId == null)
+            {
+                throw new ArgumentException($"{nameof(objectId)} is null");
+            }
+
+            var storageName = _options.DefaultStorageName;
+            var storage = _storages.FirstOrDefault(s => s.Name == storageName);
+            if (storage == null)
+            {
+                throw new NotSupportedException($"Storage with name `{storageName}` has not been registered");
+            }
+
+            var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(fileInfo.FileName);
+            var fileExtension = Path.GetExtension(fileInfo.FileName).TrimStart('.');
+
+            var newFileName = $"{fileNameWithoutExtension.GenerateSlug()}.{fileExtension}";
+
+            var key = Guid.NewGuid().ToString("n");
+
+            var className = _locationParamFormatter.Format(_paramNameResolver.Resolve(typeof(TEntity).GetTypeInfo()));
 
             var relativeLocation = _locationTemplateParser.Parse(
                 className: className,
-                propertyName: propertyName,
+                propertyName: name,
                 objectId: objectId,
-                style: style,
-                filename: filename);
+                style: "original",
+                filename: newFileName);
 
-            return storage.ExistsAsync(relativeLocation);
+            // TODO get metadata
+
+            var absoluteLocation = await storage.SaveAsync(relativeLocation, fileInfo.FileStream)
+                .ConfigureAwait(false);
+
+            // TODO
+            FilehookBlob blob = await _blobStore.CreateAsync(key, newFileName, fileInfo.ContentType, 0, "")
+                .ConfigureAwait(false);
+
+            //var fileProccessor = _fileProccessors.FirstOrDefault(p => p.CanProccess(fileExtension, bytes));
+            //if (fileProccessor == null)
+            //{
+            //    throw new NotSupportedException($"Processor for file '{fileExtension}' has not been registered");
+            //}
+
+            //var styles = _fileStyleResolver.Resolve(propertyExpression);
+
+            //var proccessingResults = await fileProccessor.ProccessAsync(bytes, styles);
+
+            //var className = _locationParamFormatter.Format(_paramNameResolver.Resolve(typeof(TEntity).GetTypeInfo()));
+            //var propertyName = _locationParamFormatter.Format(_paramNameResolver.Resolve(memberExpression.Member));
+
+            //var oldFilename = GetFilename(entity, propertyExpression);
+
+            //var result = new Dictionary<string, FilehookSavingResult>();
+            //foreach (var proccessed in proccessingResults)
+            //{
+            //    var relativeLocation = _locationTemplateParser.Parse(
+            //        className: className,
+            //        propertyName: propertyName,
+            //        objectId: objectId,
+            //        style: proccessed.Style.Name,
+            //        filename: newFilename);
+
+            //    using (proccessed.Stream)
+            //    {
+            //        var absoluteLocation = await storage.SaveAsync(relativeLocation, proccessed.Stream);
+
+            //        var url = storage.GetUrl(relativeLocation);
+
+            //        result.Add(proccessed.Style.Name, new FilehookSavingResult
+            //        {
+            //            Location = absoluteLocation,
+            //            Url = url,
+            //            ProccessingMeta = proccessed.Meta
+            //        });
+            //    }
+
+            //    if (!string.IsNullOrWhiteSpace(oldFilename) && oldFilename != newFilename)
+            //    {
+            //        var oldRelativeLocation = _locationTemplateParser.Parse(
+            //            className: className,
+            //            propertyName: propertyName,
+            //            objectId: objectId,
+            //            style: proccessed.Style.Name,
+            //            filename: oldFilename);
+
+            //        await storage.RemoveAsync(oldRelativeLocation);
+            //    }
+            //}
+
+            //if (memberExpression.Member is PropertyInfo propertyInfo)
+            //{
+            //    propertyInfo.SetValue(entity, newFilename);
+            //}
+
+            //return result;
         }
 
         public IDictionary<string, string> GetUrls<TEntity>(

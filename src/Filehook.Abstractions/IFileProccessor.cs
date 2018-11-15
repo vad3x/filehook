@@ -1,8 +1,13 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Filehook.Abstractions
 {
+    public interface IBlobMetadataExtender
+    {
+        // TODO
+    }
+
     public interface IFileProccessor
     {
         bool CanProccess(string fileExtension, byte[] bytes);

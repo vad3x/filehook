@@ -19,8 +19,8 @@ namespace System
 
         public static string RemoveAccent(this string txt)
         {
-            var bytes = System.Text.Encoding.UTF8.GetBytes(txt);
-            return System.Text.Encoding.ASCII.GetString(bytes);
+            var bytes = Text.Encoding.UTF8.GetBytes(txt);
+            return Text.Encoding.ASCII.GetString(bytes);
         }
     }
 }

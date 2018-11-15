@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
@@ -32,5 +32,21 @@ namespace Filehook.Abstractions
         Task RemoveAsync<TEntity>(
             TEntity entity,
             Expression<Func<TEntity, string>> propertyExpression) where TEntity : class;
+    }
+
+    public interface INewFilehookService
+    {
+        Task<FilehookBlob[]> GetBlobsAsync<TEntity>(
+            TEntity entity,
+            string name) where TEntity : class;
+
+        Task<FilehookBlob> SaveAsync<TEntity>(
+            TEntity entity,
+            string name,
+            FilehookFileInfo fileInfo) where TEntity : class;
+
+        //Task RemoveAsync<TEntity>(
+        //    TEntity entity,
+        //    string name) where TEntity : class;
     }
 }

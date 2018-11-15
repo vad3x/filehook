@@ -1,9 +1,14 @@
 using Filehook.Abstractions;
 using Filehook.Proccessors.Image.ImageSharpProccessor;
+
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+
 using Moq;
+
 using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
+
 using Xunit;
 
 namespace Filehook.Proccessors.Image.Abstractions.Tests
@@ -49,7 +54,6 @@ namespace Filehook.Proccessors.Image.Abstractions.Tests
             var result = imageSharpImageProccessor.ProccessAsync(bytes, new FileStyle[0]);
 
             Assert.NotNull(result);
-            //Assert.Equal(bytes, result.ToArray());
         }
     }
 }

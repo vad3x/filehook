@@ -1,11 +1,11 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace Filehook.Metadata
 {
     public class ModelMetadata
     {
-        private Dictionary<string, EntityMetadata> _entityMetadatas = new Dictionary<string, EntityMetadata>();
+        private readonly Dictionary<string, EntityMetadata> _entityMetadatas = new Dictionary<string, EntityMetadata>();
 
         public EntityMetadata<TEntity> AddType<TEntity>()
         {

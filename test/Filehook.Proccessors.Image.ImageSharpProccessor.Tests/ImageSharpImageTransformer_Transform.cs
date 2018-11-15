@@ -1,5 +1,8 @@
 using Filehook.Proccessors.Image.ImageSharpProccessor;
+
 using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
+
 using Xunit;
 
 namespace Filehook.Proccessors.Image.Abstractions.Tests.ImageSharpProccessor
