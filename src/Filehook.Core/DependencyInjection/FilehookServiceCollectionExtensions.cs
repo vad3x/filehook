@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Filehook.Abstractions;
 using Filehook.Core;
 using Filehook.Core.DependencyInjection;
@@ -20,6 +20,7 @@ namespace Microsoft.Extensions.DependencyInjection
             builder.Services.Configure(setupAction);
 
             builder.Services.AddTransient<IFilehookService, RegularFilehookService>();
+            builder.Services.AddTransient<INewFilehookService, RegularNewFilehookService>();
 
             return builder;
         }

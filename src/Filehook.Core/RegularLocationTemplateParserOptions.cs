@@ -1,7 +1,7 @@
-﻿namespace Filehook.Core
+namespace Filehook.Core
 {
     public class RegularLocationTemplateParserOptions
     {
-        public string LocationTemplate { get; set; } = ":base/public/:objectClass/:objectId/:propertyName/:style/:filename";
+        public string LocationTemplate { get; set; } = ":base/public/:objectClass/:objectId/:propertyName/:filename";
     }
 }

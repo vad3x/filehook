@@ -3,10 +3,6 @@ using System.Threading.Tasks;
 
 namespace Filehook.Abstractions
 {
-    public interface IBlobMetadataExtender
-    {
-        // TODO
-    }
 
     public interface IFileProccessor
     {

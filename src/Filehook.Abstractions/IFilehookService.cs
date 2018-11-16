@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Filehook.Abstractions
@@ -21,7 +22,7 @@ namespace Filehook.Abstractions
             Expression<Func<TEntity, string>> propertyExpression,
             string style) where TEntity : class;
 
-        Task<IDictionary<string, FilehookSavingResult>> SaveAsync<TEntity>(
+        Task<IDictionary<string, FilehookSavingResult1>> SaveAsync<TEntity>(
             TEntity entity,
             Expression<Func<TEntity, string>> propertyExpression,
             string filename,
@@ -38,15 +39,13 @@ namespace Filehook.Abstractions
     {
         Task<FilehookBlob[]> GetBlobsAsync<TEntity>(
             TEntity entity,
-            string name) where TEntity : class;
+            string name,
+            CancellationToken cancellationToken = default) where TEntity : class;
 
-        Task<FilehookBlob> SaveAsync<TEntity>(
+        Task<FilehookSavingResult> SaveAsync<TEntity>(
             TEntity entity,
             string name,
-            FilehookFileInfo fileInfo) where TEntity : class;
-
-        //Task RemoveAsync<TEntity>(
-        //    TEntity entity,
-        //    string name) where TEntity : class;
+            FilehookFileInfo fileInfo,
+            CancellationToken cancellationToken = default) where TEntity : class;
     }
 }

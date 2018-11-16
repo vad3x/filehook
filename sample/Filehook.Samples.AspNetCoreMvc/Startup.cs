@@ -1,4 +1,5 @@
 using System.IO;
+using System.Reflection;
 using Filehook.Proccessors.Image.Abstractions;
 using Filehook.Samples.AspNetCoreMvc.Infrastructure;
 using Filehook.Samples.AspNetCoreMvc.Models;
@@ -34,37 +35,24 @@ namespace WebApplication
         {
             services.AddMvc();
 
+            var migrationsAssembly = typeof(Startup).GetTypeInfo().Assembly.GetName().Name;
+
             services.AddDbContext<ExampleDbContext>(
                 o => o.UseMySql(Configuration.GetConnectionString("ExampleConnection")));
 
             services.AddFilehook(FileSystemConsts.FileSystemStorageName)
+                .AddEntityFrameworkStores(x => x.UseMySql(Configuration.GetConnectionString("ExampleConnection"), o => o.MigrationsAssembly(migrationsAssembly)))
                 .AddImageSharpImageProccessor()
                 .AddFallbackFileProccessor()
                 .AddFileSystemStorage(options =>
                 {
                     options.BasePath = "./wwwroot";
-                    options.CdnUrl = "http://localhost:5000";
+                    options.HostUrl = "http://localhost:5000";
                 })
                 .AddMetadata(builder => {
                     builder.Entity<Article>(entity => {
                         entity.HasId(x => x.Id.ToString());
                         entity.HasName("MyArticle");
-
-                        var decodeOptions = new ImageEncodeOptions { MimeType = "image/jpeg" };
-
-                        entity.Property(x => x.CoverImageFileName)
-                            .HasPostfix("FileName")
-                            .HasImageStyle(new ImageStyle("thumb", new ImageResizeOptions { Width = 310 }, decodeOptions))
-                            .HasImageStyle(new ImageStyle("retina_thumb", new ImageResizeOptions { Height = 220 }, decodeOptions))
-                            .HasImageStyle(new ImageStyle("iphone", new ImageResizeOptions { Width = 640, Height = 1136 }, decodeOptions))
-                            .HasImageStyle(new ImageStyle("ipad", new ImageResizeOptions { Width = 768, Height = 1024 }, decodeOptions))
-                            .HasImageStyle(new ImageStyle("ipad_retina", new ImageResizeOptions { Width = 1536, Height = 2048 }, decodeOptions))
-                            .HasImageStyle(new ImageStyle("desktop_hd", new ImageResizeOptions { Height = 720 }, decodeOptions))
-                            .HasImageStyle(new ImageStyle("desktop_full_hd", new ImageResizeOptions { Height = 1080, Mode = ImageResizeMode.ShrinkLarger }, decodeOptions))
-                            .HasImageStyle(new ImageStyle("desktop_retina", new ImageResizeOptions { Height = 1080, Mode = ImageResizeMode.ShrinkLarger }, decodeOptions));
-
-                        entity.Property(x => x.AttachmentFileName)
-                            .HasName("Attachment");
                     });
                 });
         }

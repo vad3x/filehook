@@ -89,7 +89,7 @@ namespace Filehook.Core
             var objectId = _entityIdResolver.Resolve(entity);
             if (objectId == null)
             {
-                throw new ArgumentNullException(nameof(objectId));
+                throw new ArgumentException(nameof(objectId));
             }
 
             var relativeLocation = _locationTemplateParser.Parse(
@@ -167,7 +167,7 @@ namespace Filehook.Core
         }
 
         // TODO tests
-        public async Task<IDictionary<string, FilehookSavingResult>> SaveAsync<TEntity>(
+        public async Task<IDictionary<string, FilehookSavingResult1>> SaveAsync<TEntity>(
             TEntity entity,
             Expression<Func<TEntity, string>> propertyExpression,
             string filename,
@@ -227,7 +227,7 @@ namespace Filehook.Core
 
             var oldFilename = GetFilename(entity, propertyExpression);
 
-            var result = new Dictionary<string, FilehookSavingResult>();
+            var result = new Dictionary<string, FilehookSavingResult1>();
             foreach (var proccessed in proccessingResults)
             {
                 var relativeLocation = _locationTemplateParser.Parse(
@@ -243,7 +243,7 @@ namespace Filehook.Core
 
                     var url = storage.GetUrl(relativeLocation);
 
-                    result.Add(proccessed.Style.Name, new FilehookSavingResult
+                    result.Add(proccessed.Style.Name, new FilehookSavingResult1
                     {
                         Location = absoluteLocation,
                         Url = url,

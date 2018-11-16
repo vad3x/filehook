@@ -1,9 +1,14 @@
 using System;
 using System.IO;
+using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+
 using Filehook.Abstractions;
+
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+
 using Renci.SshNet;
 using Renci.SshNet.Async;
 using Renci.SshNet.Common;
@@ -70,7 +75,7 @@ namespace Filehook.Storages.Ssh
             }
         }
 
-        public async Task<string> SaveAsync(string relativeLocation, Stream stream)
+        public async Task<string> SaveAsync(string relativeLocation, Stream stream, CancellationToken cancellationToken = default)
         {
             var fullPath = _locationTemplateParser.SetBase(relativeLocation, _options.BasePath);
 
@@ -101,7 +106,7 @@ namespace Filehook.Storages.Ssh
 
         private void CreateDirectoryRecursively(SftpClient client, string path)
         {
-            string current = "";
+            var current = new StringBuilder();
 
             if (path[0] == '/')
             {
@@ -111,29 +116,30 @@ namespace Filehook.Storages.Ssh
             while (!string.IsNullOrEmpty(path))
             {
                 int p = path.IndexOf('/');
-                current += '/';
+                current.Append('/');
                 if (p >= 0)
                 {
-                    current += path.Substring(0, p);
+                    current.Append(path.Substring(0, p));
                     path = path.Substring(p + 1);
                 }
                 else
                 {
-                    current += path;
+                    current.Append(path);
                     path = "";
                 }
 
-                if (client.Exists(current))
+                var temp = current.ToString();
+                if (client.Exists(temp))
                 {
-                    var attrs = client.GetAttributes(current);
+                    var attrs = client.GetAttributes(temp);
                     if (!attrs.IsDirectory)
                     {
-                        throw new Exception("not directory");
+                        throw new NotImplementedException("not directory");
                     }
                 }
                 else
                 {
-                    client.CreateDirectory(current);
+                    client.CreateDirectory(temp);
                 }
             }
         }

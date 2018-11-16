@@ -1,6 +1,6 @@
 ﻿using System;
+
 using Filehook.Core.DependencyInjection;
-using Filehook.Proccessors.Image.ImageSharpProccessor;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -8,8 +8,7 @@ namespace Microsoft.Extensions.DependencyInjection
     {
         public static IFilehookBuilder AddFilehook(
             this IServiceCollection services,
-            string defaultStorageName,
-            Action<ImageSharpImageProccessorOptions> action = null)
+            string defaultStorageName)
         {
             if (services == null)
             {
@@ -25,7 +24,6 @@ namespace Microsoft.Extensions.DependencyInjection
             builder.AddKebabLocationParamFormatter();
 
             builder.AddRegularLocationTemplateParser();
-            builder.AddImageSharpImageProccessor(action);
             builder.AddFallbackFileProccessor();
 
             return builder;

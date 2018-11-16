@@ -18,9 +18,9 @@ namespace Filehook.Samples.AspNetCoreMvc.Migrations
                     Metadata = table.Column<string>(nullable: true),
                     ByteSize = table.Column<long>(nullable: false),
                     Checksum = table.Column<string>(maxLength: 64, nullable: false),
-                    CreatedAtUtc = table.Column<DateTime>(nullable: false),
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    CreatedAtUtc = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -35,10 +35,10 @@ namespace Filehook.Samples.AspNetCoreMvc.Migrations
                     Name = table.Column<string>(maxLength: 32, nullable: false),
                     EntityId = table.Column<string>(maxLength: 32, nullable: false),
                     EntityType = table.Column<string>(maxLength: 64, nullable: false),
-                    CreatedAtUtc = table.Column<DateTime>(nullable: false),
                     Id = table.Column<int>(nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    BlobId = table.Column<int>(nullable: false)
+                    BlobId = table.Column<int>(nullable: false),
+                    CreatedAtUtc = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -55,6 +55,11 @@ namespace Filehook.Samples.AspNetCoreMvc.Migrations
                 name: "IX_FilehookAttachments_BlobId",
                 table: "FilehookAttachments",
                 column: "BlobId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_FilehookAttachments_Name_EntityId_EntityType",
+                table: "FilehookAttachments",
+                columns: new[] { "Name", "EntityId", "EntityType" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_FilehookAttachments_Name_EntityId_EntityType_BlobId",

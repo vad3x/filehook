@@ -1,6 +1,6 @@
 namespace Filehook.Abstractions
 {
-    public class FilehookSavingResult
+    public class FilehookSavingResult1
     {
         public string Location { get; set; }
 

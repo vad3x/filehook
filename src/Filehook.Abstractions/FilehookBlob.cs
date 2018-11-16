@@ -2,24 +2,35 @@ using System.Collections.Generic;
 
 namespace Filehook.Abstractions
 {
-    public class FilehookBlob
+    public class FilehookSavingResult
     {
-        public FilehookBlob(
-            string key,
-            string fileName,
-            string contentType,
-            long byteSize,
-            string checksum,
-            IDictionary<string, string> metadata = null)
+        public static FilehookSavingResult Success(
+            FilehookBlob blob,
+            string storageName,
+            string absoluteLocation)
         {
-            Key = key;
-            FileName = fileName;
-            ContentType = contentType;
-            Metadata = metadata ?? new Dictionary<string, string>();
-            ByteSize = byteSize;
-            Checksum = checksum;
+            return new FilehookSavingResult
+            {
+                Succeeded = true,
+                Blob = blob,
+                StorageName = storageName,
+                AbsoluteLocation = absoluteLocation
+            };
         }
 
+        private FilehookSavingResult()
+        {
+        }
+
+        public bool Succeeded { get; private set; }
+
+        public FilehookBlob Blob { get; private set; }
+        public string StorageName { get; private set; }
+        public string AbsoluteLocation { get; private set; }
+    }
+
+    public class FilehookBlob
+    {
         public string Key { get; set; }
 
         public string FileName { get; set; }

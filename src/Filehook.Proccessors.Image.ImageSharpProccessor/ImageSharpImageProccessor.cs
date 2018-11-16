@@ -93,7 +93,6 @@ namespace Filehook.Proccessors.Image.ImageSharpProccessor
             }
 
             GCSettings.LargeObjectHeapCompactionMode = GCLargeObjectHeapCompactionMode.CompactOnce;
-            GC.Collect();
 
             return Task.FromResult(result.AsEnumerable());
         }
@@ -130,7 +129,7 @@ namespace Filehook.Proccessors.Image.ImageSharpProccessor
             {
                 using (var image = originalImage.Clone())
                 {
-                    if (_logger.IsEnabled(LogLevel.Information))
+                    if (stopwatch != null)
                     {
                         stopwatch.Stop();
                         _logger.LogInformation("Cloned '{styleName}' in '{elapsed}'ms", style.Name, stopwatch.Elapsed.TotalMilliseconds);
@@ -139,7 +138,7 @@ namespace Filehook.Proccessors.Image.ImageSharpProccessor
 
                     _imageTransformer.Transform(image, imageStyle);
 
-                    if (_logger.IsEnabled(LogLevel.Information))
+                    if (stopwatch != null)
                     {
                         stopwatch.Stop();
                         _logger.LogInformation("Transformed '{styleName}' in '{elapsed}'ms", style.Name, stopwatch.Elapsed.TotalMilliseconds);
@@ -148,7 +147,7 @@ namespace Filehook.Proccessors.Image.ImageSharpProccessor
 
                     image.Save(outputStream, GetEncoder(imageFormat, imageStyle));
 
-                    if (_logger.IsEnabled(LogLevel.Information))
+                    if (stopwatch != null)
                     {
                         stopwatch.Stop();
                         _logger.LogInformation("Saved '{styleName}' in '{elapsed}'ms", style.Name, stopwatch.Elapsed.TotalMilliseconds);

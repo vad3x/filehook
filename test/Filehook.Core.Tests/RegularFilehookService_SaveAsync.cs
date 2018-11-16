@@ -8,6 +8,7 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Xunit;
 using Microsoft.Extensions.Options;
+using System.Threading;
 
 namespace Filehook.Core.Tests
 {
@@ -46,7 +47,7 @@ namespace Filehook.Core.Tests
                 .Returns(storageName);
 
             mockFileStorage
-                .Setup(x => x.SaveAsync(It.IsAny<string>(), It.IsAny<MemoryStream>()))
+                .Setup(x => x.SaveAsync(It.IsAny<string>(), It.IsAny<MemoryStream>(), It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult("path"));
 
             mockFileStorage

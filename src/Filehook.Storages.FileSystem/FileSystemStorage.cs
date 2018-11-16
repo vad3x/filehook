@@ -1,8 +1,11 @@
-﻿using Filehook.Abstractions;
-using Microsoft.Extensions.Options;
-using System.IO;
+﻿using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
+
+using Filehook.Abstractions;
+
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace Filehook.Storages.FileSystem
 {
@@ -29,7 +32,7 @@ namespace Filehook.Storages.FileSystem
         // TODO tests
         public string GetUrl(string relativeLocation)
         {
-            return _locationTemplateParser.SetBase(relativeLocation, _options.CdnUrl);
+            return _locationTemplateParser.SetBase(relativeLocation, _options.HostUrl);
         }
 
         // TODO tests
@@ -40,7 +43,7 @@ namespace Filehook.Storages.FileSystem
             return Task.FromResult(File.Exists(location));
         }
 
-        public async Task<string> SaveAsync(string relativeLocation, Stream stream)
+        public async Task<string> SaveAsync(string relativeLocation, Stream stream, CancellationToken cancellationToken = default)
         {
             var location = _locationTemplateParser.SetBase(relativeLocation, _options.BasePath);
 
@@ -56,7 +59,8 @@ namespace Filehook.Storages.FileSystem
             using (var fileStream = new FileStream(location, FileMode.OpenOrCreate, FileAccess.Write))
             {
                 stream.Position = 0;
-                await stream.CopyToAsync(fileStream);
+                await stream.CopyToAsync(fileStream, 81920, cancellationToken)
+                    .ConfigureAwait(false);
             }
 
             _logger.LogInformation("Saved file on location '{0}'", location);

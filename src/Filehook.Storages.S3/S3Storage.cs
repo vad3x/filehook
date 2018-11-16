@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using Amazon.S3;
 using Amazon.S3.Model;
@@ -56,7 +57,7 @@ namespace Filehook.Storages.S3
             return true;
         }
 
-        public async Task<string> SaveAsync(string relativeLocation, Stream stream)
+        public async Task<string> SaveAsync(string relativeLocation, Stream stream, CancellationToken cancellationToken = default)
         {
             var key = _locationTemplateParser.SetBase(relativeLocation, string.Empty).TrimStart('/');
             _logger.LogInformation($"Put file: '{key}' to '{_options.BucketName}' bucket");
@@ -69,7 +70,7 @@ namespace Filehook.Storages.S3
                 CannedACL = S3CannedACL.PublicRead
             };
 
-            var result = await _amazonS3Client.PutObjectAsync(request);
+            await _amazonS3Client.PutObjectAsync(request, cancellationToken);
 
             var location = ToAbsoluteUrl(relativeLocation);
 
