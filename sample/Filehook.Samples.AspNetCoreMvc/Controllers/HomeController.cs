@@ -1,16 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
 using Filehook.Abstractions;
-using Filehook.Proccessors.Image.Abstractions;
 using Filehook.Samples.AspNetCoreMvc.Models;
 using Filehook.Samples.AspNetCoreMvc.ViewModels;
 
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Filehook.Samples.AspNetCoreMvc.Controllers
@@ -44,43 +41,18 @@ namespace Filehook.Samples.AspNetCoreMvc.Controllers
                 return View();
             }
 
-            var model = new Article
+            var model = _articleStore.FirstOrDefault(x => x.Id == viewModel.Id);
+
+            if (model == null)
             {
-                Id = viewModel.Id,
-                CreatedAt = DateTime.Now
-            };
+                model = new Article
+                {
+                    Id = viewModel.Id,
+                    CreatedAt = DateTime.Now
+                };
 
-            //if (viewModel.AttachmentFile != null)
-            //{
-            //    var bytes = await viewModel.AttachmentFile.GetBytesAsync();
-
-            //    var fileExtention = Path.GetExtension(viewModel.AttachmentFile.FileName)?.Trim('.');
-            //    if (!_filehookService.CanProccess(fileExtention, bytes))
-            //    {
-            //        ModelState.AddModelError(nameof(viewModel.AttachmentFile), "Could not be proccessed");
-            //        return View();
-            //    }
-
-            //    var results = await _filehookService.SaveAsync(model, a => a.AttachmentFileName, viewModel.AttachmentFile.FileName, bytes);
-            //}
-
-            //if (viewModel.CoverImageFile != null)
-            //{
-            //    var bytes = await viewModel.CoverImageFile.GetBytesAsync();
-
-            //    var fileExtention = Path.GetExtension(viewModel.CoverImageFile.FileName)?.Trim('.');
-            //    if (!_filehookService.CanProccess(fileExtention, bytes))
-            //    {
-            //        ModelState.AddModelError(nameof(viewModel.CoverImageFile), "Could not be proccessed");
-            //        return View();
-            //    }
-
-            //    var results = await _filehookService.SaveAsync(model, a => a.CoverImageFileName, viewModel.CoverImageFile.FileName, bytes);
-            //    if (results["thumb"].ProccessingMeta is ImageProccessingResultMeta data)
-            //    {
-            //        model.CoverImageAspectRatio = (float)data.Width / data.Height;
-            //    }
-            //}
+                _articleStore.Add(model);
+            }
 
             if (viewModel.CoverImageFile != null)
             {
@@ -89,10 +61,18 @@ namespace Filehook.Samples.AspNetCoreMvc.Controllers
                     viewModel.CoverImageFile.FileName,
                     viewModel.CoverImageFile.OpenReadStream());
 
-                var result = await _filehookService.SaveAsync(model, "CoverImage", fileInfo, cancellationToken);
+                await _filehookService.SetOneAsync(model, "CoverImage", fileInfo, cancellationToken);
             }
 
-            _articleStore.Add(model);
+            if (viewModel.AttachmentFile != null)
+            {
+                var fileInfo = new FilehookFileInfo(
+                    viewModel.AttachmentFile.ContentType,
+                    viewModel.AttachmentFile.FileName,
+                    viewModel.AttachmentFile.OpenReadStream());
+
+                await _filehookService.AddManyAsync(model, "Attachment", fileInfo, cancellationToken);
+            }
 
             return RedirectToAction(nameof(Index));
         }

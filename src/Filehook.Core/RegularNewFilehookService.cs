@@ -1,9 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -12,6 +9,7 @@ using Dawn;
 using Filehook.Abstractions;
 using Filehook.Abstractions.Stores;
 
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace Filehook.Core
@@ -20,148 +18,180 @@ namespace Filehook.Core
     {
         private readonly FilehookOptions _options;
 
-        private readonly IFileStorageNameResolver _fileStorageNameResolver;
-
-        private readonly IFileStyleResolver _fileStyleResolver;
-
+        private readonly ILogger<RegularNewFilehookService> _logger;
         private readonly IEnumerable<IFileStorage> _storages;
-        private readonly IEnumerable<IFileProccessor> _fileProccessors;
-
-        private readonly ILocationTemplateParser _locationTemplateParser;
-        private readonly ILocationParamFormatter _locationParamFormatter;
-
-        private readonly IParamNameResolver _paramNameResolver;
         private readonly IEntityIdResolver _entityIdResolver;
         private readonly IFilehookStore _filehookStore;
-        private readonly IEnumerable<IBlobMetadataExtender> _blobMetadataExtenders;
+        private readonly IEnumerable<IBlobAnalyzer> _blobAnalyzers;
 
         public RegularNewFilehookService(
-            IOptions<FilehookOptions> fileStorageNameResolverOptions,
-            IFileStorageNameResolver fileStorageNameResolver,
-            IFileStyleResolver fileStyleResolver,
+            ILogger<RegularNewFilehookService> logger,
+            IOptions<FilehookOptions> options,
             IEnumerable<IFileStorage> storages,
-            IEnumerable<IFileProccessor> fileProccessors,
-            ILocationTemplateParser locationTemplateParser,
-            ILocationParamFormatter locationParamFormatter,
-            IParamNameResolver paramNameResolver,
             IEntityIdResolver entityIdResolver,
             IFilehookStore filehookStore,
-            IEnumerable<IBlobMetadataExtender> blobMetadataExtenders)
+            IEnumerable<IBlobAnalyzer> blobAnalyzers)
         {
-            if (fileStorageNameResolverOptions == null)
+            _logger = Guard.Argument(logger, nameof(logger)).NotNull().Value;
+
+            if (options == null)
             {
-                throw new ArgumentNullException(nameof(fileStorageNameResolverOptions));
+                throw new ArgumentNullException(nameof(options));
             }
 
-            _options = fileStorageNameResolverOptions.Value;
-            _fileStorageNameResolver = fileStorageNameResolver ?? throw new ArgumentNullException(nameof(fileStorageNameResolver));
-            _fileStyleResolver = fileStyleResolver ?? throw new ArgumentNullException(nameof(fileStyleResolver));
+            _options = options.Value;
 
             _storages = storages ?? throw new ArgumentNullException(nameof(storages));
-            _fileProccessors = fileProccessors ?? throw new ArgumentNullException(nameof(fileProccessors));
-
-            _locationTemplateParser = locationTemplateParser ?? throw new ArgumentNullException(nameof(locationTemplateParser));
-            _locationParamFormatter = locationParamFormatter ?? throw new ArgumentNullException(nameof(locationParamFormatter));
-
-            _paramNameResolver = paramNameResolver ?? throw new ArgumentNullException(nameof(paramNameResolver));
             _entityIdResolver = entityIdResolver ?? throw new ArgumentNullException(nameof(entityIdResolver));
             _filehookStore = Guard.Argument(filehookStore, nameof(filehookStore)).NotNull().Value;
-            _blobMetadataExtenders = Guard.Argument(blobMetadataExtenders, nameof(blobMetadataExtenders)).NotNull().Value;
+            _blobAnalyzers = Guard.Argument(blobAnalyzers, nameof(blobAnalyzers)).NotNull().Value;
         }
 
         public Task<FilehookBlob[]> GetBlobsAsync<TEntity>(
             TEntity entity,
-            string name,
+            string attachmentName,
             CancellationToken cancellationToken = default) where TEntity : class
         {
             Guard.Argument(entity, nameof(entity)).NotNull();
-            Guard.Argument(name, nameof(name)).NotNull().NotEmpty();
-            Guard.Argument(entity, nameof(entity)).NotNull();
+            Guard.Argument(attachmentName, nameof(attachmentName)).NotNull().NotEmpty();
 
-            if (entity == null)
+            string entityType = typeof(TEntity).Name;
+            string entityId = _entityIdResolver.Resolve(entity);
+            if (entityId == null)
             {
-                throw new ArgumentNullException(nameof(entity));
+                throw new ArgumentException($"{nameof(entityId)} is null");
             }
 
-            var className = _locationParamFormatter.Format(_paramNameResolver.Resolve(typeof(TEntity).GetTypeInfo()));
-            var objectId = _entityIdResolver.Resolve(entity);
-            if (objectId == null)
-            {
-                throw new NotImplementedException("Configuration error, `objectId` has not beed mapped.");
-            }
-
-            return _filehookStore.GetBlobsAsync(name, objectId, className, cancellationToken);
+            return _filehookStore.GetBlobsAsync(attachmentName, entityId, entityType, cancellationToken);
         }
 
-        public async Task<FilehookSavingResult> SaveAsync<TEntity>(
+        public async Task<FilehookUploadingResult> UploadAsync(
+            FilehookFileInfo fileInfo,
+            CancellationToken cancellationToken = default)
+        {
+            Guard.Argument(fileInfo, nameof(fileInfo)).NotNull();
+
+            string storageName = _options.DefaultStorageName;
+            IFileStorage storage = _storages.FirstOrDefault(s => s.Name == storageName);
+            if (storage == null)
+            {
+                throw new NotSupportedException($"Storage with name '{storageName}' has not been registered");
+            }
+
+            var key = Guid.NewGuid().ToString("n");
+
+            var metadata = new Dictionary<string, string>();
+            foreach (IBlobAnalyzer analyzer in _blobAnalyzers)
+            {
+                await analyzer.AnalyzeAsync(metadata, fileInfo).ConfigureAwait(false);
+            }
+
+            FileStorageSavingResult fileSavingResult = await storage.SaveAsync(key, fileInfo, cancellationToken)
+                .ConfigureAwait(false);
+
+            FilehookBlob blob = await _filehookStore.CreateBlobAsync(
+                key,
+                fileSavingResult.FileName,
+                fileInfo.ContentType,
+                fileSavingResult.ByteSize,
+                fileSavingResult.Checksum,
+                metadata,
+                cancellationToken)
+                .ConfigureAwait(false);
+
+            return FilehookUploadingResult.Success(blob, storageName, fileSavingResult.AbsoluteLocation);
+        }
+
+        public async Task<FilehookAttachment> AttachAsync<TEntity>(
             TEntity entity,
-            string name,
+            string attachmentName,
+            FilehookBlob blob,
+            CancellationToken cancellationToken = default) where TEntity : class
+        {
+            Guard.Argument(entity, nameof(entity)).NotNull();
+            Guard.Argument(attachmentName, nameof(attachmentName)).NotNull().NotEmpty();
+            Guard.Argument(blob, nameof(blob)).NotNull();
+
+            string entityType = typeof(TEntity).Name;
+            string entityId = _entityIdResolver.Resolve(entity);
+            if (entityId == null)
+            {
+                throw new ArgumentException($"{nameof(entityId)} is null");
+            }
+
+            _logger.LogInformation("Attaching blob: '{blobKey}' to '{attachmentName}' on '{entityType}':'{entityId}' ...", blob.Key, attachmentName, entityType, entityId);
+
+            return await _filehookStore.AddAttachmentAsync(attachmentName, entityId, entityType, blob, cancellationToken)
+                .ConfigureAwait(false);
+        }
+
+        public async Task<FilehookAttachment> SetOneAsync<TEntity>(
+            TEntity entity,
+            string attachmentName,
             FilehookFileInfo fileInfo,
             CancellationToken cancellationToken = default) where TEntity : class
         {
             Guard.Argument(entity, nameof(entity)).NotNull();
-            Guard.Argument(name, nameof(name)).NotNull().NotEmpty();
+            Guard.Argument(attachmentName, nameof(attachmentName)).NotNull().NotEmpty();
+            Guard.Argument(fileInfo, nameof(fileInfo)).NotNull();
 
-            var objectId = _entityIdResolver.Resolve(entity);
-            if (objectId == null)
+            string entityType = typeof(TEntity).Name;
+            string entityId = _entityIdResolver.Resolve(entity);
+            if (entityId == null)
             {
-                throw new ArgumentException($"{nameof(objectId)} is null");
+                throw new ArgumentException($"{nameof(entityId)} is null");
             }
 
-            var storageName = _options.DefaultStorageName;
-            var storage = _storages.FirstOrDefault(s => s.Name == storageName);
-            if (storage == null)
+            FilehookAttachment[] existing = await _filehookStore.GetAttachmentsAsync(attachmentName, entityId, entityType, cancellationToken)
+                .ConfigureAwait(false);
+
+            if (existing.Length > 0)
             {
-                throw new NotSupportedException($"Storage with name `{storageName}` has not been registered");
+                foreach (FilehookAttachment item in existing)
+                {
+                    _logger.LogInformation("Purging blob: '{blobKey}'...", item.Blob.Key);
+
+                    await PurgeAsync(item.Blob, cancellationToken).ConfigureAwait(false);
+                }
             }
 
-            var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(fileInfo.FileName);
-            var fileExtension = Path.GetExtension(fileInfo.FileName).TrimStart('.');
+            _logger.LogInformation("Uploading file: '{fileName}'...", fileInfo.FileName);
+            FilehookUploadingResult fileUploadingResult = await UploadAsync(fileInfo, cancellationToken).ConfigureAwait(false);
 
-            var key = Guid.NewGuid().ToString("n");
-
-            var newFileName = $"{fileNameWithoutExtension.GenerateSlug()}-{key.Substring(0, 6)}.{fileExtension}";
-
-            var className = _locationParamFormatter.Format(_paramNameResolver.Resolve(typeof(TEntity).GetTypeInfo()));
-            var locationPropertyName = _locationParamFormatter.Format(name);
-
-            var relativeLocation = _locationTemplateParser.Parse(
-                className: className,
-                propertyName: locationPropertyName,
-                objectId: objectId,
-                filename: newFileName);
-
-            var checksum = GetMD5Checksum(fileInfo.FileStream);
-            var byteSize = fileInfo.FileStream.Length;
-
-            var metadata = new Dictionary<string, string>();
-            foreach (var extender in _blobMetadataExtenders)
-            {
-                await extender.ExtendAsync(metadata, fileInfo).ConfigureAwait(false);
-            }
-
-            var absoluteLocation = await storage.SaveAsync(relativeLocation, fileInfo.FileStream, cancellationToken)
-                .ConfigureAwait(false);
-
-            FilehookBlob blob = await _filehookStore.CreateBlobAsync(key, newFileName, fileInfo.ContentType, byteSize, checksum, metadata, cancellationToken)
-                .ConfigureAwait(false);
-
-            await _filehookStore.CreateAttachmentAsync(name, objectId, className, blob, cancellationToken)
-                .ConfigureAwait(false);
-
-            return FilehookSavingResult.Success(blob, storageName, absoluteLocation);
+            return await AttachAsync(entity, attachmentName, fileUploadingResult.Blob, cancellationToken).ConfigureAwait(false);
         }
 
-        private static string GetMD5Checksum(Stream stream)
+        public async Task<FilehookAttachment> AddManyAsync<TEntity>(
+            TEntity entity,
+            string attachmentName,
+            FilehookFileInfo fileInfo,
+            CancellationToken cancellationToken = default) where TEntity : class
         {
-            using (var md5 = MD5.Create())
+            Guard.Argument(entity, nameof(entity)).NotNull();
+            Guard.Argument(attachmentName, nameof(attachmentName)).NotNull().NotEmpty();
+            Guard.Argument(fileInfo, nameof(fileInfo)).NotNull();
+
+            _logger.LogInformation("Uploading file: '{fileName}'...", fileInfo.FileName);
+            FilehookUploadingResult fileUploadingResult = await UploadAsync(fileInfo, cancellationToken).ConfigureAwait(false);
+
+            return await AttachAsync(entity, attachmentName, fileUploadingResult.Blob, cancellationToken).ConfigureAwait(false);
+        }
+
+        public async Task PurgeAsync(FilehookBlob blob, CancellationToken cancellationToken = default)
+        {
+            Guard.Argument(blob, nameof(blob)).NotNull();
+
+            await _filehookStore.RemoveAsync(blob, cancellationToken)
+                .ConfigureAwait(false);
+
+            string storageName = _options.DefaultStorageName;
+            IFileStorage storage = _storages.FirstOrDefault(s => s.Name == storageName);
+            if (storage == null)
             {
-                stream.Position = 0;
-
-                var hash = md5.ComputeHash(stream);
-
-                return BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();
+                throw new NotSupportedException($"Storage with name '{storageName}' has not been registered");
             }
+
+            await storage.RemoveFileAsync(blob.FileName);
         }
     }
 }

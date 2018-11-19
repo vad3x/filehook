@@ -37,15 +37,35 @@ namespace Filehook.Abstractions
 
     public interface INewFilehookService
     {
+        Task PurgeAsync(
+            FilehookBlob blob,
+            CancellationToken cancellationToken = default);
+
         Task<FilehookBlob[]> GetBlobsAsync<TEntity>(
             TEntity entity,
-            string name,
+            string attachmentName,
             CancellationToken cancellationToken = default) where TEntity : class;
 
-        Task<FilehookSavingResult> SaveAsync<TEntity>(
+        Task<FilehookAttachment> SetOneAsync<TEntity>(
             TEntity entity,
-            string name,
+            string attachmentName,
             FilehookFileInfo fileInfo,
+            CancellationToken cancellationToken = default) where TEntity : class;
+
+        Task<FilehookAttachment> AddManyAsync<TEntity>(
+            TEntity entity,
+            string attachmentName,
+            FilehookFileInfo fileInfo,
+            CancellationToken cancellationToken = default) where TEntity : class;
+
+        Task<FilehookUploadingResult> UploadAsync(
+            FilehookFileInfo fileInfo,
+            CancellationToken cancellationToken = default);
+
+        Task<FilehookAttachment> AttachAsync<TEntity>(
+            TEntity entity,
+            string attachmentName,
+            FilehookBlob blob,
             CancellationToken cancellationToken = default) where TEntity : class;
     }
 }

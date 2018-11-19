@@ -13,6 +13,7 @@
   <ItemGroup>
     <PackageReference Include="Dawn.Guard" Version="1.6.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="2.1.1" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="2.1.1" />
     <PackageReference Include="Microsoft.Extensions.Options" Version="2.1.1" />
     <PackageReference Include="CaseExtensions" Version="1.0.3" />
   </ItemGroup>

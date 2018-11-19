@@ -1,4 +1,4 @@
-using Filehook.Extensions.EntityFrameworkCore.Entities;
+using Filehook.Abstractions;
 
 using Microsoft.EntityFrameworkCore;
 
@@ -11,9 +11,9 @@ namespace Filehook.Extensions.EntityFrameworkCore
         {
         }
 
-        public DbSet<AttachmentEntity> FilehookAttachments { get; set; }
+        public DbSet<FilehookAttachment> FilehookAttachments { get; set; }
 
-        public DbSet<BlobEntity> FilehookBlobs { get; set; }
+        public DbSet<FilehookBlob> FilehookBlobs { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

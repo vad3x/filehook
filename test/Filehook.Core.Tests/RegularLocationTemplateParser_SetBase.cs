@@ -16,7 +16,7 @@ namespace Filehook.Core.Tests
 
             var formatter = new RegularLocationTemplateParser(Options.Create(options));
 
-            var result = formatter.SetBase(locationTemplate, baseLocation);
+            var result = formatter.SetRoot(locationTemplate, baseLocation);
 
             Assert.Equal(expected, result);
         }

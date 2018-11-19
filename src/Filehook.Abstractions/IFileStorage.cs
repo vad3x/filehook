@@ -14,6 +14,10 @@ namespace Filehook.Abstractions
 
         Task<string> SaveAsync(string relativeLocation, Stream stream, CancellationToken cancellationToken = default);
 
+        Task<FileStorageSavingResult> SaveAsync(string key, FilehookFileInfo fileInfo, CancellationToken cancellationToken = default);
+
         Task<bool> RemoveAsync(string relativeLocation);
+
+        Task<bool> RemoveFileAsync(string fileName);
     }
 }

@@ -17,21 +17,21 @@ namespace Filehook.Storages.FileSystem.Tests
             var mockLocationTemplateParser = new Mock<ILocationTemplateParser>();
             var mockLogger = new Mock<ILogger<FileSystemStorage>>();
 
-            mockLocationTemplateParser.Setup(x => x.SetBase(relativeLocation, It.IsAny<string>()))
+            mockLocationTemplateParser.Setup(x => x.SetRoot(relativeLocation, It.IsAny<string>()))
                 .Returns(relativeLocation);
 
             var locationTemplateParser = mockLocationTemplateParser.Object;
 
             var storageOptions = new FileSystemStorageOptions
             {
-                BasePath = ""
+                Root = ""
             };
 
             var fileSystemStorage = new FileSystemStorage(Options.Create(storageOptions), locationTemplateParser, mockLogger.Object);
 
             var stream = new MemoryStream();
 
-            var location = await fileSystemStorage.SaveAsync(relativeLocation, stream);
+            var location = await fileSystemStorage.OldSaveAsync(relativeLocation, stream);
 
             Assert.Equal(relativeLocation, location);
             Assert.True(File.Exists(location));

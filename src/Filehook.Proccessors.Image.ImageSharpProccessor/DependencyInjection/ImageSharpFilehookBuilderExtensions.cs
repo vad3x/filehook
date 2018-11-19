@@ -22,7 +22,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
             builder.Services.TryAddTransient<IImageTransformer, ImageSharpImageTransformer>();
             builder.Services.AddTransient<IFileProccessor, ImageSharpImageProccessor>();
-            builder.Services.AddTransient<IBlobMetadataExtender, ImageSharpImageBlobMetadataExtender>();
+            builder.Services.AddTransient<IBlobAnalyzer, ImageSharpBlobAnalyzer>();
 
             return builder;
         }

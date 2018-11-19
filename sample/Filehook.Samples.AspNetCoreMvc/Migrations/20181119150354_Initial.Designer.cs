@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Filehook.Samples.AspNetCoreMvc.Migrations
 {
     [DbContext(typeof(FilehookDbContext))]
-    [Migration("20181116145140_Initial")]
+    [Migration("20181119150354_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

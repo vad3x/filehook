@@ -1,17 +1,14 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-using Filehook.Extensions.EntityFrameworkCore.Entities;
+using Filehook.Abstractions;
+
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Newtonsoft.Json;
 
 namespace Filehook.Extensions.EntityFrameworkCore
 {
 
-    public class AttachmentEntityTypeConfiguration : IEntityTypeConfiguration<AttachmentEntity>
+    public class AttachmentEntityTypeConfiguration : IEntityTypeConfiguration<FilehookAttachment>
     {
-        public void Configure(EntityTypeBuilder<AttachmentEntity> builder)
+        public void Configure(EntityTypeBuilder<FilehookAttachment> builder)
         {
             builder.HasKey(x => x.Id);
 
@@ -28,7 +25,7 @@ namespace Filehook.Extensions.EntityFrameworkCore
                 .HasMaxLength(64);
 
             builder.HasOne(x => x.Blob)
-                .WithMany(x => x.Attachments)
+                .WithMany()
                 .HasForeignKey(x => x.BlobId);
 
             builder.HasIndex(x => new { x.Name, x.EntityId, x.EntityType });

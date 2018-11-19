@@ -46,7 +46,7 @@ namespace WebApplication
                 .AddFallbackFileProccessor()
                 .AddFileSystemStorage(options =>
                 {
-                    options.BasePath = "./wwwroot";
+                    options.Root = "./wwwroot";
                     options.HostUrl = "http://localhost:5000";
                 })
                 .AddMetadata(builder => {

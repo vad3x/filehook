@@ -12,7 +12,14 @@ namespace Filehook.Abstractions.Stores
             string entityType,
             CancellationToken cancellationToken = default);
 
-        Task<FilehookAttachment> CreateAttachmentAsync(
+        Task<FilehookAttachment> AddAttachmentAsync(
+            string name,
+            string entityId,
+            string entityType,
+            FilehookBlob blob,
+            CancellationToken cancellationToken = default);
+
+        Task<FilehookAttachment> SetAttachmentAsync(
             string name,
             string entityId,
             string entityType,
@@ -27,5 +34,15 @@ namespace Filehook.Abstractions.Stores
             string checksum,
             IDictionary<string, string> metadata = null,
             CancellationToken cancellationToken = default);
+
+        Task<FilehookAttachment[]> GetAttachmentsAsync(
+            string name,
+            string entityId,
+            string entityType,
+            CancellationToken cancellationToken = default);
+
+        Task RemoveAsync(FilehookAttachment[] attachments, CancellationToken cancellationToken = default);
+
+        Task RemoveAsync(FilehookBlob blob, CancellationToken cancellationToken = default);
     }
 }

@@ -56,7 +56,7 @@ namespace Filehook.Core
             return location;
         }
 
-        public string SetBase(string locationTemplate, string baseLocation)
+        public string SetRoot(string locationTemplate, string baseLocation)
         {
             if (baseLocation == null)
             {

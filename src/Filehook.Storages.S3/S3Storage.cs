@@ -36,7 +36,7 @@ namespace Filehook.Storages.S3
 
         public async Task<bool> ExistsAsync(string relativeLocation)
         {
-            var key = _locationTemplateParser.SetBase(relativeLocation, string.Empty).TrimStart('/');
+            var key = _locationTemplateParser.SetRoot(relativeLocation, string.Empty).TrimStart('/');
             _logger.LogInformation($"Does exist file: '{key}' on '{_options.BucketName}' bucket");
 
             var response = await _amazonS3Client.GetObjectAsync(_options.BucketName, key);
@@ -50,16 +50,16 @@ namespace Filehook.Storages.S3
 
         public async Task<bool> RemoveAsync(string relativeLocation)
         {
-            var key = _locationTemplateParser.SetBase(relativeLocation, string.Empty).TrimStart('/');
+            var key = _locationTemplateParser.SetRoot(relativeLocation, string.Empty).TrimStart('/');
             _logger.LogInformation($"Delete file: '{key}' from '{_options.BucketName}' bucket");
 
             await _amazonS3Client.DeleteAsync(_options.BucketName, key, new Dictionary<string, object>());
             return true;
         }
 
-        public async Task<string> SaveAsync(string relativeLocation, Stream stream, CancellationToken cancellationToken = default)
+        public async Task<string> OldSaveAsync(string relativeLocation, Stream stream, CancellationToken cancellationToken = default)
         {
-            var key = _locationTemplateParser.SetBase(relativeLocation, string.Empty).TrimStart('/');
+            var key = _locationTemplateParser.SetRoot(relativeLocation, string.Empty).TrimStart('/');
             _logger.LogInformation($"Put file: '{key}' to '{_options.BucketName}' bucket");
 
             var request = new PutObjectRequest
@@ -83,12 +83,27 @@ namespace Filehook.Storages.S3
         {
             if (!string.IsNullOrWhiteSpace(_options.ProxyUri))
             {
-                return _locationTemplateParser.SetBase(relativeLocation, _options.ProxyUri);
+                return _locationTemplateParser.SetRoot(relativeLocation, _options.ProxyUri);
             }
 
             var baseLocation = $"{_options.Protocol}://s3-{_options.Region}.{_options.HostName}/{_options.BucketName}";
 
-            return _locationTemplateParser.SetBase(relativeLocation, baseLocation);
+            return _locationTemplateParser.SetRoot(relativeLocation, baseLocation);
+        }
+
+        public Task<string> SaveAsync(string relativeLocation, Stream stream, CancellationToken cancellationToken = default)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public Task<FileStorageSavingResult> SaveAsync(string key, FilehookFileInfo fileInfo, CancellationToken cancellationToken = default)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public Task<bool> RemoveFileAsync(string fileName)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

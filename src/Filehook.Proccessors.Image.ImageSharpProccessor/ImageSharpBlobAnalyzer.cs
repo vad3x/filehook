@@ -14,16 +14,16 @@ using SixLabors.ImageSharp.Formats;
 
 namespace Filehook.Proccessors.Image.ImageSharpProccessor
 {
-    public class ImageSharpImageBlobMetadataExtender : IBlobMetadataExtender
+    public class ImageSharpBlobAnalyzer : IBlobAnalyzer
     {
-        private readonly ILogger<ImageSharpImageBlobMetadataExtender> _logger;
+        private readonly ILogger<ImageSharpBlobAnalyzer> _logger;
 
-        public ImageSharpImageBlobMetadataExtender(ILogger<ImageSharpImageBlobMetadataExtender> logger)
+        public ImageSharpBlobAnalyzer(ILogger<ImageSharpBlobAnalyzer> logger)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public Task ExtendAsync(Dictionary<string, string> metadata, FilehookFileInfo fileInfo)
+        public Task AnalyzeAsync(Dictionary<string, string> metadata, FilehookFileInfo fileInfo)
         {
             Guard.Argument(metadata, nameof(metadata)).NotNull();
             Guard.Argument(fileInfo, nameof(fileInfo)).NotNull();
@@ -34,8 +34,8 @@ namespace Filehook.Proccessors.Image.ImageSharpProccessor
             if (format == null)
             {
                 _logger.LogInformation(
-                    "`{extenderName}` could not extend `{fileName}` of content-type: `{contentType}`",
-                    nameof(ImageSharpImageBlobMetadataExtender),
+                    "'{extenderName}' could not extend '{fileName}' of content-type: '{contentType}'",
+                    nameof(ImageSharpBlobAnalyzer),
                     fileInfo.FileName,
                     fileInfo.ContentType);
 
@@ -62,7 +62,7 @@ namespace Filehook.Proccessors.Image.ImageSharpProccessor
             }
             else
             {
-                _logger.LogError($"Already contains `{key}`");
+                _logger.LogError($"Already contains '{key}'");
             }
         }
     }

@@ -37,7 +37,7 @@ namespace Filehook.Storages.Ssh
 
         public Task<bool> ExistsAsync(string relativeLocation)
         {
-            var fullPath = _locationTemplateParser.SetBase(relativeLocation, _options.BasePath);
+            var fullPath = _locationTemplateParser.SetRoot(relativeLocation, _options.BasePath);
 
             using (var client = new SftpClient(_options.HostName, _options.Port, _options.UserName, _options.Password))
             {
@@ -54,7 +54,7 @@ namespace Filehook.Storages.Ssh
 
         public Task<bool> RemoveAsync(string relativeLocation)
         {
-            var fullPath = _locationTemplateParser.SetBase(relativeLocation, _options.BasePath);
+            var fullPath = _locationTemplateParser.SetRoot(relativeLocation, _options.BasePath);
 
             using (var client = new SftpClient(_options.HostName, _options.Port, _options.UserName, _options.Password))
             {
@@ -75,9 +75,9 @@ namespace Filehook.Storages.Ssh
             }
         }
 
-        public async Task<string> SaveAsync(string relativeLocation, Stream stream, CancellationToken cancellationToken = default)
+        public async Task<string> OldSaveAsync(string relativeLocation, Stream stream, CancellationToken cancellationToken = default)
         {
-            var fullPath = _locationTemplateParser.SetBase(relativeLocation, _options.BasePath);
+            var fullPath = _locationTemplateParser.SetRoot(relativeLocation, _options.BasePath);
 
             using (var client = new SftpClient(_options.HostName, _options.Port, _options.UserName, _options.Password))
             {
@@ -101,7 +101,7 @@ namespace Filehook.Storages.Ssh
 
         private string ToAbsoluteUrl(string relativeLocation)
         {
-            return _locationTemplateParser.SetBase(relativeLocation, _options.RequestRootUrl);
+            return _locationTemplateParser.SetRoot(relativeLocation, _options.RequestRootUrl);
         }
 
         private void CreateDirectoryRecursively(SftpClient client, string path)
@@ -142,6 +142,21 @@ namespace Filehook.Storages.Ssh
                     client.CreateDirectory(temp);
                 }
             }
+        }
+
+        public Task<string> SaveAsync(string relativeLocation, Stream stream, CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<FileStorageSavingResult> SaveAsync(string key, FilehookFileInfo fileInfo, CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> RemoveFileAsync(string fileName)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -10,6 +10,6 @@
              string filename = null,
              string locationTemplate = null);
 
-        string SetBase(string locationTemplate, string baseLocation);
+        string SetRoot(string locationTemplate, string rootLocation);
     }
 }
