@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Filehook.Samples.AspNetCoreMvc.Migrations
 {
     [DbContext(typeof(FilehookDbContext))]
-    [Migration("20181119150354_Initial")]
+    [Migration("20181121121221_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -19,7 +19,7 @@ namespace Filehook.Samples.AspNetCoreMvc.Migrations
                 .HasAnnotation("ProductVersion", "2.1.4-rtm-31024")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
-            modelBuilder.Entity("Filehook.Extensions.EntityFrameworkCore.Entities.AttachmentEntity", b =>
+            modelBuilder.Entity("Filehook.Extensions.EntityFrameworkCore.Entities.FilehookAttachmentEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
@@ -52,7 +52,7 @@ namespace Filehook.Samples.AspNetCoreMvc.Migrations
                     b.ToTable("FilehookAttachments");
                 });
 
-            modelBuilder.Entity("Filehook.Extensions.EntityFrameworkCore.Entities.BlobEntity", b =>
+            modelBuilder.Entity("Filehook.Extensions.EntityFrameworkCore.Entities.FilehookBlobEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
@@ -87,10 +87,10 @@ namespace Filehook.Samples.AspNetCoreMvc.Migrations
                     b.ToTable("FilehookBlobs");
                 });
 
-            modelBuilder.Entity("Filehook.Extensions.EntityFrameworkCore.Entities.AttachmentEntity", b =>
+            modelBuilder.Entity("Filehook.Extensions.EntityFrameworkCore.Entities.FilehookAttachmentEntity", b =>
                 {
-                    b.HasOne("Filehook.Extensions.EntityFrameworkCore.Entities.BlobEntity", "Blob")
-                        .WithMany("Attachments")
+                    b.HasOne("Filehook.Extensions.EntityFrameworkCore.Entities.FilehookBlobEntity", "Blob")
+                        .WithMany()
                         .HasForeignKey("BlobId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });

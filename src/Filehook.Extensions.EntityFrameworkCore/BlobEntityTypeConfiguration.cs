@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-using Filehook.Abstractions;
+using Filehook.Extensions.EntityFrameworkCore.Entities;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -9,9 +9,9 @@ using Newtonsoft.Json;
 
 namespace Filehook.Extensions.EntityFrameworkCore
 {
-    public class BlobEntityTypeConfiguration : IEntityTypeConfiguration<FilehookBlob>
+    public class BlobEntityTypeConfiguration : IEntityTypeConfiguration<FilehookBlobEntity>
     {
-        public void Configure(EntityTypeBuilder<FilehookBlob> builder)
+        public void Configure(EntityTypeBuilder<FilehookBlobEntity> builder)
         {
             builder.HasKey(x => x.Id);
 

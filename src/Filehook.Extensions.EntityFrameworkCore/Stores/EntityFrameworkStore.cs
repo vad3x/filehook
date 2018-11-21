@@ -8,6 +8,7 @@ using Dawn;
 
 using Filehook.Abstractions;
 using Filehook.Abstractions.Stores;
+using Filehook.Extensions.EntityFrameworkCore.Entities;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -38,6 +39,7 @@ namespace Filehook.Extensions.EntityFrameworkCore.Stores
             return _filehookDbContext.FilehookAttachments
                 .Where(x => x.Name == name && x.EntityId == entityId && x.EntityType == entityType)
                 .Select(x => x.Blob)
+                .Select(x => ToViewModel(x))
                 .ToArrayAsync(cancellationToken);
         }
 
@@ -56,7 +58,7 @@ namespace Filehook.Extensions.EntityFrameworkCore.Stores
             Guard.Argument(byteSize, nameof(byteSize)).NotZero().NotNegative();
             Guard.Argument(checksum, nameof(checksum)).NotNull().NotEmpty();
 
-            var blob = new FilehookBlob
+            var blobEntity = new FilehookBlobEntity
             {
                 Key = key,
                 FileName = fileName,
@@ -67,11 +69,11 @@ namespace Filehook.Extensions.EntityFrameworkCore.Stores
                 CreatedAtUtc = DateTime.UtcNow
             };
 
-            _filehookDbContext.FilehookBlobs.Add(blob);
+            _filehookDbContext.FilehookBlobs.Add(blobEntity);
             await _filehookDbContext.SaveChangesAsync(cancellationToken)
                 .ConfigureAwait(false);
 
-            return blob;
+            return ToViewModel(blobEntity);
         }
 
         public async Task<FilehookAttachment> AddAttachmentAsync(
@@ -86,21 +88,25 @@ namespace Filehook.Extensions.EntityFrameworkCore.Stores
             Guard.Argument(entityType, nameof(entityType)).NotNull().NotEmpty();
             Guard.Argument(blob, nameof(blob)).NotNull();
 
-            var attachment = new FilehookAttachment
+            FilehookBlobEntity blobEntity = await _filehookDbContext.FilehookBlobs
+                .FirstOrDefaultAsync(x => x.Key == blob.Key)
+                .ConfigureAwait(false);
+
+            var attachmentEntity = new FilehookAttachmentEntity
             {
                 Name = name,
                 EntityId = entityId,
                 EntityType = entityType,
-                Blob = blob,
+                Blob = blobEntity,
                 CreatedAtUtc = DateTime.UtcNow
             };
 
-            _filehookDbContext.FilehookAttachments.Add(attachment);
+            _filehookDbContext.FilehookAttachments.Add(attachmentEntity);
 
             await _filehookDbContext.SaveChangesAsync(cancellationToken)
                 .ConfigureAwait(false);
 
-            return attachment;
+            return ToViewModel(attachmentEntity);
         }
 
         public async Task<FilehookAttachment> SetAttachmentAsync(
@@ -115,7 +121,7 @@ namespace Filehook.Extensions.EntityFrameworkCore.Stores
             Guard.Argument(entityType, nameof(entityType)).NotNull().NotEmpty();
             Guard.Argument(blob, nameof(blob)).NotNull();
 
-            var existing = await _filehookDbContext.FilehookAttachments
+            FilehookAttachmentEntity existing = await _filehookDbContext.FilehookAttachments
                 .Where(x => x.Name == name && x.EntityId == entityId && x.EntityType == entityType)
                 .Include(x => x.Blob)
                 .FirstOrDefaultAsync(cancellationToken)
@@ -127,42 +133,70 @@ namespace Filehook.Extensions.EntityFrameworkCore.Stores
                 _filehookDbContext.FilehookAttachments.Remove(existing);
             }
 
-            return await AddAttachmentAsync(name, entityId, entityType, blob, cancellationToken);
+            return await AddAttachmentAsync(name, entityId, entityType, blob, cancellationToken).ConfigureAwait(false);
         }
 
+        // TODO fix mapping entityId - entityType - attachmentNames
         public Task<FilehookAttachment[]> GetAttachmentsAsync(
-            string name,
-            string entityId,
+            string[] entityIds,
             string entityType,
+            string[] names = null,
             CancellationToken cancellationToken = default)
         {
-            Guard.Argument(name, nameof(name)).NotNull().NotEmpty();
-            Guard.Argument(entityId, nameof(entityId)).NotNull().NotEmpty();
+            Guard.Argument(entityIds, nameof(entityIds)).NotNull();
             Guard.Argument(entityType, nameof(entityType)).NotNull().NotEmpty();
 
-            return _filehookDbContext.FilehookAttachments
-                .Where(x => x.Name == name && x.EntityId == entityId && x.EntityType == entityType)
+            IQueryable<FilehookAttachmentEntity> query = _filehookDbContext.FilehookAttachments
+                .Where(x => entityIds.Contains(x.EntityId) && x.EntityType == entityType);
+
+            if (names != null)
+            {
+                query = query.Where(x => names.Contains(x.Name));
+            }
+
+            return query
                 .Include(x => x.Blob)
-                .Cast<FilehookAttachment>()
+                .Select(x => ToViewModel(x))
                 .ToArrayAsync(cancellationToken);
         }
 
-        public Task RemoveAsync(FilehookAttachment[] attachments, CancellationToken cancellationToken = default)
-        {
-            Guard.Argument(attachments, nameof(attachments)).NotNull();
-
-            _filehookDbContext.FilehookAttachments.RemoveRange(attachments);
-
-            return _filehookDbContext.SaveChangesAsync(cancellationToken);
-        }
-
-        public Task RemoveAsync(FilehookBlob blob, CancellationToken cancellationToken = default)
+        public async Task PurgeAsync(FilehookBlob blob, CancellationToken cancellationToken = default)
         {
             Guard.Argument(blob, nameof(blob)).NotNull();
 
-            _filehookDbContext.FilehookBlobs.Remove(blob);
+            FilehookBlobEntity blobEntity = await _filehookDbContext.FilehookBlobs
+                .FirstOrDefaultAsync(x => x.Key == blob.Key)
+                .ConfigureAwait(false);
 
-            return _filehookDbContext.SaveChangesAsync(cancellationToken);
+            _filehookDbContext.FilehookBlobs.Remove(blobEntity);
+
+            await _filehookDbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        }
+
+        private FilehookBlob ToViewModel(FilehookBlobEntity entity)
+        {
+            return new FilehookBlob
+            {
+                Key = entity.Key,
+                ByteSize = entity.ByteSize,
+                Checksum = entity.Checksum,
+                ContentType = entity.ContentType,
+                FileName = entity.FileName,
+                Metadata = entity.Metadata,
+                CreatedAtUtc = entity.CreatedAtUtc
+            };
+        }
+
+        private FilehookAttachment ToViewModel(FilehookAttachmentEntity entity)
+        {
+            return new FilehookAttachment
+            {
+                Blob = ToViewModel(entity.Blob),
+                Name = entity.Name,
+                EntityId = entity.EntityId,
+                EntityType = entity.EntityType,
+                CreatedAtUtc = entity.CreatedAtUtc
+            };
         }
     }
 }

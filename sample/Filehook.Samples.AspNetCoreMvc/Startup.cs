@@ -1,16 +1,13 @@
-using System.IO;
 using System.Reflection;
-using Filehook.Proccessors.Image.Abstractions;
-using Filehook.Samples.AspNetCoreMvc.Infrastructure;
+
 using Filehook.Samples.AspNetCoreMvc.Models;
 using Filehook.Storages.FileSystem;
+
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 
 namespace WebApplication
@@ -36,9 +33,6 @@ namespace WebApplication
             services.AddMvc();
 
             var migrationsAssembly = typeof(Startup).GetTypeInfo().Assembly.GetName().Name;
-
-            services.AddDbContext<ExampleDbContext>(
-                o => o.UseMySql(Configuration.GetConnectionString("ExampleConnection")));
 
             services.AddFilehook(FileSystemConsts.FileSystemStorageName)
                 .AddEntityFrameworkStores(x => x.UseMySql(Configuration.GetConnectionString("ExampleConnection"), o => o.MigrationsAssembly(migrationsAssembly)))
@@ -74,13 +68,6 @@ namespace WebApplication
 
             // map wwwroot
             app.UseStaticFiles();
-
-            // map folders
-            app.UseStaticFiles(new StaticFileOptions
-            {
-                FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "./wwwroot/public")),
-                RequestPath = new PathString("/public")
-            });
 
             app.UseMvc(routes =>
             {

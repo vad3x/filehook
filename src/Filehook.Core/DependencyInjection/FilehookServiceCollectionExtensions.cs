@@ -20,7 +20,6 @@ namespace Microsoft.Extensions.DependencyInjection
             builder.Services.Configure(setupAction);
 
             builder.Services.AddTransient<IFilehookService, RegularFilehookService>();
-            builder.Services.AddTransient<INewFilehookService, RegularNewFilehookService>();
 
             return builder;
         }

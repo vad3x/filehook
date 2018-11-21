@@ -1,4 +1,4 @@
-using Filehook.Abstractions;
+using Filehook.Extensions.EntityFrameworkCore.Entities;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -6,9 +6,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace Filehook.Extensions.EntityFrameworkCore
 {
 
-    public class AttachmentEntityTypeConfiguration : IEntityTypeConfiguration<FilehookAttachment>
+    public class AttachmentEntityTypeConfiguration : IEntityTypeConfiguration<FilehookAttachmentEntity>
     {
-        public void Configure(EntityTypeBuilder<FilehookAttachment> builder)
+        public void Configure(EntityTypeBuilder<FilehookAttachmentEntity> builder)
         {
             builder.HasKey(x => x.Id);
 

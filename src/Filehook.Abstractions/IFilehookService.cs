@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -8,42 +5,23 @@ namespace Filehook.Abstractions
 {
     public interface IFilehookService
     {
-        Task<bool> ExistsAsync<TEntity>(
-            TEntity entity,
-            Expression<Func<TEntity, string>> propertyExpression,
-            string style) where TEntity : class;
-
-        IDictionary<string, string> GetUrls<TEntity>(
-            TEntity entity,
-            Expression<Func<TEntity, string>> propertyExpression) where TEntity : class;
-
-        string GetUrl<TEntity>(
-            TEntity entity,
-            Expression<Func<TEntity, string>> propertyExpression,
-            string style) where TEntity : class;
-
-        Task<IDictionary<string, FilehookSavingResult1>> SaveAsync<TEntity>(
-            TEntity entity,
-            Expression<Func<TEntity, string>> propertyExpression,
-            string filename,
-            byte[] bytes) where TEntity : class;
-
-        bool CanProccess(string fileExtension, byte[] bytes);
-
-        Task RemoveAsync<TEntity>(
-            TEntity entity,
-            Expression<Func<TEntity, string>> propertyExpression) where TEntity : class;
-    }
-
-    public interface INewFilehookService
-    {
         Task PurgeAsync(
             FilehookBlob blob,
             CancellationToken cancellationToken = default);
 
-        Task<FilehookBlob[]> GetBlobsAsync<TEntity>(
+        FilehookBlob GetSingleBlob<TEntity>(
             TEntity entity,
             string attachmentName,
+            FilehookAttachment[] attachments) where TEntity : class;
+
+        FilehookBlob[] GetManyBlobs<TEntity>(
+            TEntity entity,
+            string attachmentName,
+            FilehookAttachment[] attachments) where TEntity : class;
+
+        Task<FilehookAttachment[]> GetAttachmentsAsync<TEntity>(
+            TEntity[] entities,
+            string[] attachmentNames = null,
             CancellationToken cancellationToken = default) where TEntity : class;
 
         Task<FilehookAttachment> SetOneAsync<TEntity>(

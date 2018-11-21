@@ -1,10 +1,12 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 
-namespace Filehook.Abstractions
+namespace Filehook.Extensions.EntityFrameworkCore.Entities
 {
-    public class FilehookBlob
+    public class FilehookBlobEntity
     {
+        public int Id { get; set; }
+
         public string Key { get; set; }
 
         public string FileName { get; set; }

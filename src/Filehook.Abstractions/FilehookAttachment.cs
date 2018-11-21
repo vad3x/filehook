@@ -4,10 +4,6 @@ namespace Filehook.Abstractions
 {
     public class FilehookAttachment
     {
-        public int Id { get; set; }
-
-        public int BlobId { get; set; }
-
         public string Name { get; set; }
 
         public string EntityId { get; set; }

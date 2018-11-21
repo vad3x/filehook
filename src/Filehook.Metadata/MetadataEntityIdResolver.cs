@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Reflection;
+
 using Filehook.Abstractions;
 
 namespace Filehook.Metadata
@@ -20,10 +20,10 @@ namespace Filehook.Metadata
                 throw new ArgumentNullException(nameof(entity));
             }
 
-            var entityMetadata = _modelMetadata.FindEntityMetadata<TEntity>();
+            EntityMetadata<TEntity> entityMetadata = _modelMetadata.FindEntityMetadata<TEntity>();
             if (entityMetadata == null)
             {
-                throw new Exception($"There is no metadata for type '{entity.GetType()}'");
+                throw new NotImplementedException($"There is no metadata for type '{entity.GetType()}'");
             }
 
             if (entityMetadata.GetId == null)
@@ -32,15 +32,6 @@ namespace Filehook.Metadata
             }
 
             return entityMetadata.GetId(entity);
-        }
-        private string TrimEnd(string source, string value)
-        {
-            if (value == null || !source.EndsWith(value, StringComparison.Ordinal))
-            {
-                return source;
-            }
-
-            return source.Remove(source.LastIndexOf(value, StringComparison.Ordinal));
         }
     }
 }

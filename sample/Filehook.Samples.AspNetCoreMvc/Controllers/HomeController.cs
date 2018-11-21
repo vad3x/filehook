@@ -14,19 +14,37 @@ namespace Filehook.Samples.AspNetCoreMvc.Controllers
 {
     public class HomeController : Controller
     {
+        private const string COVER_IMAGE_NAME = "CoverImage";
+        private const string ATTACHMENT_NAME = "Attachment";
+
         private static readonly List<Article> _articleStore = new List<Article>();
 
-        private readonly INewFilehookService _filehookService;
+        private readonly IFilehookService _filehookService;
 
-        public HomeController(INewFilehookService filehookService)
+        public HomeController(IFilehookService filehookService)
         {
             _filehookService = filehookService;
         }
 
         [HttpGet]
-        public IActionResult Index()
+        public async Task<IActionResult> Index(CancellationToken cancellationToken = default)
         {
-            ViewBag.Articles = _articleStore.OrderByDescending(a => a.CreatedAt);
+            Article[] articles = _articleStore
+                .OrderByDescending(a => a.CreatedAt)
+                .ToArray();
+
+            FilehookAttachment[] attachments = await _filehookService
+                .GetAttachmentsAsync(articles, cancellationToken: cancellationToken);
+
+            ViewBag.Articles = articles.Select(a => new ArticleViewModel
+            {
+                Id = a.Id,
+                CreatedAt = a.CreatedAt,
+                CoverImage = _filehookService.GetSingleBlob(a, COVER_IMAGE_NAME, attachments),
+                Attachments = _filehookService.GetManyBlobs(a, ATTACHMENT_NAME, attachments)
+            })
+            .ToArray();
+
             return View();
         }
 
@@ -41,7 +59,7 @@ namespace Filehook.Samples.AspNetCoreMvc.Controllers
                 return View();
             }
 
-            var model = _articleStore.FirstOrDefault(x => x.Id == viewModel.Id);
+            Article model = _articleStore.FirstOrDefault(x => x.Id == viewModel.Id);
 
             if (model == null)
             {
@@ -61,7 +79,7 @@ namespace Filehook.Samples.AspNetCoreMvc.Controllers
                     viewModel.CoverImageFile.FileName,
                     viewModel.CoverImageFile.OpenReadStream());
 
-                await _filehookService.SetOneAsync(model, "CoverImage", fileInfo, cancellationToken);
+                await _filehookService.SetOneAsync(model, COVER_IMAGE_NAME, fileInfo, cancellationToken);
             }
 
             if (viewModel.AttachmentFile != null)
@@ -71,7 +89,7 @@ namespace Filehook.Samples.AspNetCoreMvc.Controllers
                     viewModel.AttachmentFile.FileName,
                     viewModel.AttachmentFile.OpenReadStream());
 
-                await _filehookService.AddManyAsync(model, "Attachment", fileInfo, cancellationToken);
+                await _filehookService.AddManyAsync(model, ATTACHMENT_NAME, fileInfo, cancellationToken);
             }
 
             return RedirectToAction(nameof(Index));

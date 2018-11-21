@@ -15,8 +15,4 @@
     <ProjectReference Include="..\Filehook.Metadata\Filehook.Metadata.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Entities\" />
-  </ItemGroup>
-
 </Project>

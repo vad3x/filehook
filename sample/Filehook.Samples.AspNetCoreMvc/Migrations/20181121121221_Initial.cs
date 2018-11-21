@@ -12,14 +12,14 @@ namespace Filehook.Samples.AspNetCoreMvc.Migrations
                 name: "FilehookBlobs",
                 columns: table => new
                 {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     Key = table.Column<string>(maxLength: 32, nullable: false),
                     FileName = table.Column<string>(nullable: false),
                     ContentType = table.Column<string>(maxLength: 64, nullable: true),
                     Metadata = table.Column<string>(nullable: true),
                     ByteSize = table.Column<long>(nullable: false),
                     Checksum = table.Column<string>(maxLength: 64, nullable: false),
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     CreatedAtUtc = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
@@ -32,11 +32,11 @@ namespace Filehook.Samples.AspNetCoreMvc.Migrations
                 name: "FilehookAttachments",
                 columns: table => new
                 {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     Name = table.Column<string>(maxLength: 32, nullable: false),
                     EntityId = table.Column<string>(maxLength: 32, nullable: false),
                     EntityType = table.Column<string>(maxLength: 64, nullable: false),
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     BlobId = table.Column<int>(nullable: false),
                     CreatedAtUtc = table.Column<DateTime>(nullable: false)
                 },
