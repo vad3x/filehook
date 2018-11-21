@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Http;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
 
+using Microsoft.AspNetCore.Http;
+
 namespace Filehook.AspNetCore.Http
 {
+    [System.AttributeUsage(System.AttributeTargets.All, AllowMultiple = false)]
     public class FileFormatsAttribute : ValidationAttribute
     {
         public FileFormatsAttribute(params string[] formats)

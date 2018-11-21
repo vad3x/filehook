@@ -24,7 +24,6 @@ namespace Microsoft.Extensions.DependencyInjection
             builder.AddKebabLocationParamFormatter();
 
             builder.AddRegularLocationTemplateParser();
-            builder.AddFallbackFileProccessor();
 
             return builder;
         }

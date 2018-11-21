@@ -56,11 +56,11 @@ namespace Filehook.Core
             return location;
         }
 
-        public string SetRoot(string locationTemplate, string baseLocation)
+        public string SetRoot(string locationTemplate, string rootLocation)
         {
-            if (baseLocation == null)
+            if (rootLocation == null)
             {
-                throw new ArgumentNullException(nameof(baseLocation));
+                throw new ArgumentNullException(nameof(rootLocation));
             }
 
             if (locationTemplate == null)
@@ -68,7 +68,7 @@ namespace Filehook.Core
                 throw new ArgumentNullException(nameof(locationTemplate));
             }
 
-            return locationTemplate.Replace(":base", baseLocation);
+            return locationTemplate.Replace(":root", rootLocation);
         }
     }
 }

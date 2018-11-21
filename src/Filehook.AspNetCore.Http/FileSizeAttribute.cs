@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Filehook.AspNetCore.Http
 {
+    [System.AttributeUsage(System.AttributeTargets.All, AllowMultiple = false)]
     public class FileSizeAttribute : ValidationAttribute
     {
         public long MinFileSize { get; set; }

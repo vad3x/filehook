@@ -60,7 +60,7 @@ namespace Filehook.Core
                 throw new NotSupportedException($"Storage with name '{storageName}' has not been registered");
             }
 
-            var key = Guid.NewGuid().ToString("n");
+            var key = _options.NewKey();
 
             var metadata = new Dictionary<string, string>();
             foreach (IBlobAnalyzer analyzer in _blobAnalyzers)

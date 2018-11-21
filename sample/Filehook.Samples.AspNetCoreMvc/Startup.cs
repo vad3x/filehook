@@ -36,11 +36,10 @@ namespace WebApplication
 
             services.AddFilehook(FileSystemConsts.FileSystemStorageName)
                 .AddEntityFrameworkStores(x => x.UseMySql(Configuration.GetConnectionString("ExampleConnection"), o => o.MigrationsAssembly(migrationsAssembly)))
-                .AddImageSharpImageProccessor()
-                .AddFallbackFileProccessor()
+                .AddImageSharpBlobAnalyzer()
                 .AddFileSystemStorage(options =>
                 {
-                    options.Root = "./wwwroot";
+                    options.Root = "./wwwroot/public/storage";
                     options.HostUrl = "http://localhost:5000";
                 })
                 .AddMetadata(builder => {

@@ -52,22 +52,5 @@ namespace Microsoft.Extensions.DependencyInjection
 
             return builder;
         }
-
-        public static IFilehookBuilder AddFallbackFileProccessor(this IFilehookBuilder builder, Action<FallbackFileProccessorOptions> setupAction = null)
-        {
-            if (builder == null)
-            {
-                throw new ArgumentNullException(nameof(builder));
-            }
-
-            if (setupAction != null)
-            {
-                builder.Services.Configure(setupAction);
-            }
-
-            builder.Services.AddTransient<IFileProccessor, FallbackFileProccessor>();
-
-            return builder;
-        }
     }
 }

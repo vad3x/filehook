@@ -14,12 +14,10 @@ namespace Microsoft.AspNetCore.Http
             }
 
             using (var memoryStream = new MemoryStream())
-            using (var sourceStream = formFile.OpenReadStream())
+            using (Stream sourceStream = formFile.OpenReadStream())
             {
-                await sourceStream.CopyToAsync(memoryStream);
-                var bytes = memoryStream.ToArray();
-
-                return bytes;
+                await sourceStream.CopyToAsync(memoryStream).ConfigureAwait(false);
+                return memoryStream.ToArray();
             }
         }
     }

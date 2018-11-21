@@ -54,12 +54,7 @@ namespace Filehook.Storages.FileSystem
 
             var newFileName = _options.FileName(key, checksum, fileInfo);
 
-            var relativeLocation = _locationTemplateParser.Parse(
-                filename: newFileName,
-                // TODO options
-                locationTemplate: ":base/public/blobs/:filename");
-
-            var location = _locationTemplateParser.SetRoot(relativeLocation, _options.Root);
+            var location = _options.Location(_options.Root, null, null, null, key, newFileName);
 
             var directoryPath = Path.GetDirectoryName(location);
 
@@ -80,31 +75,6 @@ namespace Filehook.Storages.FileSystem
             _logger.LogInformation("Saved file on location '{0}'", location);
 
             return FileStorageSavingResult.Success(newFileName, location, checksum, byteSize);
-        }
-
-        public async Task<string> OldSaveAsync(string relativeLocation, Stream stream, CancellationToken cancellationToken = default)
-        {
-            var location = _locationTemplateParser.SetRoot(relativeLocation, _options.Root);
-
-            var directoryPath = Path.GetDirectoryName(location);
-
-            if (!Directory.Exists(directoryPath))
-            {
-                _logger.LogDebug("Created empty directory '{0}'", directoryPath);
-
-                Directory.CreateDirectory(directoryPath);
-            }
-
-            using (var fileStream = new FileStream(location, FileMode.OpenOrCreate, FileAccess.Write))
-            {
-                stream.Position = 0;
-                await stream.CopyToAsync(fileStream, 81920, cancellationToken)
-                    .ConfigureAwait(false);
-            }
-
-            _logger.LogInformation("Saved file on location '{0}'", location);
-
-            return location;
         }
 
         public Task<bool> RemoveFileAsync(string fileName)

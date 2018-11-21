@@ -8,7 +8,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Filehook.Abstractions\Filehook.Abstractions.csproj" />
-    <ProjectReference Include="..\Filehook.Proccessors.Image.Abstractions\Filehook.Proccessors.Image.Abstractions.csproj" />
   </ItemGroup>
 
 </Project>

@@ -4,6 +4,16 @@ using Filehook.Abstractions;
 
 namespace Filehook.Storages.FileSystem
 {
+    public delegate string FileNameBuilder(string key, string checksum, FilehookFileInfo fileInfo);
+
+    public delegate string LocationBuilder(
+        string root,
+        string normilizedEntityType,
+        string normilizedEntityId,
+        string normilizedAttachmentName,
+        string blobKey,
+        string normilizedFileName);
+
     public class FileSystemStorageOptions
     {
         public string Name { get; set; } = FileSystemConsts.FileSystemStorageName;
@@ -12,7 +22,11 @@ namespace Filehook.Storages.FileSystem
 
         public string Root { get; set; } = string.Empty;
 
-        public Func<string, string, FilehookFileInfo, string> FileName { get; set; } =
+        public LocationBuilder Location { get; set; } =
+            (string root, string _, string __, string ___, string blobKey, string normilizedFileName)
+                => $"{root}/{blobKey.Substring(0, 2)}/{blobKey.Substring(2, 2)}/{normilizedFileName}";
+
+        public FileNameBuilder FileName { get; set; } =
             (string key, string _, FilehookFileInfo fileInfo) =>
             {
                 var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(fileInfo.FileName);

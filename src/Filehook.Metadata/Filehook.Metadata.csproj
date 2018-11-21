@@ -12,7 +12,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Filehook.Core\Filehook.Core.csproj" />
-    <ProjectReference Include="..\Filehook.Proccessors.Image.Abstractions\Filehook.Proccessors.Image.Abstractions.csproj" />
   </ItemGroup>
 
 </Project>
