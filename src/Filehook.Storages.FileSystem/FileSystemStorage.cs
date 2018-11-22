@@ -52,9 +52,7 @@ namespace Filehook.Storages.FileSystem
             var checksum = GetMD5Checksum(stream);
             var byteSize = stream.Length;
 
-            var newFileName = _options.FileName(key, checksum, fileInfo);
-
-            var location = _options.Location(_options.Root, null, null, null, key, newFileName);
+            var location = _options.Location(_options.Root, null, null, null, key, fileInfo.FileName);
 
             var directoryPath = Path.GetDirectoryName(location);
 
@@ -74,7 +72,7 @@ namespace Filehook.Storages.FileSystem
 
             _logger.LogInformation("Saved file on location '{0}'", location);
 
-            return FileStorageSavingResult.Success(newFileName, location, checksum, byteSize);
+            return FileStorageSavingResult.Success(location, checksum, byteSize);
         }
 
         public Task<bool> RemoveFileAsync(string fileName)

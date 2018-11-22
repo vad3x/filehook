@@ -73,7 +73,7 @@ namespace Filehook.Core
 
             FilehookBlob blob = await _filehookStore.CreateBlobAsync(
                 key,
-                fileSavingResult.FileName,
+                fileInfo.FileName,
                 fileInfo.ContentType,
                 fileSavingResult.ByteSize,
                 fileSavingResult.Checksum,

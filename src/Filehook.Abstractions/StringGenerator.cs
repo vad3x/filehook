@@ -13,7 +13,7 @@ namespace Filehook.Abstractions
         /// </summary>
         /// <param name="length">Length of generated string</param>
         /// <param name="allowedChars">Alphabet to use</param>
-        public static string Generate(int length, string allowedChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_")
+        public static string Generate(int length, string allowedChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
         {
             if (length < 0)
             {
