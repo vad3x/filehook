@@ -173,7 +173,7 @@ namespace Filehook.Core
                 throw new NotSupportedException($"Storage with name '{storageName}' has not been registered");
             }
 
-            await storage.RemoveFileAsync(blob.FileName).ConfigureAwait(false);
+            await storage.RemoveFileAsync(blob.Key).ConfigureAwait(false);
         }
 
         public Task<FilehookAttachment[]> GetAttachmentsAsync<TEntity>(

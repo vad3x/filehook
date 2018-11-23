@@ -15,32 +15,22 @@ namespace Filehook.Storages.FileSystem
     {
         private readonly FileSystemStorageOptions _options;
 
-        private readonly ILocationTemplateParser _locationTemplateParser;
-
         private readonly ILogger _logger;
 
         public FileSystemStorage(
             IOptions<FileSystemStorageOptions> options,
-            ILocationTemplateParser locationTemplateParser,
             ILogger<FileSystemStorage> logger)
         {
             _options = options.Value;
-            _locationTemplateParser = locationTemplateParser;
             _logger = logger;
         }
 
         public string Name => _options.Name;
 
         // TODO tests
-        public string GetUrl(string relativeLocation)
+        public Task<bool> ExistsAsync(string key, CancellationToken cancellationToken = default)
         {
-            return _locationTemplateParser.SetRoot(relativeLocation, _options.HostUrl);
-        }
-
-        // TODO tests
-        public Task<bool> ExistsAsync(string relativeLocation)
-        {
-            var location = _locationTemplateParser.SetRoot(relativeLocation, _options.Root);
+            var location = _options.RelativeLocation(_options.Root, key);
 
             return Task.FromResult(File.Exists(location));
         }
@@ -52,7 +42,7 @@ namespace Filehook.Storages.FileSystem
             var checksum = GetMD5Checksum(stream);
             var byteSize = stream.Length;
 
-            var location = _options.Location(_options.Root, null, null, null, key, fileInfo.FileName);
+            var location = _options.RelativeLocation(_options.Root, key);
 
             var directoryPath = Path.GetDirectoryName(location);
 
@@ -75,33 +65,9 @@ namespace Filehook.Storages.FileSystem
             return FileStorageSavingResult.Success(location, checksum, byteSize);
         }
 
-        public Task<bool> RemoveFileAsync(string fileName)
+        public Task<bool> RemoveFileAsync(string key, CancellationToken cancellationToken = default)
         {
-            var relativeLocation = _locationTemplateParser.Parse(
-                filename: fileName,
-                // TODO options
-                locationTemplate: ":base/public/blobs/:filename");
-
-            var location = _locationTemplateParser.SetRoot(relativeLocation, _options.Root);
-
-            if (File.Exists(location))
-            {
-                File.Delete(location);
-
-                _logger.LogInformation("Removed file from location '{0}'", location);
-
-                return Task.FromResult(true);
-            }
-
-            _logger.LogDebug("File on location '{0}' is not found", location);
-
-            return Task.FromResult(false);
-        }
-
-        // TODO tests
-        public Task<bool> RemoveAsync(string relativeLocation)
-        {
-            var location = _locationTemplateParser.SetRoot(relativeLocation, _options.Root);
+            var location = _options.RelativeLocation(_options.Root, key);
 
             if (File.Exists(location))
             {
@@ -127,11 +93,6 @@ namespace Filehook.Storages.FileSystem
 
                 return BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();
             }
-        }
-
-        public Task<string> SaveAsync(string relativeLocation, Stream stream, CancellationToken cancellationToken = default)
-        {
-            throw new NotImplementedException();
         }
     }
 }

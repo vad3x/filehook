@@ -19,13 +19,6 @@ namespace Filehook.Metadata.Builders
             return this;
         }
 
-        public EntityTypeBuilder<TEntity> HasName(string name)
-        {
-            _entityMetadata.Name = name ?? throw new ArgumentNullException(nameof(name));
-
-            return this;
-        }
-
         public EntityTypeBuilder<TEntity> HasStorage(string storageName)
         {
             _entityMetadata.StorageName = storageName ?? throw new ArgumentNullException(nameof(storageName));

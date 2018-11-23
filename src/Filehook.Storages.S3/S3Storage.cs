@@ -14,96 +14,62 @@ namespace Filehook.Storages.S3
     {
         private readonly S3StorageOptions _options;
 
-        private readonly ILocationTemplateParser _locationTemplateParser;
-
         private readonly IAmazonS3 _amazonS3Client;
 
         private readonly ILogger _logger;
 
         public S3Storage(
             IOptions<S3StorageOptions> options,
-            ILocationTemplateParser locationTemplateParser,
             IAmazonS3 amazonS3Client,
             ILogger<S3Storage> logger)
         {
             _options = options.Value;
             _amazonS3Client = amazonS3Client;
-            _locationTemplateParser = locationTemplateParser;
             _logger = logger;
         }
 
         public string Name => _options.Name;
 
-        public async Task<bool> ExistsAsync(string relativeLocation)
+        public async Task<bool> ExistsAsync(string key, CancellationToken cancellationToken = default)
         {
-            var key = _locationTemplateParser.SetRoot(relativeLocation, string.Empty).TrimStart('/');
-            _logger.LogInformation($"Does exist file: '{key}' on '{_options.BucketName}' bucket");
+            var location = _options.RelativeLocation(string.Empty, key).TrimStart('/');
 
-            var response = await _amazonS3Client.GetObjectAsync(_options.BucketName, key);
+            _logger.LogInformation($"Does exist file: '{location}' on '{_options.BucketName}' bucket");
+
+            GetObjectResponse response = await _amazonS3Client.GetObjectAsync(_options.BucketName, key, cancellationToken)
+                .ConfigureAwait(false);
+
             return response.Key != null;
         }
 
-        public string GetUrl(string relativeLocation)
+        public async Task<bool> RemoveFileAsync(string key, CancellationToken cancellationToken = default)
         {
-            return ToAbsoluteUrl(relativeLocation);
-        }
+            var location = _options.RelativeLocation(string.Empty, key).TrimStart('/');
+            _logger.LogInformation($"Delete file: '{location}' from '{_options.BucketName}' bucket");
 
-        public async Task<bool> RemoveAsync(string relativeLocation)
-        {
-            var key = _locationTemplateParser.SetRoot(relativeLocation, string.Empty).TrimStart('/');
-            _logger.LogInformation($"Delete file: '{key}' from '{_options.BucketName}' bucket");
-
-            await _amazonS3Client.DeleteAsync(_options.BucketName, key, new Dictionary<string, object>());
+            await _amazonS3Client.DeleteAsync(_options.BucketName, key, new Dictionary<string, object>(), cancellationToken);
             return true;
         }
 
-        public async Task<string> OldSaveAsync(string relativeLocation, Stream stream, CancellationToken cancellationToken = default)
+        public async Task<FileStorageSavingResult> SaveAsync(string key, FilehookFileInfo fileInfo, CancellationToken cancellationToken = default)
         {
-            var key = _locationTemplateParser.SetRoot(relativeLocation, string.Empty).TrimStart('/');
-            _logger.LogInformation($"Put file: '{key}' to '{_options.BucketName}' bucket");
+            var location = _options.RelativeLocation(string.Empty, key).TrimStart('/');
+            _logger.LogInformation($"Put file: '{location}' to '{_options.BucketName}' bucket");
 
             var request = new PutObjectRequest
             {
                 BucketName = _options.BucketName,
                 Key = key,
-                InputStream = stream,
+                InputStream = fileInfo.FileStream,
                 CannedACL = S3CannedACL.PublicRead
             };
 
-            await _amazonS3Client.PutObjectAsync(request, cancellationToken);
-
-            var location = ToAbsoluteUrl(relativeLocation);
+            await _amazonS3Client.PutObjectAsync(request, cancellationToken)
+                .ConfigureAwait(false);
 
             _logger.LogInformation($"Created '{location}'");
 
             return location;
-        }
-
-        private string ToAbsoluteUrl(string relativeLocation)
-        {
-            if (!string.IsNullOrWhiteSpace(_options.ProxyUri))
-            {
-                return _locationTemplateParser.SetRoot(relativeLocation, _options.ProxyUri);
-            }
-
-            var baseLocation = $"{_options.Protocol}://s3-{_options.Region}.{_options.HostName}/{_options.BucketName}";
-
-            return _locationTemplateParser.SetRoot(relativeLocation, baseLocation);
-        }
-
-        public Task<string> SaveAsync(string relativeLocation, Stream stream, CancellationToken cancellationToken = default)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public Task<FileStorageSavingResult> SaveAsync(string key, FilehookFileInfo fileInfo, CancellationToken cancellationToken = default)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public Task<bool> RemoveFileAsync(string fileName)
-        {
-            throw new System.NotImplementedException();
         }
     }
 }

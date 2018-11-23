@@ -19,23 +19,19 @@ namespace Filehook.Storages.Ssh
     {
         private readonly SftpStorageOptions _options;
 
-        private readonly ILocationTemplateParser _locationTemplateParser;
-
         private readonly ILogger<SftpStorage> _logger;
 
         public SftpStorage(
             IOptions<SftpStorageOptions> options,
-            ILocationTemplateParser locationTemplateParser,
             ILogger<SftpStorage> logger)
         {
             _options = options.Value;
-            _locationTemplateParser = locationTemplateParser;
             _logger = logger;
         }
 
         public string Name => _options.Name;
 
-        public Task<bool> ExistsAsync(string relativeLocation)
+        public Task<bool> ExistsAsync(string key, CancellationToken cancellationToken = default)
         {
             var fullPath = _locationTemplateParser.SetRoot(relativeLocation, _options.BasePath);
 
@@ -47,12 +43,7 @@ namespace Filehook.Storages.Ssh
             }
         }
 
-        public string GetUrl(string relativeLocation)
-        {
-            return ToAbsoluteUrl(relativeLocation);
-        }
-
-        public Task<bool> RemoveAsync(string relativeLocation)
+        public Task<bool> RemoveFileAsync(string key, CancellationToken cancellationToken = default)
         {
             var fullPath = _locationTemplateParser.SetRoot(relativeLocation, _options.BasePath);
 

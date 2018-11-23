@@ -1,6 +1,6 @@
 ﻿namespace Filehook.Abstractions
 {
-    public class FilehookUploadingResult
+    public sealed class FilehookUploadingResult
     {
         public static FilehookUploadingResult Success(
             FilehookBlob blob,

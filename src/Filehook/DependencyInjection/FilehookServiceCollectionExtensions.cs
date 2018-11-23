@@ -15,15 +15,11 @@ namespace Microsoft.Extensions.DependencyInjection
                 throw new ArgumentNullException(nameof(services));
             }
 
-            var builder = services.AddFilehookCore(options => {
+            IFilehookBuilder builder = services.AddFilehookCore(options => {
                 options.DefaultStorageName = defaultStorageName;
             });
 
             builder.AddDataAnnotations();
-
-            builder.AddKebabLocationParamFormatter();
-
-            builder.AddRegularLocationTemplateParser();
 
             return builder;
         }

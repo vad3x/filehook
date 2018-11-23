@@ -1,8 +1,10 @@
-﻿namespace Filehook.Storages.S3
+﻿using Filehook.Abstractions;
+
+namespace Filehook.Storages.S3
 {
-    public class S3StorageOptions
+    public class S3StorageOptions : StorageOptions
     {
-        public string Name { get; set; } = S3Consts.S3StorageName;
+        public override string Name { get; set; } = S3Consts.S3StorageName;
 
         public string Protocol { get; set; } = "https";
 
