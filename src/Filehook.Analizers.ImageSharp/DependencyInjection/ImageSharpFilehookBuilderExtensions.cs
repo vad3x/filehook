@@ -1,8 +1,8 @@
 ﻿using System;
 
 using Filehook.Abstractions;
+using Filehook.Analizers.ImageSharp;
 using Filehook.Core.DependencyInjection;
-using Filehook.Proccessors.Image.ImageSharpProccessor;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
