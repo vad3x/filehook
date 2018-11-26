@@ -2,9 +2,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+
 using Amazon.S3;
 using Amazon.S3.Model;
+
 using Filehook.Abstractions;
+
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -47,12 +50,19 @@ namespace Filehook.Storages.S3
             var location = _options.RelativeLocation(string.Empty, key).TrimStart('/');
             _logger.LogInformation($"Delete file: '{location}' from '{_options.BucketName}' bucket");
 
-            await _amazonS3Client.DeleteAsync(_options.BucketName, key, new Dictionary<string, object>(), cancellationToken);
+            await _amazonS3Client.DeleteAsync(_options.BucketName, key, new Dictionary<string, object>(), cancellationToken)
+                .ConfigureAwait(false);
+
             return true;
         }
 
         public async Task<FileStorageSavingResult> SaveAsync(string key, FilehookFileInfo fileInfo, CancellationToken cancellationToken = default)
         {
+            Stream stream = fileInfo.FileStream;
+
+            var checksum = stream.GetMD5Checksum();
+            var byteSize = stream.GetByteSize();
+
             var location = _options.RelativeLocation(string.Empty, key).TrimStart('/');
             _logger.LogInformation($"Put file: '{location}' to '{_options.BucketName}' bucket");
 
@@ -69,7 +79,7 @@ namespace Filehook.Storages.S3
 
             _logger.LogInformation($"Created '{location}'");
 
-            return location;
+            return FileStorageSavingResult.Success(location, checksum, byteSize);
         }
     }
 }

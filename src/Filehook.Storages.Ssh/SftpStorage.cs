@@ -33,19 +33,19 @@ namespace Filehook.Storages.Ssh
 
         public Task<bool> ExistsAsync(string key, CancellationToken cancellationToken = default)
         {
-            var fullPath = _locationTemplateParser.SetRoot(relativeLocation, _options.BasePath);
+            var location = _options.RelativeLocation(_options.Root, key);
 
             using (var client = new SftpClient(_options.HostName, _options.Port, _options.UserName, _options.Password))
             {
                 client.Connect();
 
-                return Task.FromResult(client.Exists(fullPath));
+                return Task.FromResult(client.Exists(location));
             }
         }
 
         public Task<bool> RemoveFileAsync(string key, CancellationToken cancellationToken = default)
         {
-            var fullPath = _locationTemplateParser.SetRoot(relativeLocation, _options.BasePath);
+            var location = _options.RelativeLocation(_options.Root, key);
 
             using (var client = new SftpClient(_options.HostName, _options.Port, _options.UserName, _options.Password))
             {
@@ -53,46 +53,17 @@ namespace Filehook.Storages.Ssh
 
                 try
                 {
-                    client.DeleteFile(fullPath);
+                    client.DeleteFile(location);
                 }
                 catch (SftpPathNotFoundException)
                 {
-                    _logger.LogError("File with path '{path}' could not be found", fullPath);
+                    _logger.LogError("File with path '{path}' could not be found", location);
 
                     return Task.FromResult(false);
                 }
 
                 return Task.FromResult(true);
             }
-        }
-
-        public async Task<string> OldSaveAsync(string relativeLocation, Stream stream, CancellationToken cancellationToken = default)
-        {
-            var fullPath = _locationTemplateParser.SetRoot(relativeLocation, _options.BasePath);
-
-            using (var client = new SftpClient(_options.HostName, _options.Port, _options.UserName, _options.Password))
-            {
-                client.Connect();
-
-                var fileName = Path.GetFileName(fullPath);
-                var directoryPath = fullPath.Remove(fullPath.Length - fileName.Length, fileName.Length);
-
-                CreateDirectoryRecursively(client, directoryPath);
-
-                stream.Position = 0;
-                await client.UploadAsync(stream, fullPath, true);
-            }
-
-            var location = ToAbsoluteUrl(relativeLocation);
-
-            _logger.LogInformation("Created '{location}'", location);
-
-            return location;
-        }
-
-        private string ToAbsoluteUrl(string relativeLocation)
-        {
-            return _locationTemplateParser.SetRoot(relativeLocation, _options.RequestRootUrl);
         }
 
         private void CreateDirectoryRecursively(SftpClient client, string path)
@@ -135,19 +106,32 @@ namespace Filehook.Storages.Ssh
             }
         }
 
-        public Task<string> SaveAsync(string relativeLocation, Stream stream, CancellationToken cancellationToken = default)
+        public async Task<FileStorageSavingResult> SaveAsync(string key, FilehookFileInfo fileInfo, CancellationToken cancellationToken = default)
         {
-            throw new NotImplementedException();
-        }
+            Stream stream = fileInfo.FileStream;
 
-        public Task<FileStorageSavingResult> SaveAsync(string key, FilehookFileInfo fileInfo, CancellationToken cancellationToken = default)
-        {
-            throw new NotImplementedException();
-        }
+            var checksum = stream.GetMD5Checksum();
+            var byteSize = stream.GetByteSize();
 
-        public Task<bool> RemoveFileAsync(string fileName)
-        {
-            throw new NotImplementedException();
+            var location = _options.RelativeLocation(_options.Root, key);
+
+            using (var client = new SftpClient(_options.HostName, _options.Port, _options.UserName, _options.Password))
+            {
+                client.Connect();
+
+                var fileName = Path.GetFileName(location);
+                var directoryPath = location.Remove(location.Length - fileName.Length, fileName.Length);
+
+                CreateDirectoryRecursively(client, directoryPath);
+
+                stream.Position = 0;
+                await client.UploadAsync(stream, location, true)
+                        .ConfigureAwait(false);
+            }
+
+            _logger.LogInformation("Created '{location}'", location);
+
+            return FileStorageSavingResult.Success(location, checksum, byteSize);
         }
     }
 }

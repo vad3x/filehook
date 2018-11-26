@@ -5,8 +5,13 @@ namespace Filehook.Abstractions
 {
     public interface IFilehookService
     {
+        Task PurgeAsync<TEntity>(
+            TEntity entity,
+            string attachmentName = null,
+            CancellationToken cancellationToken = default) where TEntity : class;
+
         Task PurgeAsync(
-            FilehookBlob blob,
+            FilehookBlob[] blobs,
             CancellationToken cancellationToken = default);
 
         FilehookBlob GetSingleBlob<TEntity>(

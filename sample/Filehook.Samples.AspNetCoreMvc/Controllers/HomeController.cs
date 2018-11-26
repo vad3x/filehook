@@ -52,10 +52,22 @@ namespace Filehook.Samples.AspNetCoreMvc.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Index(AttachmentViewModel viewModel, CancellationToken cancellationToken = default)
         {
-            ViewBag.Articles = _articleStore;
-
             if (!ModelState.IsValid)
             {
+                Article[] articles = _articleStore.ToArray();
+
+                FilehookAttachment[] attachments = await _filehookService
+                    .GetAttachmentsAsync(articles, cancellationToken: cancellationToken);
+
+                ViewBag.Articles = articles.Select(a => new ArticleViewModel
+                {
+                    Id = a.Id,
+                    CreatedAt = a.CreatedAt,
+                    CoverImage = _filehookService.GetSingleBlob(a, COVER_IMAGE_NAME, attachments),
+                    Attachments = _filehookService.GetManyBlobs(a, ATTACHMENT_NAME, attachments)
+                })
+                .ToArray();
+
                 return View();
             }
 
@@ -105,17 +117,9 @@ namespace Filehook.Samples.AspNetCoreMvc.Controllers
                 return View();
             }
 
-            //if (article.CoverImageFileName != null)
-            //{
-            //    await _filehookService.RemoveAsync(article, a => a.CoverImageFileName);
-            //}
+            await _filehookService.PurgeAsync(article);
 
-            //if (article.AttachmentFileName != null)
-            //{
-            //    await _filehookService.RemoveAsync(article, a => a.AttachmentFileName);
-            //}
-
-            //_articleStore.Remove(article);
+            _articleStore.Remove(article);
 
             return RedirectToAction(nameof(Index));
         }

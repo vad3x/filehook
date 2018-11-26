@@ -40,7 +40,6 @@ namespace WebApplication
                 .AddFileSystemStorage(options =>
                 {
                     options.Root = "./wwwroot/public/storage";
-                    options.HostUrl = "http://localhost:5000";
                 })
                 .AddMetadata(builder => {
                     builder.Entity<Article>(entity => {

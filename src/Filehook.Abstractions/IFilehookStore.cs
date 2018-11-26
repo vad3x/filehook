@@ -16,7 +16,7 @@ namespace Filehook.Abstractions.Stores
             CancellationToken cancellationToken = default);
 
         Task PurgeAsync(
-            FilehookBlob blob,
+            FilehookBlob[] blobs,
             CancellationToken cancellationToken = default);
 
         Task<FilehookAttachment[]> GetAttachmentsAsync(

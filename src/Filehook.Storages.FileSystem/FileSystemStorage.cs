@@ -1,6 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Security.Cryptography;
+﻿using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -39,8 +37,8 @@ namespace Filehook.Storages.FileSystem
         {
             Stream stream = fileInfo.FileStream;
 
-            var checksum = GetMD5Checksum(stream);
-            var byteSize = stream.Length;
+            var checksum = stream.GetMD5Checksum();
+            var byteSize = stream.GetByteSize();
 
             var location = _options.RelativeLocation(_options.Root, key);
 
@@ -81,18 +79,6 @@ namespace Filehook.Storages.FileSystem
             _logger.LogDebug("File on location '{0}' is not found", location);
 
             return Task.FromResult(false);
-        }
-
-        private static string GetMD5Checksum(Stream stream)
-        {
-            using (var md5 = MD5.Create())
-            {
-                stream.Position = 0;
-
-                var hash = md5.ComputeHash(stream);
-
-                return BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();
-            }
         }
     }
 }

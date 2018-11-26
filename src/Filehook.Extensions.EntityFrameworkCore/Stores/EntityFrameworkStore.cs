@@ -160,15 +160,18 @@ namespace Filehook.Extensions.EntityFrameworkCore.Stores
                 .ToArrayAsync(cancellationToken);
         }
 
-        public async Task PurgeAsync(FilehookBlob blob, CancellationToken cancellationToken = default)
+        public async Task PurgeAsync(FilehookBlob[] blobs, CancellationToken cancellationToken = default)
         {
-            Guard.Argument(blob, nameof(blob)).NotNull();
+            Guard.Argument(blobs, nameof(blobs)).NotNull();
 
-            FilehookBlobEntity blobEntity = await _filehookDbContext.FilehookBlobs
-                .FirstOrDefaultAsync(x => x.Key == blob.Key)
+            var blobKeys = blobs.Select(x => x.Key).ToArray();
+
+            FilehookBlobEntity[] blobEntities = await _filehookDbContext.FilehookBlobs
+                .Where(x => blobKeys.Contains(x.Key))
+                .ToArrayAsync()
                 .ConfigureAwait(false);
 
-            _filehookDbContext.FilehookBlobs.Remove(blobEntity);
+            _filehookDbContext.FilehookBlobs.RemoveRange(blobEntities);
 
             await _filehookDbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
         }

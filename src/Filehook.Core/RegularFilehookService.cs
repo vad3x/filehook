@@ -133,7 +133,7 @@ namespace Filehook.Core
                 {
                     _logger.LogInformation("Purging blob: '{blobKey}'...", item.Blob.Key);
 
-                    await PurgeAsync(item.Blob, cancellationToken).ConfigureAwait(false);
+                    await PurgeAsync(new[] { item.Blob }, cancellationToken).ConfigureAwait(false);
                 }
             }
 
@@ -159,11 +159,11 @@ namespace Filehook.Core
             return await AttachAsync(entity, attachmentName, fileUploadingResult.Blob, cancellationToken).ConfigureAwait(false);
         }
 
-        public async Task PurgeAsync(FilehookBlob blob, CancellationToken cancellationToken = default)
+        public async Task PurgeAsync(FilehookBlob[] blobs, CancellationToken cancellationToken = default)
         {
-            Guard.Argument(blob, nameof(blob)).NotNull();
+            Guard.Argument(blobs, nameof(blobs)).NotNull();
 
-            await _filehookStore.PurgeAsync(blob, cancellationToken)
+            await _filehookStore.PurgeAsync(blobs, cancellationToken)
                 .ConfigureAwait(false);
 
             string storageName = _options.DefaultStorageName;
@@ -173,7 +173,10 @@ namespace Filehook.Core
                 throw new NotSupportedException($"Storage with name '{storageName}' has not been registered");
             }
 
-            await storage.RemoveFileAsync(blob.Key).ConfigureAwait(false);
+            foreach (FilehookBlob blob in blobs)
+            {
+                await storage.RemoveFileAsync(blob.Key).ConfigureAwait(false);
+            }
         }
 
         public Task<FilehookAttachment[]> GetAttachmentsAsync<TEntity>(
@@ -225,6 +228,24 @@ namespace Filehook.Core
                 .Where(x => x.Name == attachmentName && x.EntityId == entityId && x.EntityType == entityType)
                 .Select(x => x.Blob)
                 .ToArray();
+        }
+
+        public async Task PurgeAsync<TEntity>(
+            TEntity entity,
+            string attachmentName = null,
+            CancellationToken cancellationToken = default) where TEntity : class
+        {
+            Guard.Argument(entity, nameof(entity)).NotNull();
+
+            var names = attachmentName != null ? new[] { attachmentName } : null;
+
+            FilehookAttachment[] attachments = await GetAttachmentsAsync(new[] { entity }, names, cancellationToken)
+                .ConfigureAwait(false);
+
+            FilehookBlob[] blobs = attachments.Select(a => a.Blob).ToArray();
+
+            await PurgeAsync(blobs, cancellationToken)
+                .ConfigureAwait(false);
         }
     }
 }
