@@ -12,7 +12,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Filehook.Metadata\Filehook.Metadata.csproj" />
+    <ProjectReference Include="..\Filehook.Abstractions\Filehook.Abstractions.csproj" />
+    <ProjectReference Include="..\Filehook.Core\Filehook.Core.csproj" />
   </ItemGroup>
 
 </Project>

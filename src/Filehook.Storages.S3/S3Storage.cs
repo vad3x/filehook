@@ -31,8 +31,6 @@ namespace Filehook.Storages.S3
             _logger = logger;
         }
 
-        public string Name => _options.Name;
-
         public async Task<bool> ExistsAsync(string key, CancellationToken cancellationToken = default)
         {
             var location = _options.RelativeLocation(string.Empty, key).TrimStart('/');

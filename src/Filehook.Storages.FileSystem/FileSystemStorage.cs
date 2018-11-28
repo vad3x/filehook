@@ -23,8 +23,6 @@ namespace Filehook.Storages.FileSystem
             _logger = logger;
         }
 
-        public string Name => _options.Name;
-
         // TODO tests
         public Task<bool> ExistsAsync(string key, CancellationToken cancellationToken = default)
         {

@@ -29,8 +29,6 @@ namespace Filehook.Storages.Ssh
             _logger = logger;
         }
 
-        public string Name => _options.Name;
-
         public Task<bool> ExistsAsync(string key, CancellationToken cancellationToken = default)
         {
             var location = _options.RelativeLocation(_options.Root, key);

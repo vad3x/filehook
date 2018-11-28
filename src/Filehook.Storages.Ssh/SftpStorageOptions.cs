@@ -4,8 +4,6 @@ namespace Filehook.Storages.Ssh
 {
     public class SftpStorageOptions : StorageOptions
     {
-        public override string Name { get; set; } = SshConsts.SftpStorageName;
-
         public string HostName { get; set; }
 
         public int Port { get; set; } = 22;

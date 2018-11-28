@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-
+using AutoMapper;
 using Filehook.Abstractions;
 using Filehook.Samples.AspNetCoreMvc.Models;
 using Filehook.Samples.AspNetCoreMvc.ViewModels;
@@ -20,10 +20,12 @@ namespace Filehook.Samples.AspNetCoreMvc.Controllers
         private static readonly List<Article> _articleStore = new List<Article>();
 
         private readonly IFilehookService _filehookService;
+        private readonly IMapper _mapper;
 
-        public HomeController(IFilehookService filehookService)
+        public HomeController(IFilehookService filehookService, IMapper mapper)
         {
             _filehookService = filehookService;
+            _mapper = mapper;
         }
 
         [HttpGet]
@@ -36,13 +38,12 @@ namespace Filehook.Samples.AspNetCoreMvc.Controllers
             FilehookAttachment[] attachments = await _filehookService
                 .GetAttachmentsAsync(articles, cancellationToken: cancellationToken);
 
-            ViewBag.Articles = articles.Select(a => new ArticleViewModel
-            {
-                Id = a.Id,
-                CreatedAt = a.CreatedAt,
-                CoverImage = _filehookService.GetSingleBlob(a, COVER_IMAGE_NAME, attachments),
-                Attachments = _filehookService.GetManyBlobs(a, ATTACHMENT_NAME, attachments)
-            })
+            ViewBag.Articles = articles.Select(a =>
+                _mapper.Map(a, new ArticleViewModel
+                {
+                    CoverImage = attachments.FindBlob(a, COVER_IMAGE_NAME),
+                    Attachments = attachments.FindBlobs(a, ATTACHMENT_NAME)
+                }))
             .ToArray();
 
             return View();
@@ -59,13 +60,12 @@ namespace Filehook.Samples.AspNetCoreMvc.Controllers
                 FilehookAttachment[] attachments = await _filehookService
                     .GetAttachmentsAsync(articles, cancellationToken: cancellationToken);
 
-                ViewBag.Articles = articles.Select(a => new ArticleViewModel
-                {
-                    Id = a.Id,
-                    CreatedAt = a.CreatedAt,
-                    CoverImage = _filehookService.GetSingleBlob(a, COVER_IMAGE_NAME, attachments),
-                    Attachments = _filehookService.GetManyBlobs(a, ATTACHMENT_NAME, attachments)
-                })
+                ViewBag.Articles = articles.Select(a =>
+                    _mapper.Map(a, new ArticleViewModel
+                    {
+                        CoverImage = attachments.FindBlob(a, COVER_IMAGE_NAME),
+                        Attachments = attachments.FindBlobs(a, ATTACHMENT_NAME)
+                    }))
                 .ToArray();
 
                 return View();
@@ -86,22 +86,28 @@ namespace Filehook.Samples.AspNetCoreMvc.Controllers
 
             if (viewModel.CoverImageFile != null)
             {
-                var fileInfo = new FilehookFileInfo(
-                    viewModel.CoverImageFile.ContentType,
-                    viewModel.CoverImageFile.FileName,
-                    viewModel.CoverImageFile.OpenReadStream());
+                using (var stream = viewModel.CoverImageFile.OpenReadStream())
+                {
+                    var fileInfo = new FilehookFileInfo(
+                        viewModel.CoverImageFile.ContentType,
+                        viewModel.CoverImageFile.FileName,
+                        stream);
 
-                await _filehookService.SetOneAsync(model, COVER_IMAGE_NAME, fileInfo, cancellationToken);
+                    await _filehookService.SetAttachmentAsync(model, COVER_IMAGE_NAME, fileInfo, cancellationToken: cancellationToken);
+                }
             }
 
             if (viewModel.AttachmentFile != null)
             {
-                var fileInfo = new FilehookFileInfo(
+                using (var stream = viewModel.AttachmentFile.OpenReadStream())
+                {
+                    var fileInfo = new FilehookFileInfo(
                     viewModel.AttachmentFile.ContentType,
                     viewModel.AttachmentFile.FileName,
-                    viewModel.AttachmentFile.OpenReadStream());
+                    stream);
 
-                await _filehookService.AddManyAsync(model, ATTACHMENT_NAME, fileInfo, cancellationToken);
+                    await _filehookService.AddAttachmentAsync(model, ATTACHMENT_NAME, fileInfo, cancellationToken: cancellationToken);
+                }
             }
 
             return RedirectToAction(nameof(Index));

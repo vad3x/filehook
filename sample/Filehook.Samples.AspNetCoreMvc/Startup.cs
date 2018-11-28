@@ -1,5 +1,6 @@
 using System.Reflection;
-
+using AutoMapper;
+using Filehook.Samples.AspNetCoreMvc.Infrastructure;
 using Filehook.Samples.AspNetCoreMvc.Models;
 using Filehook.Storages.FileSystem;
 
@@ -34,18 +35,18 @@ namespace WebApplication
 
             var migrationsAssembly = typeof(Startup).GetTypeInfo().Assembly.GetName().Name;
 
-            services.AddFilehook(FileSystemConsts.FileSystemStorageName)
+            services.AddFilehook()
                 .AddEntityFrameworkStores(x => x.UseMySql(Configuration.GetConnectionString("ExampleConnection"), o => o.MigrationsAssembly(migrationsAssembly)))
                 .AddImageSharpBlobAnalyzer()
                 .AddFileSystemStorage(options =>
                 {
                     options.Root = "./wwwroot/public/storage";
-                })
-                .AddMetadata(builder => {
-                    builder.Entity<Article>(entity => {
-                        entity.HasId(x => x.Id.ToString());
-                    });
                 });
+
+            services.AddAutoMapper(options =>
+            {
+                options.AddProfile<ArticleProfile>();
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -4,8 +4,6 @@ namespace Filehook.Storages.S3
 {
     public class S3StorageOptions : StorageOptions
     {
-        public override string Name { get; set; } = S3Consts.S3StorageName;
-
         public string Protocol { get; set; } = "https";
 
         public string Region { get; set; } = "us-east-1";

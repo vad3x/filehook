@@ -5,8 +5,6 @@ namespace Filehook.Abstractions
 {
     public interface IFileStorage
     {
-        string Name { get; }
-
         Task<bool> ExistsAsync(string key, CancellationToken cancellationToken = default);
 
         Task<FileStorageSavingResult> SaveAsync(string key, FilehookFileInfo fileInfo, CancellationToken cancellationToken = default);

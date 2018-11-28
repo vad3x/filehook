@@ -8,47 +8,38 @@ namespace Filehook.Abstractions
         Task PurgeAsync<TEntity>(
             TEntity entity,
             string attachmentName = null,
+            FilehookAttachmentOptions filehookAttachmentOptions = null,
             CancellationToken cancellationToken = default) where TEntity : class;
 
         Task PurgeAsync(
             FilehookBlob[] blobs,
             CancellationToken cancellationToken = default);
 
-        FilehookBlob GetSingleBlob<TEntity>(
-            TEntity entity,
-            string attachmentName,
-            FilehookAttachment[] attachments) where TEntity : class;
-
-        FilehookBlob[] GetManyBlobs<TEntity>(
-            TEntity entity,
-            string attachmentName,
-            FilehookAttachment[] attachments) where TEntity : class;
-
         Task<FilehookAttachment[]> GetAttachmentsAsync<TEntity>(
             TEntity[] entities,
             string[] attachmentNames = null,
+            FilehookAttachmentOptions filehookAttachmentOptions = null,
             CancellationToken cancellationToken = default) where TEntity : class;
 
-        Task<FilehookAttachment> SetOneAsync<TEntity>(
+        Task<FilehookAttachment> SetAttachmentAsync<TEntity>(
             TEntity entity,
             string attachmentName,
             FilehookFileInfo fileInfo,
+            FilehookAttachmentOptions filehookAttachmentOptions = null,
             CancellationToken cancellationToken = default) where TEntity : class;
 
-        Task<FilehookAttachment> AddManyAsync<TEntity>(
+        Task<FilehookAttachment> AddAttachmentAsync<TEntity>(
             TEntity entity,
             string attachmentName,
             FilehookFileInfo fileInfo,
+            FilehookAttachmentOptions filehookAttachmentOptions = null,
             CancellationToken cancellationToken = default) where TEntity : class;
-
-        Task<FilehookUploadingResult> UploadAsync(
-            FilehookFileInfo fileInfo,
-            CancellationToken cancellationToken = default);
 
         Task<FilehookAttachment> AttachAsync<TEntity>(
             TEntity entity,
             string attachmentName,
             FilehookBlob blob,
+            FilehookAttachmentOptions filehookAttachmentOptions = null,
             CancellationToken cancellationToken = default) where TEntity : class;
     }
 }

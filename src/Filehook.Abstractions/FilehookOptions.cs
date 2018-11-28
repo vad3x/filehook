@@ -4,8 +4,8 @@ namespace Filehook.Abstractions
 {
     public class FilehookOptions
     {
-        public string DefaultStorageName { get; set; }
-
         public Func<string> NewKey { get; set; } = () => StringGenerator.Generate(24);
+
+        public FilehookAttachmentOptions AttachmentOptions { get; set; } = new FilehookAttachmentOptions();
     }
 }

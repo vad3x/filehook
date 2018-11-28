@@ -4,8 +4,6 @@
     {
         public delegate string LocationBuilder(string root, string blobKey);
 
-        public virtual string Name { get; set; }
-
         public virtual LocationBuilder RelativeLocation { get; set; } = DefaultLocation;
 
         private static string DefaultLocation(string root, string blobKey)
