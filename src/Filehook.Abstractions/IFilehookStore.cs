@@ -20,22 +20,19 @@ namespace Filehook.Abstractions.Stores
             CancellationToken cancellationToken = default);
 
         Task<FilehookAttachment[]> GetAttachmentsAsync(
-            string[] entityIds,
-            string entityType,
+            EntityMetadata[] entities,
             string[] names = null,
             CancellationToken cancellationToken = default);
 
         Task<FilehookAttachment> AddAttachmentAsync(
             string name,
-            string entityId,
-            string entityType,
+            EntityMetadata entity,
             FilehookBlob blob,
             CancellationToken cancellationToken = default);
 
         Task<FilehookAttachment> SetAttachmentAsync(
             string name,
-            string entityId,
-            string entityType,
+            EntityMetadata entity,
             FilehookBlob blob,
             CancellationToken cancellationToken = default);
     }

@@ -62,7 +62,7 @@ namespace Filehook
 
             _logger.LogInformation("Attaching blob: '{blobKey}' to '{attachmentName}' on '{entityType}':'{entityId}' ...", blob.Key, attachmentName, entityType, entityId);
 
-            return await _filehookStore.AddAttachmentAsync(attachmentName, entityId, entityType, blob, cancellationToken)
+            return await _filehookStore.AddAttachmentAsync(attachmentName, new EntityMetadata(entityId, entityType), blob, cancellationToken)
                 .ConfigureAwait(false);
         }
 
@@ -82,7 +82,7 @@ namespace Filehook
             string entityType = filehookAttachmentOptions.ResolveEntityType(entity.GetType());
             string entityId = filehookAttachmentOptions.ResolveEntityId(entity);
 
-            FilehookAttachment[] existing = await _filehookStore.GetAttachmentsAsync(new[] { entityId }, entityType, new[] { attachmentName }, cancellationToken)
+            FilehookAttachment[] existing = await _filehookStore.GetAttachmentsAsync(new[] { new EntityMetadata(entityId, entityType) }, new[] { attachmentName }, cancellationToken)
                 .ConfigureAwait(false);
 
             if (existing.Length > 0)
@@ -138,7 +138,7 @@ namespace Filehook
 
             filehookAttachmentOptions = filehookAttachmentOptions ?? _options.AttachmentOptions;
 
-            var entityIds = entities.Select(x =>
+            EntityMetadata[] entityMetadatas = entities.Select(x =>
             {
                 string entityId = filehookAttachmentOptions.ResolveEntityId(x);
                 if (entityId == null)
@@ -146,13 +146,13 @@ namespace Filehook
                     throw new ArgumentException($"{nameof(entityId)} is null");
                 }
 
-                return entityId;
+                string entityType = filehookAttachmentOptions.ResolveEntityType(typeof(TEntity));
+
+                return new EntityMetadata(entityId, entityType);
             })
             .ToArray();
 
-            string entityType = filehookAttachmentOptions.ResolveEntityType(typeof(TEntity));
-
-            return _filehookStore.GetAttachmentsAsync(entityIds, entityType, attachmentNames, cancellationToken);
+            return _filehookStore.GetAttachmentsAsync(entityMetadatas, attachmentNames, cancellationToken);
         }
 
         public async Task PurgeAsync<TEntity>(
