@@ -129,10 +129,19 @@ namespace Filehook
         }
 
         public Task<FilehookAttachment[]> GetAttachmentsAsync<TEntity>(
-            TEntity[] entities,
+            TEntity entity,
             string[] attachmentNames = null,
             FilehookAttachmentOptions filehookAttachmentOptions = null,
             CancellationToken cancellationToken = default) where TEntity : class
+        {
+            return GetAttachmentsAsync(new[] { entity }, attachmentNames, filehookAttachmentOptions, cancellationToken);
+        }
+
+        public Task<FilehookAttachment[]> GetAttachmentsAsync<TEntity>(
+        TEntity[] entities,
+        string[] attachmentNames = null,
+        FilehookAttachmentOptions filehookAttachmentOptions = null,
+        CancellationToken cancellationToken = default) where TEntity : class
         {
             Guard.Argument(entities, nameof(entities)).NotNull();
 

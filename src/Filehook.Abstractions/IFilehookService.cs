@@ -16,6 +16,12 @@ namespace Filehook.Abstractions
             CancellationToken cancellationToken = default);
 
         Task<FilehookAttachment[]> GetAttachmentsAsync<TEntity>(
+            TEntity entity,
+            string[] attachmentNames = null,
+            FilehookAttachmentOptions filehookAttachmentOptions = null,
+            CancellationToken cancellationToken = default) where TEntity : class;
+
+        Task<FilehookAttachment[]> GetAttachmentsAsync<TEntity>(
             TEntity[] entities,
             string[] attachmentNames = null,
             FilehookAttachmentOptions filehookAttachmentOptions = null,
