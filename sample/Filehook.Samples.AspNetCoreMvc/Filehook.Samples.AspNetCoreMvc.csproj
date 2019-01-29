@@ -16,7 +16,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Filehook.Analizers.ImageSharp\Filehook.Analizers.ImageSharp.csproj" />
+    <ProjectReference Include="..\..\src\Filehook.Analyzers.ImageMetadata\Filehook.Analyzers.ImageMetadata.csproj" />
+    <ProjectReference Include="..\..\src\Filehook.Analyzers.ImageSharp\Filehook.Analyzers.ImageSharp.csproj" />
     <ProjectReference Include="..\..\src\Filehook.Extensions.EntityFrameworkCore\Filehook.Extensions.EntityFrameworkCore.csproj" />
     <ProjectReference Include="..\..\src\Filehook.Storages.FileSystem\Filehook.Storages.FileSystem.csproj" />
     <ProjectReference Include="..\..\src\Filehook.Storages.S3\Filehook.Storages.S3.csproj" />

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -93,7 +94,11 @@ namespace Filehook.Samples.AspNetCoreMvc.Controllers
                         viewModel.CoverImageFile.FileName,
                         stream);
 
+                    var a = Stopwatch.StartNew();
                     await _filehookService.SetAttachmentAsync(model, COVER_IMAGE_NAME, fileInfo, cancellationToken: cancellationToken);
+                    a.Stop();
+
+                    Console.WriteLine($"======================= {a.Elapsed.TotalSeconds}");
                 }
             }
 

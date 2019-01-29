@@ -12,7 +12,7 @@ using Microsoft.Extensions.Logging;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats;
 
-namespace Filehook.Analizers.ImageSharp
+namespace Filehook.Analyzers.ImageSharp
 {
     public class ImageSharpBlobAnalyzer : IBlobAnalyzer
     {

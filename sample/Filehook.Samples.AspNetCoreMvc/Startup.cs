@@ -37,7 +37,8 @@ namespace WebApplication
 
             services.AddFilehook()
                 .AddEntityFrameworkStores(x => x.UseMySql(Configuration.GetConnectionString("ExampleConnection"), o => o.MigrationsAssembly(migrationsAssembly)))
-                .AddImageSharpBlobAnalyzer()
+                //.AddImageSharpBlobAnalyzer()
+                .AddImageMetadataBlobAnalyzer()
                 .AddFileSystemStorage(options =>
                 {
                     options.Root = "./wwwroot/public/storage";
