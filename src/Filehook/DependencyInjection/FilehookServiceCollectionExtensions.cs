@@ -1,32 +1,29 @@
-﻿using System;
+using System;
+
+using Filehook;
+using Filehook.Abstractions;
 using Filehook.Core.DependencyInjection;
-using Filehook.Proccessors.Image.ImageSharpProccessor;
+using Filehook.Internal;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
     public static class FilehookServiceCollectionExtensions
     {
-        public static IFilehookBuilder AddFilehook(
-            this IServiceCollection services,
-            string defaultStorageName,
-            Action<ImageSharpImageProccessorOptions> action = null)
+        public static IFilehookBuilder AddFilehook(this IServiceCollection services, Action<FilehookOptions> setupAction = null)
         {
             if (services == null)
             {
                 throw new ArgumentNullException(nameof(services));
             }
 
-            var builder = services.AddFilehookCore(options => {
-                options.DefaultStorageName = defaultStorageName;
-            });
+            var builder = new FilehookBuilder(services);
 
-            builder.AddDataAnnotations();
+            if (setupAction != null)
+            {
+                builder.Services.Configure(setupAction);
+            }
 
-            builder.AddKebabLocationParamFormatter();
-
-            builder.AddRegularLocationTemplateParser();
-            builder.AddImageSharpImageProccessor(action);
-            builder.AddFallbackFileProccessor();
+            builder.Services.AddTransient<IFilehookService, RegularFilehookService>();
 
             return builder;
         }

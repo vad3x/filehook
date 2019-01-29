@@ -1,9 +1,9 @@
-﻿namespace Filehook.Storages.S3
-{
-    public class S3StorageOptions
-    {
-        public string Name { get; set; } = S3Consts.S3StorageName;
+﻿using Filehook.Abstractions;
 
+namespace Filehook.Storages.S3
+{
+    public class S3StorageOptions : StorageOptions
+    {
         public string Protocol { get; set; } = "https";
 
         public string Region { get; set; } = "us-east-1";

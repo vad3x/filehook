@@ -1,5 +1,4 @@
-﻿@inject Filehook.Abstractions.IFilehookService filehookService
-@model AttachmentViewModel
+﻿@model AttachmentViewModel
 
 <form asp-action="index" asp-controller="home" enctype="multipart/form-data">
     <div class="row">
@@ -29,51 +28,47 @@
 
 <h1> Articles </h1>
 <ul>
-    @foreach (Article article in ViewBag.Articles)
+    @foreach (ArticleViewModel article in ViewBag.Articles)
     {
         <li>
             <h2>@article.Id</h2>
             <form asp-action="remove" asp-controller="home" asp-route-id="@article.Id">
-                <input type="submit" value="Remove"/>
+                <input type="submit" value="Remove" />
             </form>
-            @if (article.CoverImageFileName != null)
+
+            @if (article.CoverImage != null)
             {
-                <section>
-                    <h3>Cover Image Styles (@article.CoverImageAspectRatio)</h3>
-                    @{
-                        var coverImageUrls = filehookService.GetUrls(article, a => a.CoverImageFileName);
-                    }
-                    <ol>
-                        @foreach (var styleUrl in coverImageUrls)
-                        {
-                            <li>
-                                <h4>@styleUrl.Key</h4>
-                                <div>@styleUrl.Value</div>
-                                <img src="@styleUrl.Value" />
-                            </li>
-                        }
-                    </ol>
-                </section>
+            <section>
+                <h3>Cover Image</h3>
+                <p>Medium Blured</p>
+                <img src="http://localhost:8000/filehook/medium-blurred/@article.CoverImage.Key">
+
+                <p>Small</p>
+                <img src="http://localhost:8000/filehook/small/@article.CoverImage.Key">
+            </section>
             }
 
-            @if (article.AttachmentFileName != null)
-            {
-                <section>
-                    <h3>Cover Image Styles</h3>
-                    @{
-                        var attachmentUrls = filehookService.GetUrls(article, a => a.AttachmentFileName);
-                    }
-                    <ol>
-                        @foreach (var styleUrl in attachmentUrls)
-                        {
+
+            @if (article.Attachments != null)
+                {
+                    <section>
+                        <h3>Attachments</h3>
+                        <ol>
+                            @foreach (var blob in article.Attachments)
+                            {
                             <li>
-                                <h4>@styleUrl.Key</h4>
-                                <div>@styleUrl.Value</div>
+                                <h4>key: @blob.Key</h4>
+                                <div>fileName: @blob.FileName</div>
+                                <div>byteSize: @blob.ByteSize</div>
+                                <div>checksum: @blob.Checksum</div>
+                                <div>contentType: @blob.ContentType</div>
                             </li>
-                        }
-                    </ol>
-                </section>
-            }
+                            }
+                        </ol>
+                    </section>
+                }
+
+            
         </li>
     }
 </ul>

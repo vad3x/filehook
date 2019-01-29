@@ -1,18 +1,14 @@
-﻿using System.IO;
+﻿using System.Threading;
 using System.Threading.Tasks;
 
 namespace Filehook.Abstractions
 {
     public interface IFileStorage
     {
-        string Name { get; }
+        Task<bool> ExistsAsync(string key, CancellationToken cancellationToken = default);
 
-        string GetUrl(string relativeLocation);
+        Task<FileStorageSavingResult> SaveAsync(string key, FilehookFileInfo fileInfo, CancellationToken cancellationToken = default);
 
-        Task<bool> ExistsAsync(string relativeLocation);
-
-        Task<string> SaveAsync(string relativeLocation, Stream stream);
-
-        Task<bool> RemoveAsync(string relativeLocation);
+        Task<bool> RemoveFileAsync(string key, CancellationToken cancellationToken = default);
     }
 }

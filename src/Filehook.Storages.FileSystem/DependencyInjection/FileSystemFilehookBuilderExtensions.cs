@@ -7,19 +7,17 @@ namespace Microsoft.Extensions.DependencyInjection
 {
     public static class FileSystemFilehookBuilderExtensions
     {
-        public static IFilehookBuilder AddFileSystemStorage(this IFilehookBuilder builder, Action<FileSystemStorageOptions> setupAction)
+        public static IFilehookBuilder AddFileSystemStorage(this IFilehookBuilder builder, Action<FileSystemStorageOptions> setupAction = null)
         {
             if (builder == null)
             {
                 throw new ArgumentNullException(nameof(builder));
             }
 
-            if (setupAction == null)
+            if (setupAction != null)
             {
-                throw new ArgumentNullException(nameof(setupAction));
+                builder.Services.Configure(setupAction);
             }
-
-            builder.Services.Configure(setupAction);
 
             builder.Services.AddTransient<IFileStorage, FileSystemStorage>();
 

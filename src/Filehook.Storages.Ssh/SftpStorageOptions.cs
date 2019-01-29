@@ -1,9 +1,9 @@
+using Filehook.Abstractions;
+
 namespace Filehook.Storages.Ssh
 {
-    public class SftpStorageOptions
+    public class SftpStorageOptions : StorageOptions
     {
-        public string Name { get; set; } = SshConsts.SftpStorageName;
-
         public string HostName { get; set; }
 
         public int Port { get; set; } = 22;
@@ -12,8 +12,6 @@ namespace Filehook.Storages.Ssh
 
         public string Password { get; set; }
 
-        public string BasePath { get; set; }
-
-        public string RequestRootUrl { get; set; } = string.Empty;
+        public string Root { get; set; }
     }
 }

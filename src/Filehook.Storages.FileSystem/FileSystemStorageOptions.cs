@@ -1,11 +1,9 @@
-﻿namespace Filehook.Storages.FileSystem
+﻿using Filehook.Abstractions;
+
+namespace Filehook.Storages.FileSystem
 {
-    public class FileSystemStorageOptions
+    public class FileSystemStorageOptions : StorageOptions
     {
-        public string Name { get; set; } = FileSystemConsts.FileSystemStorageName;
-
-        public string CdnUrl { get; set; } = string.Empty;
-
-        public string BasePath { get; set; } = string.Empty;
+        public virtual string Root { get; set; } = string.Empty;
     }
 }

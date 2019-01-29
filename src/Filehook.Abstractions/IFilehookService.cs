@@ -1,36 +1,51 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq.Expressions;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Filehook.Abstractions
 {
     public interface IFilehookService
     {
-        Task<bool> ExistsAsync<TEntity>(
+        Task PurgeAsync<TEntity>(
             TEntity entity,
-            Expression<Func<TEntity, string>> propertyExpression,
-            string style) where TEntity : class;
+            string attachmentName = null,
+            FilehookAttachmentOptions filehookAttachmentOptions = null,
+            CancellationToken cancellationToken = default) where TEntity : class;
 
-        IDictionary<string, string> GetUrls<TEntity>(
+        Task PurgeAsync(
+            FilehookBlob[] blobs,
+            CancellationToken cancellationToken = default);
+
+        Task<FilehookAttachment[]> GetAttachmentsAsync<TEntity>(
             TEntity entity,
-            Expression<Func<TEntity, string>> propertyExpression) where TEntity : class;
+            string[] attachmentNames = null,
+            FilehookAttachmentOptions filehookAttachmentOptions = null,
+            CancellationToken cancellationToken = default) where TEntity : class;
 
-        string GetUrl<TEntity>(
+        Task<FilehookAttachment[]> GetAttachmentsAsync<TEntity>(
+            TEntity[] entities,
+            string[] attachmentNames = null,
+            FilehookAttachmentOptions filehookAttachmentOptions = null,
+            CancellationToken cancellationToken = default) where TEntity : class;
+
+        Task<FilehookAttachment> SetAttachmentAsync<TEntity>(
             TEntity entity,
-            Expression<Func<TEntity, string>> propertyExpression,
-            string style) where TEntity : class;
+            string attachmentName,
+            FilehookFileInfo fileInfo,
+            FilehookAttachmentOptions filehookAttachmentOptions = null,
+            CancellationToken cancellationToken = default) where TEntity : class;
 
-        Task<IDictionary<string, FilehookSavingResult>> SaveAsync<TEntity>(
+        Task<FilehookAttachment> AddAttachmentAsync<TEntity>(
             TEntity entity,
-            Expression<Func<TEntity, string>> propertyExpression,
-            string filename,
-            byte[] bytes) where TEntity : class;
+            string attachmentName,
+            FilehookFileInfo fileInfo,
+            FilehookAttachmentOptions filehookAttachmentOptions = null,
+            CancellationToken cancellationToken = default) where TEntity : class;
 
-        bool CanProccess(string fileExtension, byte[] bytes);
-
-        Task RemoveAsync<TEntity>(
+        Task<FilehookAttachment> AttachAsync<TEntity>(
             TEntity entity,
-            Expression<Func<TEntity, string>> propertyExpression) where TEntity : class;
+            string attachmentName,
+            FilehookBlob blob,
+            FilehookAttachmentOptions filehookAttachmentOptions = null,
+            CancellationToken cancellationToken = default) where TEntity : class;
     }
 }
